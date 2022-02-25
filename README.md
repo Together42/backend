@@ -3,7 +3,7 @@
 서먹서먹한 사람들이 친해지기 위해 밥 한 끼 먹게 해주는 랜덤매칭 웹 서비스
 
 ## 기술 스택
-- exporess.js
+- express.js
 - mysql
 
 ## developers
