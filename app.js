@@ -1,0 +1,72 @@
+const express = require("express");
+const db = require("./db.js");
+const bodyParser = require('body-parser');
+const morgan = require('morgan');
+const router = express.Router();
+const port = 3000;
+require('dotenv').config();
+
+// express configuration
+const app = express();
+
+
+//parse JSON and url-encoded query
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
+
+//print the request log on console
+app.use(morgan('dev'));
+
+//set the secret key variable for jwt
+app.set('jwt-secret', process.env.JW_SECRET);
+
+app.set('port', port);
+
+
+//index page, just for testing
+app.get('/', (req, res) => {
+	res.send('Hello JWT');
+})
+
+//configure api router
+app.use('/api', require('./routes/api'));
+
+
+
+
+
+
+
+
+
+
+//db exam
+//app.get("/",(req, res) => {
+//	db.query(`select * from test`, (err, results) =>{
+//		if(err)
+//			console.log(err);
+//		res.send(results);
+//	});
+//});
+
+//app.route("/book")
+//	.get((req, res) => {
+//		res.send('Get a random book')
+//	})
+//	.post((req, res) => {
+//		res.send('Add a book');
+//	})
+
+//app.get("/post",(req, res) => {
+//	const sql = `insert into board(title, content) values("tkim","smart boy")`; 
+//	db.query(sql,req.body, (err, results) =>{
+//		if(err)
+//			console.log(err);
+//		console.log(results);
+//		res.send(results);
+//	});
+//});
+
+
+app.listen(app.get("port"));
+console.log("Listening on", app.get("port"));
