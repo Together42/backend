@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <%-include('layout/header')%>
+        <link rel="stylesheet" href="css/register.css">
+    </head>
+    <body id="page-top">
+        <!-- Navigation-->
+        <%-include('layout/navigation')%>
+        <!-- Contact Section-->
+        <section class="page-section" id="contact">
+            <div class="container">
+                <!-- Contact Section Heading-->
+                <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Register</h2>
+                <!-- Icon Divider-->
+                <div class="divider-custom">
+                    <div class="divider-custom-line"></div>
+                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                    <div class="divider-custom-line"></div>
+                </div>
+                <!-- Contact Section Form-->
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 col-xl-7">
+                        <!-- * * * * * * * * * * * * * * *-->
+                        <!-- * * SB Forms Contact Form * *-->
+                        <!-- * * * * * * * * * * * * * * *-->
+                        <!-- This form is pre-integrated with SB Forms.-->
+                        <!-- To make this form functional, sign up at-->
+                        <!-- https://startbootstrap.com/solution/contact-forms-->
+                        <!-- to get an API token!-->
+                        <form id="contactForm" method="post" action="/api/auth/register">
+                            <!-- Login Id input-->
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="id" name="id" type="text" placeholder="Enter your id..."
+                                    data-sb-validations="required" />
+                                <label for="id">ID</label>
+                                <div class="invalid-feedback" data-sb-feedback="id:required">A login Id is required.</div>
+                            </div>
+                            <!-- Password input-->
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="password" name="pw" type="password" placeholder="Enter your password..."
+                                    data-sb-validations="required" />
+                                <label for="password">Password</label>
+                                <div class="invalid-feedback" data-sb-feedback="password:required">A password is required.
+                                </div>
+                            </div>
+                            <!-- Email address input-->
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="email" name="email" type="email" placeholder="name@example.com"
+                                    data-sb-validations="required,email" />
+                                <label for="email">Email address</label>
+                                <div class="invalid-feedback" data-sb-feedback="email:required">An email is required.</div>
+                                <div class="invalid-feedback" data-sb-feedback="email:email">Email is not valid.</div>
+                            </div>
+                            <!-- NickName input-->
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="nickname" name="name" type="text" placeholder="Enter your nickname..."
+                                    data-sb-validations="required" />
+                                <label for="nickname">Nick name</label>
+                                <div class="invalid-feedback" data-sb-feedback="nickname:required">A nickname is required.
+                                </div>
+                            </div>
+                            <!-- Gender input-->
+                            <div class="form-floating mb-3">
+                                <div>
+                                    <label for="gender">Gender</label>
+                                </div>
+
+                                    <div class="form-gender">
+
+                                        <input type="radio" id="genderchoice1" name="gender" value="male"
+                                               checked>
+                                        <label for="male">Male</label>
+                                    
+                                        <input type="radio" id="genderchoice2" name="gender" value="female"
+                                               checked>
+                                        <label for="female">Female</label>
+                                    
+                                        <input type="radio" id="genderchoice3" name="gender" value="other"
+                                               checked>
+                                        <label for="other">Other</label>
+                                      </div>
+                                <div class="invalid-feedback" data-sb-feedback="gender:required">A gender is required.</div>
+                            </div>
+                            <!-- Location input-->
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="location" name="location" type="text" placeholder="Enter your location..."
+                                    data-sb-validations="required" />
+                                <label for="location">Location</label>
+                                <div class="invalid-feedback" data-sb-feedback="location:required">A location is required.
+                                </div>
+                            </div>
+                            <!-- Hobby input-->
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="hobby" type="text" name="hobby" placeholder="Enter your hobby..."
+                                    data-sb-validations="required" />
+                                <label for="hobby">Hobby</label>
+                                <div class="invalid-feedback" data-sb-feedback="hobby:required">A hobby is required.</div>
+                            </div>
+                            <!-- Submit success message-->
+                            <!---->
+                            <!-- This is what your users will see when the form-->
+                            <!-- has successfully submitted-->
+                            <div class="d-none" id="submitSuccessMessage">
+                                <div class="text-center mb-3">
+                                    <div class="fw-bolder">Form submission successful!</div>
+                                    To activate this form, sign up at
+                                    <br />
+                                    <a
+                                        href="https://startbootstrap.com/solution/contact-forms">https://startbootstrap.com/solution/contact-forms</a>
+                                </div>
+                            </div>
+                            <!-- Submit error message-->
+                            <!---->
+                            <!-- This is what your users will see when there is-->
+                            <!-- an error submitting the form-->
+                            <div class="d-none" id="submitErrorMessage">
+                                <div class="text-center text-danger mb-3">Error sending message!</div>
+                            </div>
+                            <!-- Submit Button-->
+                            <button class="btn btn-primary btn-xl" id="submitButton" type="submit">Send</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Footer-->
+        <%-include('layout/footer')%>
+        <!-- FooterLib-->
+        <%-include('layout/footerlib')%>
+    </body>
+</html>

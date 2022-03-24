@@ -1,0 +1,7 @@
+.form-gender {
+    margin-top: 10px;
+}
+
+.form-gender > label {
+    margin-right: 30px;
+}

@@ -2,13 +2,19 @@ const express = require("express");
 const db = require("./db.js");
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+const path = require("path");
 const router = express.Router();
 const port = 3000;
+const indexRouter = require('./routes/render/index');
 require('dotenv').config();
 
 // express configuration
 const app = express();
 
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
+app.use(express.static(path.join(__dirname, 'public')));
 
 //parse JSON and url-encoded query
 app.use(bodyParser.urlencoded({extended: false}));
@@ -22,11 +28,7 @@ app.set('jwt-secret', process.env.JW_SECRET);
 
 app.set('port', port);
 
-
-//index page, just for testing
-app.get('/', (req, res) => {
-	res.send('Hello JWT');
-})
+app.use('/', indexRouter);
 
 //configure api router
 app.use('/api', require('./routes/api'));
