@@ -1,20 +1,14 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
+name: 투게더42 이슈 템플릿
+about: 투게더42 이슈 템플릿입니다.
 title: ''
 labels: ''
 assignees: ''
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
-
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
-
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
-
-**Additional context**
-Add any other context or screenshots about the feature request here.
+## description
+> 이슈의 목적을 간결하게 서술해주세요
+## todo
+- [ ] todo 1
+- [ ] todo 2
