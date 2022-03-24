@@ -64,20 +64,19 @@ exports.login = (req, res, next) => {
 					}
 					);
 					res.cookie("userId", accessToken);
-					res.status(201).json({
-					result: "ok",
-					accessToken,
-					});
+					return res.status(201).json({
+						result: "ok",
+						accessToken,
+					},
+					res.redirect('/'));
 				}else{
 					//실패
-					res.status(400).json({ error: 'invalid user' });
 					console.log('비번틀림');
+					return res.status(400).json({ error: 'invalid user' });
 				}
 			})
 		}else{
 			console.log('ID가 없습니다');
 		}
 	})
-
-	//res.end();
 }
