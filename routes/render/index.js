@@ -15,4 +15,7 @@ router.get('/login', function(req, res, next) {
   res.render('login', { title: '로그인' });
 });
 
+router.get('/together', function(req, res, next) {
+  res.render('together_test', { title: '친바하기' });
+});
 module.exports = router;
