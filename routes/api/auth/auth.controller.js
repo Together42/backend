@@ -13,31 +13,36 @@ POST /api/auth/register
 
 const bcrypt = require('bcrypt');
 const saltRounds = 10; //암호화 진행 횟수
+//id pw email name gender location hobby
 
 exports.register = (req, res, next) => {
-	const param = [req.body.id, req.body.pw, req.body.name];
+	const param = [req.body.id, req.body.pw, req.body.email, req.body.name, req.body.gender, req.body.location, req.body.hobby];
 	//console.log(param);
-	const user = [req.body.id, req.body.pw, req.body.name];
+	const user = [req.body.id, req.body.pw, req.body.email, req.body.name, req.body.gender, req.body.location, req.body.hobby];
 	db.query('SELECT * FROM test WHERE id=?', user, (err, result) =>{
 	
 		console.log(result);
-		if(result.length > 0)
+		if(result.length > 0){
 			console.log('중복된 아이디입니다');
 		//else if(result[0].name > 0)
 		//	console.log('중복된 이름입니다');
+		return res.redirect('/');
+		}
 		else{
 		bcrypt.hash(param[1], saltRounds, (error, hash)=>{
 			param[1] = hash;
-			db.query('INSERT INTO test(`id`,`pw`,`name`) VALUES (?,?,?)', param, (err, row) =>{
-				console.log(param);
-				if(err)
-					console.log(err);
+			db.query('INSERT INTO test(`id`,`pw`,`email`,`name`,`gender`,`location`,`hobby`) VALUES (?,?,?,?,?,?,?)', param, (err, row) =>{
+			console.log(param);
+			if(err)
+				console.log(err);	
 			})
+		return res.redirect('/');
+
 		})
 	}
 	})
-	res.end();
 }
+//id pw email name gender location hobby
 
 exports.login = (req, res, next) => {
 	const param = [req.body.id, req.body.pw];
