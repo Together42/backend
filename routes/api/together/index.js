@@ -1,8 +1,7 @@
 const router = require('express').Router();
 const controller = require('./together.controller');
 
-router.post('/user-add', controller.userAdd);
-router.post('/team-matching', controller.teamMatching);
+router.post('/matching', controller.Matching);
 
 module.exports = router
 
