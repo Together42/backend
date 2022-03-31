@@ -44,6 +44,11 @@ exports.register = (req, res, next) => {
 }
 //id pw email name gender location hobby
 
+exports.logout = (req, res, next) => {
+	res.clearCookie('userId');
+	res.redirect('/');
+}
+
 exports.login = (req, res, next) => {
 	const param = [req.body.id, req.body.pw];
 	const {userId, userPw} = req.body;

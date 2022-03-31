@@ -39,6 +39,16 @@ router.get('/login', function(req, res, next) {
 });
 
 router.get('/together', function(req, res, next) {
-  res.render('together_test', { title: '친바하기' });
+  const token = getCookie(req.headers.cookie, 'userId');
+  let state;
+  if (token) {
+    try {
+      req.decoded = jwt.verify(token, process.env.JW_SECRET);
+      state = true;
+    } catch (error) {
+      state = false;
+    }
+  }
+  res.render('together_test', { title: '친바하기', token: state });
 });
 module.exports = router;
