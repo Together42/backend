@@ -16,29 +16,32 @@ function getCookie(cookie, cName) {
   return res
 }
 
-router.get('/', function(req, res, next) {
+router.use((req, res, next) => {
   const token = getCookie(req.headers.cookie, 'userId');
-  let state;
   if (token) {
     try {
-      req.decoded = jwt.verify(token, process.env.JW_SECRET);
-      state = true;
+      jwt.verify(token, process.env.JW_SECRET);
+      res.locals.state = true;
     } catch (error) {
-      state = false;
+      res.locals.state = false;
     }
   }
-  res.render('index', { token: state });
+  next()
+});
+
+router.get('/', function(req, res, next) {
+  res.render('index', { token: res.locals.state });
 });
 
 router.get('/register', function(req, res, next) {
-  res.render('register', { title: '회원가입' });
+  res.render('register', { title: '회원가입', token: res.locals.state });
 });
 
 router.get('/login', function(req, res, next) {
-  res.render('login', { title: '로그인' });
+  res.render('login', { title: '로그인', token: res.locals.state });
 });
 
 router.get('/together', function(req, res, next) {
-  res.render('together_test', { title: '친바하기' });
+  res.render('together_test', { title: '친바하기', token: res.locals.state });
 });
 module.exports = router;
