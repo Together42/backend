@@ -1,10 +1,33 @@
 var express = require('express');
+const jwt = require("jsonwebtoken");
 var router = express.Router();
 
 /* GET home page. */
 
+function getCookie(cookie, cName) {
+  if (!cookie)
+    return ;
+  const name = cName + "=";
+  const cArr = cookie.split('; ');
+  let res;
+  cArr.forEach(val => {
+    if (val.indexOf(name) === 0) res = val.substring(name.length);
+  })
+  return res
+}
+
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Together42' });
+  const token = getCookie(req.headers.cookie, 'userId');
+  let state;
+  if (token) {
+    try {
+      req.decoded = jwt.verify(token, process.env.JW_SECRET);
+      state = true;
+    } catch (error) {
+      state = false;
+    }
+  }
+  res.render('index', { token: state });
 });
 
 router.get('/register', function(req, res, next) {
