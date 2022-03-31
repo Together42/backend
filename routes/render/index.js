@@ -1,32 +1,13 @@
 var express = require('express');
-const jwt = require("jsonwebtoken");
+const app = express();
 var router = express.Router();
-
+const authCheck = require('../middleware/token');
 /* GET home page. */
 
-function getCookie(cookie, cName) {
-  if (!cookie)
-    return ;
-  const name = cName + "=";
-  const cArr = cookie.split('; ');
-  let res;
-  cArr.forEach(val => {
-    if (val.indexOf(name) === 0) res = val.substring(name.length);
-  })
-  return res
-}
-
-router.use((req, res, next) => {
-  const token = getCookie(req.headers.cookie, 'userId');
-  if (token) {
-    try {
-      jwt.verify(token, process.env.JW_SECRET);
-      res.locals.state = true;
-    } catch (error) {
-      res.locals.state = false;
-    }
-  }
-  next()
+router.use((req,res,next) => {
+  console.log('test');
+  authCheck(req,res,next);
+  next();
 });
 
 router.get('/', function(req, res, next) {
@@ -42,16 +23,10 @@ router.get('/login', function(req, res, next) {
 });
 
 router.get('/together', function(req, res, next) {
-  const token = getCookie(req.headers.cookie, 'userId');
-  let state;
-  if (token) {
-    try {
-      req.decoded = jwt.verify(token, process.env.JW_SECRET);
-      state = true;
-    } catch (error) {
-      state = false;
-    }
-  }
-  res.render('together_test', { title: '친바하기', token: state });
+  console.log(`together ${res.locals.state}`);
+  if(!res.locals.state)
+    res.redirect('/login');
+  res.render('together_test', { title: '친바하기', token: res.locals.state });
 });
+
 module.exports = router;
