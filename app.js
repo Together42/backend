@@ -6,6 +6,7 @@ const path = require("path");
 const router = express.Router();
 const port = 3000;
 const indexRouter = require('./routes/render/index');
+const authCheck = require('./routes/middleware/token');
 require('dotenv').config();
 
 // express configuration
@@ -28,6 +29,7 @@ app.set('jwt-secret', process.env.JW_SECRET);
 
 app.set('port', port);
 
+app.use(authCheck);
 app.use('/', indexRouter);
 
 //configure api router
