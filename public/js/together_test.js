@@ -9,7 +9,7 @@ const inputFormTeam = document.querySelector("#input-form-team");
 const idArr = [];
 let teamNum = 4;
 
-function onSubmit(event){
+function onSubmit(event){//참석자 추가받는곳
 
 	event.preventDefault();
 	const name = input.value;
@@ -21,7 +21,7 @@ function onSubmit(event){
 	inputform.focus();
 }
 
-function onTeamNSubmit(event){
+function onTeamNSubmit(event){//팀개수 입력받는곳
 
 	event.preventDefault();
 	const num = teamNInput.value;
@@ -35,6 +35,7 @@ function shuffle(array){
 }
 
 function onBtn(event){//랜덤매칭
+	//postIdArr();
 	let teamName = [];
 	const teamName2 = ["사","이"];
 	const teamName3 = ["집","현","전"];
@@ -68,12 +69,12 @@ function onBtn(event){//랜덤매칭
 	const br = document.createElement("div");
 	resultTag.appendChild(br);
 	for (let i = 0; i < idArr.length; i++) {
-  	setTimeout(() => {
-		  if(i % teamNum == 0)
-		  {
+	setTimeout(() => {
+		if(i % teamNum == 0)
+		{
 			const user = document.createElement("div");
 			resultTag.appendChild(user);
-		  }
+		}
 		const user = document.createElement("span");
 		user.className = "user";
 		// colorize(winusers[i], user);
@@ -91,7 +92,9 @@ function onReset(event){
 		temp.firstChild.remove();
 	}
 }
+
 inputform.addEventListener("submit", onSubmit);
 btn.addEventListener("click",onBtn);
+// btn.addEventListener("click",postIdArr);
 reset.addEventListener("click",onReset);
 inputFormTeam.addEventListener("submit", onTeamNSubmit);

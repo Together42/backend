@@ -1,7 +1,8 @@
 const router = require('express').Router();
 const controller = require('./together.controller');
 
-router.post('/matching', controller.Matching);
+router.post('/matching', controller.matching);
+router.get('/matching', controller.team);
 
 module.exports = router
 

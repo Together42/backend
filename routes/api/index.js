@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const auth = require('./auth');
+const together = require('./together');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
@@ -7,6 +8,7 @@ const express = require("express");
 
 const app = express();
 router.use('/auth', auth);
+router.use('/together', together);
 
 app.use(cors({
 	origin : true,
