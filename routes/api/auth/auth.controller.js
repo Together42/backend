@@ -82,7 +82,8 @@ exports.login = (req, res, next) => {
 				}else{
 					//실패
 					console.log('비번틀림');
-					return res.status(400).json({ error: 'invalid user' });
+					return res.status(400).json({ error: 'invalid user' },
+					res.redirect('/'));
 				}
 			})
 		}else{
