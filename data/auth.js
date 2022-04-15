@@ -13,7 +13,6 @@ export async function findByLoginId(loginId) {
 }
 
 export async function createUser(user) {
-	consolg.loe('hi');
 	const {loginId, pw, nickName, email, url} = user;
 	return db
 	.execute('INSERT INTO users (loginId, pw, nickName, email, url) VALUES (?,?,?,?,?)',

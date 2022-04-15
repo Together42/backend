@@ -27,10 +27,10 @@
                         <!-- To make this form functional, sign up at-->
                         <!-- https://startbootstrap.com/solution/contact-forms-->
                         <!-- to get an API token!-->
-                        <form id="contactForm" method="post" action="/api/auth/login">
+                        <form id="contactForm" method="post" action="/auth/login">
                             <!-- Login Id input-->
                             <div class="form-floating mb-3">
-                                <input class="form-control" id="id" name="id" type="text" placeholder="Enter your id..." data-sb-validations="required" />
+                                <input class="form-control" id="loginId" name="loginId" type="text" placeholder="Enter your id..." data-sb-validations="required" />
                                 <label for="id">ID</label>
                                 <div class="invalid-feedback" data-sb-feedback="id:required">A login Id is required.</div>
                             </div>
@@ -59,7 +59,7 @@
                             <div class="d-none" id="submitErrorMessage"><div class="text-center text-danger mb-3">Error sending message!</div></div>
                             <!-- Submit Button-->
                             <button class="btn btn-primary btn-xl" id="submitButton" type="submit">Send</button>
-                            <a class="btn btn-primary btn-xl" id="submitButton" href="/register">Register</a>
+                            <a class="btn btn-primary btn-xl" id="submitButton" href="/signup">SignUp</a>
                         </form>
                     </div>
                 </div>
