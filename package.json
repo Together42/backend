@@ -2,7 +2,8 @@
   "name": "together42",
   "version": "1.0.0",
   "description": "서먹서먹한 사람들이 친해지기 위해 밥 한 끼 먹게 해주는 랜덤매칭 웹 서비스",
-  "main": "index.js",
+  "main": "app.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon app.js"
@@ -19,8 +20,6 @@
   "homepage": "https://github.com/Together42/Together#readme",
   "dependencies": {
     "bcrypt": "^5.0.1",
-    "cookie": "^0.4.2",
-    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "ejs": "^3.1.6",
