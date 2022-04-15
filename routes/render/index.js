@@ -1,14 +1,13 @@
-var express = require('express');
-const app = express();
+import express from 'express';
 var router = express.Router();
-const authCheck = require('../middleware/token');
+
 /* GET home page. */
 
-router.use((req,res,next) => {
-  console.log('test');
-  authCheck(req,res,next);
-  next();
-});
+//router.use((req,res,next) => {
+//  console.log('test');
+//  authCheck(req,res,next);
+//  next();
+//});
 
 router.get('/', function(req, res, next) {
   res.render('index', { token: res.locals.state });
@@ -29,4 +28,4 @@ router.get('/together', function(req, res, next) {
   res.render('together_test', { title: '친바하기', token: res.locals.state });
 });
 
-module.exports = router;
+export default router;
