@@ -2,7 +2,7 @@ const inputform = document.querySelector("#input-form");
 const input = document.querySelector("#input-form input");
 const intra = document.querySelector("#intra-id");
 const teamNumPrint = document.querySelector("#team-num");
-const btn = document.querySelector("#button");
+const btn = document.querySelector("#submitButton");
 const reset = document.querySelector("#reset");
 const teamNInput = document.querySelector("#input-form-team input");
 const inputFormTeam = document.querySelector("#input-form-team");
@@ -41,11 +41,11 @@ function onBtn(event){//랜덤매칭
 	const teamName3 = ["집","현","전"];
 	const teamName4 = ["사","이","서","울"];
 	if(teamNum == 2)
-		teamName = teamName2;
+	teamName = teamName2;
 	else if(teamNum == 3)
-		teamName = teamName3;
+	teamName = teamName3;
 	else if(teamNum == 4)
-		teamName = teamName4;
+	teamName = teamName4;
 	else{
 		console.log(teamName);
 		for(let i = 1; i <= parseInt(teamNum); i++)
@@ -53,7 +53,7 @@ function onBtn(event){//랜덤매칭
 			teamName.push(`${i}팀`);
 		}
 	}
-	event.preventDefault();
+	//event.preventDefault();
 	console.log(`team : ${teamName}`);
 	shuffle(idArr);
 	console.log(idArr);
@@ -95,6 +95,5 @@ function onReset(event){
 
 inputform.addEventListener("submit", onSubmit);
 btn.addEventListener("click",onBtn);
-// btn.addEventListener("click",postIdArr);
 reset.addEventListener("click",onReset);
 inputFormTeam.addEventListener("submit", onTeamNSubmit);
