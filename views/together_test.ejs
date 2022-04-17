@@ -38,21 +38,23 @@
       </form>
     </br>
     </div>
-    <div>
       <span>팀개수 </span>
       <span id="team-num"> </span>
     </br>
-    </div>
-    <div>
       <span>참여인원 </span>
       <span id="intra-id"> </span>
     </br>
-    </div>
-    <div>
-      <button id="button">랜덤 팀원 매칭</button>
+      <form method="post" action="/together/team">
+        <input id="teamNum" name="teamNum" type="number" />
+        </br>
+        <input id="intraId" name="intraId" type="text" />
+        </br>
+        <textarea id="tkim" name="tkim" type="text">i love tkim</textarea>
+      <button id="submitButton" type="submit">랜덤 팀원 매칭</button>
       <button id="reset">Reset</button>
+    </form>
     </br>
-    </div>
+    
     <div id="result"></div>
     <script src="js/together_test.js"></script>
   </body>

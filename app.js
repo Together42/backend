@@ -6,6 +6,7 @@ import indexRouter from './routes/render/index.js';
 //const indexRouter = require('./api/routes/render/index');
 import { config } from './config.js';
 import authRouter from './routes/auth.js';
+import togetherRouter from './routes/together.js';
 
 // express configuration
 const app = express();
@@ -27,6 +28,7 @@ app.use(morgan('dev'));
 app.use('/', indexRouter);
 
 app.use('/auth', authRouter);
+app.use('/together', togetherRouter);
 
 
 app.listen(config.host.port);
