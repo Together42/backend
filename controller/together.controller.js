@@ -1,4 +1,6 @@
 import * as togetherRepository from '../data/together.js';
+import * as userRepository from '../data/auth.js';
+
 ///*
 //POST /api/together/matching
 //{
@@ -54,4 +56,26 @@ export async function getTogether(req, res, next){
 	
 	const together = await togetherRepository.getTogether(id);
 	res.status(200).json({together});
+}
+
+export async function register(req, res, next){
+	const user = await userRepository.findById(req.userId);//토큰으로 받아온 아이디
+	const togetherId = req.body.togetherId;
+	const alreadyAttend = await togetherRepository.findByAttend(user.id, togetherId)
+	//console.log(alreadyAttend);
+	if(alreadyAttend) //이미 참석했다면
+		return res.sendStatus(400);
+	const attend = await togetherRepository.register(user.id, togetherId);
+	res.status(201).json({attend});
+}
+
+export async function unregister(req, res, next){
+	const user = await userRepository.findById(req.userId);//토큰으로 받아온 아이디
+	const togetherId = req.params.id;//together id
+	const alreadyAttend = await togetherRepository.findByAttend(user.id, togetherId)
+	//console.log(alreadyAttend);
+	if(!alreadyAttend) //참석이 없으면
+		return res.sendStatus(400);
+	await togetherRepository.unregister(user.id, togetherId);
+	res.sendStatus(204);
 }
