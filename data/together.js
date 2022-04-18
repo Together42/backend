@@ -30,3 +30,26 @@ export async function createTogether(together) {
 	)
 	.then((result) => result[0].insertId);
 }
+
+export async function register(user, togetherId) {
+	return db
+	.execute('INSERT INTO attend (userId, togetherId) VALUES (?,?)',
+	[user, togetherId]
+	)
+	.then((result)=> result[0].insertId);
+}
+
+export async function unregister(user, togetherId) {
+	return db
+	.execute('DELETE FROM attend WHERE userId=? && togetherId=?',
+	[user, togetherId]
+	)
+}
+
+export async function findByAttend(user, togetherId) {
+	return db
+	.execute('SELECT * FROM attend WHERE userId=? && togetherId=?',
+	[user, togetherId]
+	)
+	.then((result) => result[0][0]);
+}
