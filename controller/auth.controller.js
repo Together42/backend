@@ -22,8 +22,8 @@ export async function signUp(req, res) {
 	});
 	const token = createJwtToken(userId);
 	console.log(hashed);
-	res.status(201).json({token, loginId}
-	,res.redirect('/'));
+	res.status(201).json({token, loginId});
+	//,res.redirect('/'));
 }
 
 export async function login(req, res) {
@@ -37,8 +37,8 @@ export async function login(req, res) {
 		return res.status(401).json({message: 'Invalid user or password'});
 	}
 	const token = createJwtToken(user.loginId);
-	res.status(200).json({token, loginId}
-	,res.redirect('/'));
+	res.status(200).json({token, loginId});
+	//,res.redirect('/'));
 }
 
 function createJwtToken(id) {

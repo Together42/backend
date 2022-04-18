@@ -41,7 +41,17 @@ export async function deleteTogether(req, res, next){
 	res.sendStatus(204);
 }
 
-//export async function getTogethers(req, res, next){
-//	const togethers = await togetherRepository.getTogethers();
-//	res.status(200).json({togethers});
-//}
+export async function getTogethers(req, res, next){
+	const togethers = await togetherRepository.getTogethers();
+	res.status(200).json({togethers});
+}
+
+export async function getTogether(req, res, next){
+	const id = req.params.id;
+	const togetherId = await togetherRepository.findByTogetherId(id);
+	if(!togetherId) //조회할 친바가 없다면
+		return res.sendStatus(404);
+	
+	const together = await togetherRepository.getTogether(id);
+	res.status(200).json({together});
+}
