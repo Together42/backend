@@ -12,9 +12,9 @@ import { db } from '../db/database.js';
 //	.then((result) => result[0][0]);
 //}
 
-//export async function deleteTogether(id) {
-//	return db.execute('DELETE FROM together WHERE id=?',[id]);
-//}
+export async function deleteTogether(id) {
+	return db.execute('DELETE FROM together WHERE id=?',[id]);
+}
 
 export async function createTogether(together) {
 	const {title, description} = together;
