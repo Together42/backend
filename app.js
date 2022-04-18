@@ -27,8 +27,8 @@ app.use(morgan('dev'));
 //set the secret key variable for jwt
 app.use('/', indexRouter);
 
-app.use('/auth', authRouter);
-app.use('/together', togetherRouter);
+app.use('/api/auth', authRouter);
+app.use('/api/together', togetherRouter);
 
 
 app.listen(config.host.port);
