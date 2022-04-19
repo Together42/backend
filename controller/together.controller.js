@@ -3,9 +3,13 @@ import * as userRepository from '../data/auth.js';
 
 export async function createTogether(req, res) {
 	const { title, description } = req.body;
+	const user = await userRepository.findById(req.userId);
+	console.log(user);
+	const createUser = user.id;
 	const together = await togetherRepository.createTogether({
 		title,
 		description,
+		createUser,
 	});
 	res.status(201).json({together});
 }
@@ -14,8 +18,16 @@ export async function deleteTogether(req, res){
 	const id = req.params.id;
 	console.log(id);
 	const deleteId = await togetherRepository.findByTogetherId(id);
+	const user = await userRepository.findById(req.userId);
+	const createUser = user.id;
+
 	if(!deleteId) //삭제할 친바가 없다면
 		return res.status(404).json({message: 'Together not found'});
+	
+		//권한
+	if(deleteId.createUser !== createUser)
+		return res.status(401).json({message: 'UnAuthorization User'});
+
 	await togetherRepository.deleteTogether(id);
 	res.sendStatus(204);
 }
