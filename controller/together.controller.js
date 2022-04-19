@@ -56,15 +56,16 @@ export async function unregister(req, res){
 export async function matching(req, res) {
 	const teamList = [];
 	const {togetherId, teamNum } = req.body;
-	const checkId = await togetherRepository.findByTeamTogetherId(togetherId);
+	const checkId = await togetherRepository.findTeamByTogetherId(togetherId);
 	if(checkId)//이미 매칭을 돌렸다면
 		return res.status(400).json({message: 'already matching'});
-	const checkAttendId = await togetherRepository.getAttendUserId(togetherId);
-
-	if(checkAttendId.length == 0)//참석자가 없는경우
-		return res.status(400).json({message: 'Attend not found'});
 
 	const userId = await togetherRepository.getAttendUserId(togetherId);
+	if(userId.length == 0)//참석자가 없는경우
+		return res.status(400).json({message: 'Attend not found'});
+	if(userId.length < teamNum) //유저보다 팀 개수가 많을때
+		return res.status(400).json({message: 'Too few attendees'});
+
 	shuffle(userId);//팀 셔플완료  이제 팀개수대로 팀 나눠야함
 	for(let i = 0; i < userId.length; i++)
 	{
