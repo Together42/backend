@@ -9,11 +9,11 @@
 
 ## developers
 - 1차 개발 로그인,회원가입, 구조 ~4/2
-- [tkim](https://github.com/kth2624)
-- [jaekim](https://github.com/jae-hwan-kim)
-- [chulee](https://github.com/tmam444)
-- [honkim](https://github.com/honkim42)
+  - [tkim](https://github.com/kth2624)
+  - [jaekim](https://github.com/jae-hwan-kim)
+  - [chulee](https://github.com/tmam444)
+  - [honkim](https://github.com/honkim42)
 
 
 - 2차 개발 친바하기(팀매칭), 게시판,  4/2~
-- [tkim](https://github.com/kth2624)
+  - [tkim](https://github.com/kth2624)
