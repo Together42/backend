@@ -14,6 +14,7 @@ router.post('/',togetherController.createTogether);
 router.delete('/:id',togetherController.deleteTogether);
 router.post('/register', isAuth ,togetherController.register);
 router.delete('/unregister/:id', isAuth ,togetherController.unregister);
+router.post('/matching', togetherController.matching);
 
 
 export default router;
