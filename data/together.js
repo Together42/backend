@@ -17,10 +17,10 @@ export async function deleteTogether(id) {
 }
 
 export async function createTogether(together) {
-	const {title, description} = together;
+	const {title, description, createUser} = together;
 	return db
-	.execute('INSERT INTO together (title, description) VALUES (?,?)',
-	[title, description]
+	.execute('INSERT INTO together (title, description, createUser) VALUES (?,?,?)',
+	[title, description, createUser]
 	)
 	.then((result) => result[0].insertId);
 }
@@ -74,7 +74,7 @@ export async function getTeam(togetherId, teamId){
 	.then((result)=>result[0]);
 }
 
-export async function findByTeamTogetherId(togetherId) {
+export async function findTeamByTogetherId(togetherId) {
 	return db
 	.execute('SELECT * FROM team WHERE togetherId=?',[togetherId])
 	.then((result) => result[0][0]);
