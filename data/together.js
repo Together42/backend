@@ -54,28 +54,28 @@ export async function getAttendUserId(togetherId){
 	.then((result)=>result[0].map(attend => attend.userId));
 }
 
-export async function createTeam(teamId, togetherId, userId)
-{
-	return db
-	.execute('INSERT INTO team (teamId, togetherId, userId) VALUES (?,?,?)',
-	[teamId, togetherId, userId])
-	.then((result)=> result[0].insertId);
-}
+//export async function createTeam(teamId, togetherId, userId)
+//{
+//	return db
+//	.execute('INSERT INTO team (teamId, togetherId, userId) VALUES (?,?,?)',
+//	[teamId, togetherId, userId])
+//	.then((result)=> result[0].insertId);
+//}
 
-export async function getTeams(togetherId){
-	return db
-	.execute('SELECT * FROM team WHERE togetherId=? ORDER BY teamId ASC',[togetherId])
-	.then((result)=>result[0]);
-}
+//export async function getTeams(togetherId){
+//	return db
+//	.execute('SELECT * FROM team WHERE togetherId=? ORDER BY teamId ASC',[togetherId])
+//	.then((result)=>result[0]);
+//}
 
-export async function getTeam(togetherId, teamId){
-	return db
-	.execute('SELECT * FROM team WHERE togetherId=? && teamId=?',[togetherId, teamId])
-	.then((result)=>result[0]);
-}
+//export async function getTeam(togetherId, teamId){
+//	return db
+//	.execute('SELECT * FROM team WHERE togetherId=? && teamId=?',[togetherId, teamId])
+//	.then((result)=>result[0]);
+//}
 
-export async function findTeamByTogetherId(togetherId) {
-	return db
-	.execute('SELECT * FROM team WHERE togetherId=?',[togetherId])
-	.then((result) => result[0][0]);
-}
+//export async function findTeamByTogetherId(togetherId) {
+//	return db
+//	.execute('SELECT * FROM team WHERE togetherId=?',[togetherId])
+//	.then((result) => result[0][0]);
+//}

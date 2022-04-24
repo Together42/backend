@@ -12,11 +12,11 @@ const validateCredential = [
 	body('loginId')
 		.trim()
 		.notEmpty()
-		.isLength({min:4})
-		.withMessage('loginId should be at least 4 characters'),
+		.isLength({min:2})
+		.withMessage('loginId should be at least 2 characters'),
 	body('pw')
 		.trim()
-		.isLength({min:5})
+		.isLength({min:8})
 		.withMessage('password should be at least 5 characters'),
 	validate,
 ];
@@ -24,9 +24,9 @@ const validateCredential = [
 //회원가입 유효성 검사
 const validateSignup= [
 	...validateCredential,
-	body('nickName')
-		.notEmpty()
-		.withMessage('nickName is missing'),
+	//body('nickName')
+	//	.notEmpty()
+	//	.withMessage('nickName is missing'),
 	body('email')
 		.isEmail()
 		.normalizeEmail()
