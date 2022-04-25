@@ -7,14 +7,14 @@ import * as togetherController from '../controller/together.controller.js';
 
 const router = express.Router();
 
-//router.post('/team',togetherController.team);
-router.get('/',togetherController.getTogethers);
-router.get('/:id',togetherController.getTogether);
-router.post('/', isAuth ,togetherController.createTogether);
-router.delete('/:id', isAuth ,togetherController.deleteTogether);
+router.get('/',togetherController.getEventList);
+router.get('/:id',togetherController.getEvent);
+router.post('/', isAuth ,togetherController.createEvent);
+router.delete('/:id', isAuth ,togetherController.deleteEvent);
 router.post('/register', isAuth ,togetherController.register);
 router.delete('/unregister/:id', isAuth ,togetherController.unregister);
 router.post('/matching', togetherController.matching);
+router.get('/matching/:id', togetherController.getTeam);
 
 
 export default router;

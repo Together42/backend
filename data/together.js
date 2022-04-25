@@ -1,81 +1,80 @@
 import { db } from '../db/database.js';
 
-export async function getTogethers(){
+export async function getEventList(){
 	return db
-	.execute('SELECT * FROM together')
+	.execute('SELECT * FROM event_info')
 	.then((result)=>result[0]);
 }
 
-export async function findByTogetherId(id) {
+export async function findByEventId(id) {
 	return db
-	.execute('SELECT * FROM together WHERE id=?',[id])
+	.execute('SELECT * FROM event_info WHERE id=?',[id])
 	.then((result) => result[0][0]);
 }
 
-export async function deleteTogether(id) {
-	return db.execute('DELETE FROM together WHERE id=?',[id]);
+export async function deleteEvent(id) {
+	return db.execute('DELETE FROM event_info WHERE id=?',[id]);
 }
 
-export async function createTogether(together) {
-	const {title, description, createUser} = together;
+export async function createEvent(event) {
+	const {title, description, createdBy} = event;
 	return db
-	.execute('INSERT INTO together (title, description, createUser) VALUES (?,?,?)',
-	[title, description, createUser]
+	.execute('INSERT INTO event_info (title, description, createdBy) VALUES (?,?,?)',
+	[title, description, createdBy]
 	)
 	.then((result) => result[0].insertId);
 }
 
-export async function register(user, togetherId) {
+export async function register(user, eventId) {
 	return db
-	.execute('INSERT INTO attend (userId, togetherId) VALUES (?,?)',
-	[user, togetherId]
+	.execute('INSERT INTO attendance_info (userId, eventId) VALUES (?,?)',
+	[user, eventId]
 	)
 	.then((result)=> result[0].insertId);
 }
 
-export async function unregister(user, togetherId) {
+export async function unregister(user, eventId) {
 	return db
-	.execute('DELETE FROM attend WHERE userId=? && togetherId=?',
-	[user, togetherId]
+	.execute('DELETE FROM attendance_info WHERE userId=? && eventId=?',
+	[user, eventId]
 	)
 }
 
-export async function findByAttend(user, togetherId) {
+export async function findByAttend(user, eventId) {
 	return db
-	.execute('SELECT * FROM attend WHERE userId=? && togetherId=?',
-	[user, togetherId]
+	.execute('SELECT * FROM attendance_info WHERE userId=? && eventId=?',
+	[user, eventId]
 	)
 	.then((result) => result[0][0]);
 }
 
-export async function getAttendUserId(togetherId){
+export async function findAttendByEventId(eventId) {
 	return db
-	.execute('SELECT * FROM attend WHERE togetherId=?',[togetherId])
-	.then((result)=>result[0].map(attend => attend.userId));
+	.execute('SELECT * FROM attendance_info WHERE eventId=?',
+	[eventId]
+	)
+	.then((result) => result[0]);
 }
 
-//export async function createTeam(teamId, togetherId, userId)
-//{
+export async function getByAttendId(id)
+{
+	return db
+	.execute('SELECT * FROM attendance_info WHERE id=?',
+	[id]
+	)
+	.then((result)=> result[0][0]);
+}
+
+//export async function getAttendUserId(eventId){
 //	return db
-//	.execute('INSERT INTO team (teamId, togetherId, userId) VALUES (?,?,?)',
-//	[teamId, togetherId, userId])
-//	.then((result)=> result[0].insertId);
+//	.execute('SELECT * FROM attendance_info WHERE eventId=?',[eventId])
+//	.then((result)=>result[0].map(attend => attend.userId));
 //}
 
-//export async function getTeams(togetherId){
-//	return db
-//	.execute('SELECT * FROM team WHERE togetherId=? ORDER BY teamId ASC',[togetherId])
-//	.then((result)=>result[0]);
-//}
-
-//export async function getTeam(togetherId, teamId){
-//	return db
-//	.execute('SELECT * FROM team WHERE togetherId=? && teamId=?',[togetherId, teamId])
-//	.then((result)=>result[0]);
-//}
-
-//export async function findTeamByTogetherId(togetherId) {
-//	return db
-//	.execute('SELECT * FROM team WHERE togetherId=?',[togetherId])
-//	.then((result) => result[0][0]);
-//}
+export async function createTeam(teamId, id)
+{
+	return db
+	.execute('UPDATE attendance_info SET teamId=? WHERE id=?',
+	[teamId, id])
+	.then(()=> getByAttendId(id));
+}
