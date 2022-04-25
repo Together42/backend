@@ -1,97 +1,104 @@
 import * as togetherRepository from '../data/together.js';
 import * as userRepository from '../data/auth.js';
 
-export async function createTogether(req, res) {
+export async function createEvent(req, res) {
 	const { title, description } = req.body;
 	const user = await userRepository.findById(req.userId);
 	console.log(user);
-	const createUser = user.id;
-	const together = await togetherRepository.createTogether({
+	const createdBy = user.id;
+	const event = await togetherRepository.createEvent({
 		title,
 		description,
-		createUser,
+		createdBy,
 	});
-	res.status(201).json({together});
+	res.status(201).json({event});
 }
 
-export async function deleteTogether(req, res){
+export async function deleteEvent(req, res){
 	const id = req.params.id;
-	console.log(id);
-	const deleteId = await togetherRepository.findByTogetherId(id);
+	const deleteId = await togetherRepository.findByEventId(id);
 	const user = await userRepository.findById(req.userId);
 	const createUser = user.id;
 
 	if(!deleteId) //삭제할 친바가 없다면
-		return res.status(404).json({message: 'Together not found'});
+		return res.status(404).json({message: 'Event not found'});
 	
 		//권한
-	if(deleteId.createUser !== createUser)
+	if(deleteId.createdBy !== createUser)
 		return res.status(401).json({message: 'UnAuthorization User'});
 
-	await togetherRepository.deleteTogether(id);
+	await togetherRepository.deleteEvent(id);
 	res.sendStatus(204);
 }
 
-export async function getTogethers(req, res){
-	const togethers = await togetherRepository.getTogethers();
-	res.status(200).json({togethers});
+export async function getEventList(req, res){
+	const EventList = await togetherRepository.getEventList();
+	res.status(200).json({EventList});
 }
 
-export async function getTogether(req, res){
+//상세조회 , 유저객체정보를 배열로 넘겨달라
+export async function getEvent(req, res){
 	const id = req.params.id;
-	const together = await togetherRepository.findByTogetherId(id);
-	if(!together) //조회할 친바가 없다면
-		return res.status(404).json({message: 'Together not found'});
-	res.status(200).json({together});
+	const event = await togetherRepository.findByEventId(id);
+	if(!event) //조회할 친바가 없다면
+		return res.status(404).json({message: 'Event not found'});
+	res.status(200).json({event});
 }
 
 export async function register(req, res){
 	const user = await userRepository.findById(req.userId);//토큰으로 받아온 아이디
-	const togetherId = req.body.togetherId;
-	const alreadyAttend = await togetherRepository.findByAttend(user.id, togetherId)
+	const eventId = req.body.eventId;
+	const alreadyAttend = await togetherRepository.findByAttend(user.id, eventId)
 	if(alreadyAttend) //이미 참석했다면
 		return res.status(400).json({message: 'already attend'});
-	const attend = await togetherRepository.register(user.id, togetherId);
+	const attend = await togetherRepository.register(user.id, eventId);
 	res.status(201).json({attend});
 }
 
 export async function unregister(req, res){
 	const user = await userRepository.findById(req.userId);//토큰으로 받아온 아이디
-	const togetherId = req.params.id;//together id
-	const alreadyAttend = await togetherRepository.findByAttend(user.id, togetherId)
+	console.log(user);
+	const eventId = req.params.id;//event id
+	const alreadyAttend = await togetherRepository.findByAttend(user.id, eventId)
+	console.log(alreadyAttend);
 	if(!alreadyAttend) //참석이 없으면
 		return res.status(400).json({message: 'Attend not found'});
-	await togetherRepository.unregister(user.id, togetherId);
+	//teamId가 있으면(즉 팀 매칭이 완료된경우)
+	if(alreadyAttend.teamId !== null)
+		return res.status(400).json({message: 'already matching'});
+
+	await togetherRepository.unregister(user.id, eventId);
 	res.sendStatus(204);
 }
 
+export async function getTeam(req, res){
+	const id = req.params.id;//event id
+	const teamList = await togetherRepository.findAttendByEventId(id);
+	res.status(200).json({teamList});
+}
+
+
 export async function matching(req, res) {
 	const teamList = [];
-	const {togetherId, teamNum } = req.body;
-	const checkId = await togetherRepository.findTeamByTogetherId(togetherId);
-	if(checkId)//이미 매칭을 돌렸다면
-		return res.status(400).json({message: 'already matching'});
+	const {eventId, teamNum } = req.body;
+	const check = await togetherRepository.findAttendByEventId(eventId)
+	console.log(check);
+	if(check === undefined || check[0].teamId !== null) //참석자가 없거나, 이미 매칭이 된경우
+		return res.status(400).json({message: 'already matching or not exists'});
 
-	const userId = await togetherRepository.getAttendUserId(togetherId);
-	if(userId.length == 0)//참석자가 없는경우
-		return res.status(400).json({message: 'Attend not found'});
-	if(userId.length < teamNum) //유저보다 팀 개수가 많을때
+	if(check.length < teamNum) //유저보다 팀 개수가 많을때
 		return res.status(400).json({message: 'Too few attendees'});
+	shuffle(check);//팀 셔플완료  이제 팀개수대로 팀 나눠야함
+	console.log(check);
 
-	shuffle(userId);//팀 셔플완료  이제 팀개수대로 팀 나눠야함
-	for(let i = 0; i < userId.length; i++)
+	for(let i = 0; i < check.length; i++)
 	{
 		let teamId = i % teamNum + 1;
-		await togetherRepository.createTeam(teamId, togetherId, userId[i]);
-		//console.log(`id=${userId[i]}, team=${i%teamNum +1}`);
+		await togetherRepository.createTeam(teamId, check[i].id);
+		console.log(`id=${check[i].id}, team=${teamId}`);
 	}
-	for(let i = 1; i <= teamNum; i++)
-	{
-		const team = await togetherRepository.getTeam(togetherId, i);
-		const teamUser = team.map(factor => factor.userId);
-		teamList.push({teamId:i , userList:teamUser});
-	}
-	res.status(201).json({togetherId:togetherId, teamList: teamList});
+
+	res.status(201).json({eventId:eventId, teamList: check});
 }
 
 //팀 셔플

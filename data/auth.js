@@ -13,10 +13,10 @@ export async function findByLoginId(loginId) {
 }
 
 export async function createUser(user) {
-	const {loginId, pw, nickName, email, url} = user;
+	const {loginId, pw, email, url} = user;
 	return db
-	.execute('INSERT INTO users (loginId, pw, nickName, email, url) VALUES (?,?,?,?,?)',
-	[loginId, pw, nickName, email, url]
+	.execute('INSERT INTO users (loginId, pw, email, url) VALUES (?,?,?,?)',
+	[loginId, pw, email, url]
 	)
 	.then((result) => result[0].insertId);
 }

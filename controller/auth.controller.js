@@ -7,23 +7,20 @@ import { config } from '../config.js';
 //id pw email name gender location hobby
 
 export async function signUp(req, res) {
-	const { loginId, pw, nickName, email, url } = req.body;
-	const found = await userRepository.findByLoginId(loginId);
-	if(found){ //이미 존재하는 사용자라면
+	const { loginId, pw, email, url } = req.body;
+	const user = await userRepository.findByLoginId(loginId);
+	if(user){ //이미 존재하는 사용자라면
 		return res.status(400).json({message: `${loginId} already exists`});
 	}
 	const hashed = await bcrypt.hash(pw, config.bcrypt.saltRounds);
 	const userId = await userRepository.createUser({
 		loginId,
 		pw: hashed,
-		nickName,
 		email,
 		url,
 	});
 	const token = createJwtToken(userId);
-	console.log(hashed);
 	res.status(201).json({token, loginId});
-	//,res.redirect('/'));
 }
 
 export async function login(req, res) {
