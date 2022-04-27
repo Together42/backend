@@ -73,13 +73,13 @@ export async function getTeam(req, res){
 	const id = req.params.id;//event id
 	const matchingList = await togetherRepository.getMatchingList(id);
 	//teamId(키)로 객체에서 배열 그룹화
-	let result = matchingList.reduce(function (r, a) {
+	let teamList = matchingList.reduce(function (r, a) {
         r[a.teamId] = r[a.teamId] || [];
         r[a.teamId].push(a);
         return r;
     }, Object.create(null));
 
-	res.status(200).json({result});
+	res.status(200).json({teamList});
 }
 
 export async function matching(req, res) {
