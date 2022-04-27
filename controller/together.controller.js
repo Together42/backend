@@ -57,10 +57,8 @@ export async function register(req, res){
 
 export async function unregister(req, res){
 	const user = await userRepository.findById(req.userId);//토큰으로 받아온 아이디
-	console.log(user);
 	const eventId = req.params.id;//event id
 	const alreadyAttend = await togetherRepository.findByAttend(user.id, eventId)
-	console.log(alreadyAttend);
 	if(!alreadyAttend) //참석이 없으면
 		return res.status(400).json({message: 'Attend not found'});
 	//teamId가 있으면(즉 팀 매칭이 완료된경우)
@@ -73,23 +71,28 @@ export async function unregister(req, res){
 
 export async function getTeam(req, res){
 	const id = req.params.id;//event id
-	const teamList = await togetherRepository.findAttendByEventId(id);
-	res.status(200).json({teamList});
-}
+	const matchingList = await togetherRepository.getMatchingList(id);
+	//teamId(키)로 객체에서 배열 그룹화
+	let result = matchingList.reduce(function (r, a) {
+        r[a.teamId] = r[a.teamId] || [];
+        r[a.teamId].push(a);
+        return r;
+    }, Object.create(null));
 
+	res.status(200).json({result});
+}
 
 export async function matching(req, res) {
 	const teamList = [];
 	const {eventId, teamNum } = req.body;
 	const check = await togetherRepository.findAttendByEventId(eventId)
-	console.log(check);
+
 	if(check === undefined || check[0].teamId !== null) //참석자가 없거나, 이미 매칭이 된경우
 		return res.status(400).json({message: 'already matching or not exists'});
 
 	if(check.length < teamNum) //유저보다 팀 개수가 많을때
 		return res.status(400).json({message: 'Too few attendees'});
 	shuffle(check);//팀 셔플완료  이제 팀개수대로 팀 나눠야함
-	console.log(check);
 
 	for(let i = 0; i < check.length; i++)
 	{
@@ -97,6 +100,7 @@ export async function matching(req, res) {
 		await togetherRepository.createTeam(teamId, check[i].id);
 		console.log(`id=${check[i].id}, team=${teamId}`);
 	}
+	console.log(check);
 
 	res.status(201).json({eventId:eventId, teamList: check});
 }

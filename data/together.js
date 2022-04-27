@@ -56,6 +56,16 @@ export async function findAttendByEventId(eventId) {
 	.then((result) => result[0]);
 }
 
+export async function getMatchingList(id)
+{
+	return db
+	.execute('SELECT us.loginId, us.url, at.teamId from attendance_info as at JOIN users as us ON at.userId=us.id WHERE at.eventId=? ORDER BY at.teamId',
+	[id]
+	)
+	.then((result) => result[0]);
+}
+
+
 export async function getByAttendId(id)
 {
 	return db
