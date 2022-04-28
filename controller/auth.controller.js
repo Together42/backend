@@ -49,3 +49,8 @@ export async function me(req, res) {
 	}
 	res.status(200).json({token: req.token, loginId:user.loginId});
 }
+
+export async function test(req, res) {
+	console.log("hi");
+	res.send("hi");
+}

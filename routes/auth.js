@@ -46,5 +46,6 @@ router.post('/login', authController.login);
 
 //GET /me
 router.get('/me', isAuth,  authController.me);
+router.get('/', authController.test);
 
 export default router;
