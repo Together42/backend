@@ -17,6 +17,7 @@ on:
 jobs:
   SSH:
     runs-on: ubuntu-latest
+    environment: together42
 
     steps:
       - uses: actions/checkout@v2
