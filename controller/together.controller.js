@@ -69,8 +69,8 @@ export async function unregister(req, res){
 	res.sendStatus(204);
 }
 
-export async function getTeam(req, res){
-	const id = req.params.id;//event id
+async function getTeamList(id) //중복되는 부분이여서 함수로빼냄
+{
 	const matchingList = await togetherRepository.getMatchingList(id);
 	//teamId(키)로 객체에서 배열 그룹화
 	let teamList = matchingList.reduce(function (r, a) {
@@ -78,12 +78,16 @@ export async function getTeam(req, res){
         r[a.teamId].push(a);
         return r;
     }, Object.create(null));
+	return teamList;
+}
 
-	res.status(200).json({teamList});
+export async function getTeam(req, res){
+	const id = req.params.id;//event id
+	const test = await getTeamList(id);
+	res.status(200).json({test});
 }
 
 export async function matching(req, res) {
-	const teamList = [];
 	const {eventId, teamNum } = req.body;
 	const check = await togetherRepository.findAttendByEventId(eventId)
 
@@ -100,9 +104,8 @@ export async function matching(req, res) {
 		await togetherRepository.createTeam(teamId, check[i].id);
 		console.log(`id=${check[i].id}, team=${teamId}`);
 	}
-	console.log(check);
 
-	res.status(201).json({eventId:eventId, teamList: check});
+	res.status(201).json(await getTeamList(eventId));
 }
 
 //팀 셔플
