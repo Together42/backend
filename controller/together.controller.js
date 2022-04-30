@@ -83,8 +83,8 @@ async function getTeamList(id) //중복되는 부분이여서 함수로빼냄
 
 export async function getTeam(req, res){
 	const id = req.params.id;//event id
-	const test = await getTeamList(id);
-	res.status(200).json({test});
+	const teamList = await getTeamList(id);
+	res.status(200).json({teamList});
 }
 
 export async function matching(req, res) {
