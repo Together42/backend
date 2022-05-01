@@ -9,8 +9,8 @@ import * as authController from '../controller/auth.controller.js';
 const router = express.Router();
 const upload = multer({
 	dest: './uploads/'
-	},
-	filename: (req, res, next) => {
+	//},
+	//filename: (req, res, next) => {
 		
 	}
 );
