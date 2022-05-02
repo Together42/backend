@@ -18,6 +18,7 @@ const credentials = {
 	cert: certificate,
 	ca: ca
 };
+
 //parse JSON and url-encoded query
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
@@ -27,13 +28,12 @@ app.use(morgan('dev'));
 app.use('/api/auth', authRouter);
 app.use('/api/together', togetherRouter);
 
-
-// Starting both http & https servers
 const httpsServer = https.createServer(credentials, app);
 
 httpsServer.listen(config.host.port, () => {
 	console.log('HTTPS Server running on', config.host.port);
 });
+
 
 //app.listen(config.host.port);
 //console.log("Listening on", config.host.port);
