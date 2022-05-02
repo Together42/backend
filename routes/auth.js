@@ -1,11 +1,19 @@
 import express from 'express';
 import 'express-async-errors';
+import multer from 'multer';
 import { body } from 'express-validator';
 import { validate } from '../middleware/validator.js'
 import { isAuth } from '../middleware/auth.js';
 import * as authController from '../controller/auth.controller.js';
 
 const router = express.Router();
+const upload = multer({
+	dest: './uploads/'
+	//},
+	//filename: (req, res, next) => {
+		
+	}
+);
 
 //로그인할때 
 const validateCredential = [
@@ -46,6 +54,7 @@ router.post('/login', authController.login);
 
 //GET /me
 router.get('/me', isAuth,  authController.me);
-router.get('/', authController.test);
 
+router.post('/profile', upload.single('image'), authController.uploadProfile);
+router.post('/selfies', upload.array('image',4), authController.uploadImages);
 export default router;

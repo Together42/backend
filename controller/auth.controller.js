@@ -50,7 +50,40 @@ export async function me(req, res) {
 	res.status(200).json({token: req.token, loginId:user.loginId});
 }
 
-export async function test(req, res) {
-	console.log("hi");
-	res.send("hi");
+export async function uploadProfile(req, res) {
+	const image = req.file.path;
+	//console.log(req.file);
+	//console.log(image);
+	if(image === undefined){
+		return res.status(400).send(util.fail(400, "이미지가 없다"));
+	}
+	res.status(200).send(util.success(200, "요청 성공 ", image));
+}
+
+export async function uploadImages(req, res) {
+	const image = req.files;
+	console.log(req.files);
+	const path = image.map(img => img.path);
+	if(image === undefined){
+		return res.status(400).send(util.fail(400, "이미지가 없다"));
+	}
+	res.status(200).send(util.success(200, "요청 성공 ", path));
+}
+
+const util = {
+	success: (status, message, data) => {
+		return {
+			status: status,
+			success: true,
+			message: message,
+			data: data
+		}
+	},
+	fail: (status, message) => {
+		return {
+			status: status,
+			success: false,
+			message: message
+		}
+	}
 }
