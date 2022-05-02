@@ -39,10 +39,6 @@ const validateSignup= [
 		.isEmail()
 		.normalizeEmail()
 		.withMessage('invalid email'),
-	body('url')
-		.isURL()//url 포맷이 맞는지
-		.withMessage('invalid URL')
-		.optional({nullable: true, checkFalsy: true}),//데이터가 없거나 텅텅빈 문자열이려도 허용,	
 	validate,
 ];
 
