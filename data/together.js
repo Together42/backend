@@ -75,12 +75,6 @@ export async function getByAttendId(id)
 	.then((result)=> result[0][0]);
 }
 
-//export async function getAttendUserId(eventId){
-//	return db
-//	.execute('SELECT * FROM attendance_info WHERE eventId=?',[eventId])
-//	.then((result)=>result[0].map(attend => attend.userId));
-//}
-
 export async function createTeam(teamId, id)
 {
 	return db

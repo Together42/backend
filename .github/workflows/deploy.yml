@@ -32,4 +32,4 @@ jobs:
             git reset --hard
             git fetch
             git pull
-            pm2 restart app.js
+            pm2 restart app
