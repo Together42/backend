@@ -33,9 +33,10 @@ export async function login(req, res) {
 	if(!isValidPassword){//비밀먼호 검증
 		return res.status(401).json({message: 'Invalid user or password'});
 	}
-	console.log(user);
+	const url = user.url;
+	console.log(url);
 	const token = createJwtToken(user.loginId);
-	res.status(200).json({token, loginId});
+	res.status(200).json({token, loginId, url });
 	//,res.redirect('/'));
 }
 
