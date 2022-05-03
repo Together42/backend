@@ -42,7 +42,9 @@ export async function getEvent(req, res){
 	const event = await togetherRepository.findByEventId(id);
 	if(!event) //조회할 친바가 없다면
 		return res.status(404).json({message: 'Event not found'});
-	res.status(200).json({event});
+	const teamList = await getTeamList(id);
+
+	res.status(200).json({event, teamList});
 }
 
 export async function register(req, res){
