@@ -56,6 +56,13 @@ export async function findAttendByEventId(eventId) {
 	.then((result) => result[0]);
 }
 
+export async function chagneEvent(eventId) {
+	return db
+	.execute('UPDATE event_info SET isMatching=1 WHERE id=?',
+	[eventId]
+	)
+}
+
 export async function getMatchingList(id)
 {
 	return db

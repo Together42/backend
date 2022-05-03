@@ -99,12 +99,11 @@ export async function matching(req, res) {
 	if(check.length < teamNum) //유저보다 팀 개수가 많을때
 		return res.status(400).json({message: 'Too few attendees'});
 	shuffle(check);//팀 셔플완료  이제 팀개수대로 팀 나눠야함
-
+	await togetherRepository.chagneEvent(eventId);
 	for(let i = 0; i < check.length; i++)
 	{
 		let teamId = i % teamNum + 1;
 		await togetherRepository.createTeam(teamId, check[i].id);
-		console.log(`id=${check[i].id}, team=${teamId}`);
 	}
 
 	res.status(201).json(await getTeamList(eventId));
