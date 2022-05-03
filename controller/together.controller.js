@@ -91,9 +91,11 @@ export async function getTeam(req, res){
 
 export async function matching(req, res) {
 	const {eventId, teamNum } = req.body;
+	const create = await togetherRepository.findCreateUser(eventId);
+	if(create.createdBy !== req.userId)
+		return res.status(400).json({message: 'UnAuthorization User'});
 	const check = await togetherRepository.findAttendByEventId(eventId)
-
-	if(check === undefined || check[0].teamId !== null) //참석자가 없거나, 이미 매칭이 된경우
+	if(check === undefined || check[0] === undefined || check[0].teamId !== null) //참석자가 없거나, 이미 매칭이 된경우
 		return res.status(400).json({message: 'already matching or not exists'});
 
 	if(check.length < teamNum) //유저보다 팀 개수가 많을때

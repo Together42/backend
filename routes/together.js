@@ -13,7 +13,7 @@ router.post('/', isAuth ,togetherController.createEvent);
 router.delete('/:id', isAuth ,togetherController.deleteEvent);
 router.post('/register', isAuth ,togetherController.register);
 router.delete('/unregister/:id', isAuth ,togetherController.unregister);
-router.post('/matching', togetherController.matching);
+router.post('/matching', isAuth, togetherController.matching);
 router.get('/matching/:id', togetherController.getTeam);
 
 
