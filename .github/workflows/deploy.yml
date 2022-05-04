@@ -32,4 +32,5 @@ jobs:
             git reset --hard
             git fetch
             git pull
-            pm2 restart app
+            pm2 delete 0
+            pm2 start --no-daemon app.js
