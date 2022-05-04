@@ -42,7 +42,9 @@ export async function getEvent(req, res){
 	const event = await togetherRepository.findByEventId(id);
 	if(!event) //조회할 친바가 없다면
 		return res.status(404).json({message: 'Event not found'});
-	res.status(200).json({event});
+	const teamList = await getTeamList(id);
+
+	res.status(200).json({event, teamList});
 }
 
 export async function register(req, res){
@@ -89,20 +91,21 @@ export async function getTeam(req, res){
 
 export async function matching(req, res) {
 	const {eventId, teamNum } = req.body;
+	const create = await togetherRepository.findCreateUser(eventId);
+	if(create.createdBy !== req.userId)
+		return res.status(400).json({message: 'UnAuthorization User'});
 	const check = await togetherRepository.findAttendByEventId(eventId)
-
-	if(check === undefined || check[0].teamId !== null) //참석자가 없거나, 이미 매칭이 된경우
+	if(check === undefined || check[0] === undefined || check[0].teamId !== null) //참석자가 없거나, 이미 매칭이 된경우
 		return res.status(400).json({message: 'already matching or not exists'});
 
 	if(check.length < teamNum) //유저보다 팀 개수가 많을때
 		return res.status(400).json({message: 'Too few attendees'});
 	shuffle(check);//팀 셔플완료  이제 팀개수대로 팀 나눠야함
-
+	await togetherRepository.chagneEvent(eventId);
 	for(let i = 0; i < check.length; i++)
 	{
 		let teamId = i % teamNum + 1;
 		await togetherRepository.createTeam(teamId, check[i].id);
-		console.log(`id=${check[i].id}, team=${teamId}`);
 	}
 
 	res.status(201).json(await getTeamList(eventId));

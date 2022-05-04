@@ -56,6 +56,13 @@ export async function findAttendByEventId(eventId) {
 	.then((result) => result[0]);
 }
 
+export async function chagneEvent(eventId) {
+	return db
+	.execute('UPDATE event_info SET isMatching=1 WHERE id=?',
+	[eventId]
+	)
+}
+
 export async function getMatchingList(id)
 {
 	return db
@@ -65,6 +72,13 @@ export async function getMatchingList(id)
 	.then((result) => result[0]);
 }
 
+export async function findCreateUser(eventId) {
+	return db
+	.execute('SELECT * FROM event_info WHERE id=?',
+	[eventId]
+	)
+	.then((result) => result[0][0]);
+}
 
 export async function getByAttendId(id)
 {
