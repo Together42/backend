@@ -2,13 +2,14 @@ import { db } from '../db/database.js';
 
 export async function getEventList(){
 	return db
-	.execute('SELECT * FROM event_info')
+	.execute('SELECT ev.id, ev.title, ev.description, us.loginId as createdBy, ev.isMatching FROM event_info as ev JOIN users as us ON ev.createdBy=us.id')
 	.then((result)=>result[0]);
 }
 
 export async function findByEventId(id) {
 	return db
-	.execute('SELECT * FROM event_info WHERE id=?',[id])
+	//.execute('SELECT * FROM event_info WHERE id=?',[id])
+	.execute('SELECT ev.id, ev.title, ev.description, us.loginId as createdBy, ev.isMatching FROM event_info as ev JOIN users as us ON ev.createdBy=us.id WHERE ev.id=?',[id])
 	.then((result) => result[0][0]);
 }
 

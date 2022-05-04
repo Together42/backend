@@ -34,7 +34,6 @@ export async function login(req, res) {
 		return res.status(401).json({message: 'Invalid user or password'});
 	}
 	const url = user.url;
-	console.log(url);
 	const token = createJwtToken(user.loginId);
 	res.status(200).json({token, loginId, url });
 	//,res.redirect('/'));
@@ -64,7 +63,6 @@ export async function uploadProfile(req, res) {
 
 export async function uploadImages(req, res) {
 	const image = req.files;
-	console.log(req.files);
 	const path = image.map(img => img.path);
 	if(image === undefined){
 		return res.status(400).send(util.fail(400, "이미지가 없다"));
