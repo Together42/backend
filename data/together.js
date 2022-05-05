@@ -2,14 +2,14 @@ import { db } from '../db/database.js';
 
 export async function getEventList(){
 	return db
-	.execute('SELECT ev.id, ev.title, ev.description, us.loginId as createdBy, ev.isMatching FROM event_info as ev JOIN users as us ON ev.createdBy=us.id')
+	.execute('SELECT ev.id, ev.title, ev.description, ev.createdId, us.intraId, ev.isMatching FROM event_info as ev JOIN users as us ON ev.createdId=us.id')
 	.then((result)=>result[0]);
 }
 
 export async function findByEventId(id) {
 	return db
 	//.execute('SELECT * FROM event_info WHERE id=?',[id])
-	.execute('SELECT ev.id, ev.title, ev.description, us.loginId as createdBy, ev.isMatching FROM event_info as ev JOIN users as us ON ev.createdBy=us.id WHERE ev.id=?',[id])
+	.execute('SELECT ev.id, ev.title, ev.description, ev.createdId, us.intraId, ev.isMatching FROM event_info as ev JOIN users as us ON ev.createdId=us.id WHERE ev.id=?',[id])
 	.then((result) => result[0][0]);
 }
 
@@ -18,10 +18,10 @@ export async function deleteEvent(id) {
 }
 
 export async function createEvent(event) {
-	const {title, description, createdBy} = event;
+	const {title, description, createdId} = event;
 	return db
-	.execute('INSERT INTO event_info (title, description, createdBy) VALUES (?,?,?)',
-	[title, description, createdBy]
+	.execute('INSERT INTO event_info (title, description, createdId) VALUES (?,?,?)',
+	[title, description, createdId]
 	)
 	.then((result) => result[0].insertId);
 }
@@ -67,7 +67,7 @@ export async function chagneEvent(eventId) {
 export async function getMatchingList(id)
 {
 	return db
-	.execute('SELECT us.loginId, us.url, at.teamId from attendance_info as at JOIN users as us ON at.userId=us.id WHERE at.eventId=? ORDER BY at.teamId',
+	.execute('SELECT us.intraId, us.url, at.teamId from attendance_info as at JOIN users as us ON at.userId=us.id WHERE at.eventId=? ORDER BY at.teamId',
 	[id]
 	)
 	.then((result) => result[0]);

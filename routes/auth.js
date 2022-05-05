@@ -17,11 +17,11 @@ const upload = multer({
 
 //로그인할때 
 const validateCredential = [
-	body('loginId')
+	body('intraId')
 		.trim()
 		.notEmpty()
 		.isLength({min:2})
-		.withMessage('loginId should be at least 2 characters'),
+		.withMessage('intraId should be at least 2 characters'),
 	body('pw')
 		.trim()
 		.isLength({min:8})

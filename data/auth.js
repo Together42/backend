@@ -6,17 +6,17 @@ export async function findById(id) {
 	.then((result) => result[0][0]);
 }
 
-export async function findByLoginId(loginId) {
+export async function findByintraId(intraId) {
 	return db
-	.execute('SELECT * FROM users WHERE loginId=?',[loginId])
+	.execute('SELECT * FROM users WHERE intraId=?',[intraId])
 	.then((result) => result[0][0]);
 }
 
 export async function createUser(user) {
-	const {loginId, pw, email, url} = user;
+	const {intraId, pw, email, url} = user;
 	return db
-	.execute('INSERT INTO users (loginId, pw, email, url) VALUES (?,?,?,?)',
-	[loginId, pw, email, url]
+	.execute('INSERT INTO users (intraId, pw, email, url) VALUES (?,?,?,?)',
+	[intraId, pw, email, url]
 	)
 	.then((result) => result[0].insertId);
 }

@@ -5,11 +5,11 @@ export async function createEvent(req, res) {
 	const { title, description } = req.body;
 	const user = await userRepository.findById(req.userId);
 	console.log(user);
-	const createdBy = user.id;
+	const createdId = user.id;
 	const event = await togetherRepository.createEvent({
 		title,
 		description,
-		createdBy,
+		createdId,
 	});
 	res.status(201).json({event});
 }
@@ -24,8 +24,13 @@ export async function deleteEvent(req, res){
 		return res.status(404).json({message: 'Event not found'});
 	
 		//권한
-	if(deleteId.createdBy !== createUser)
+	console.log(deleteId);
+	if(deleteId.createdId !== createUser)
+	{
+		console.log(`?? ${deleteId.createdId} user=${createUser}`);
 		return res.status(401).json({message: 'UnAuthorization User'});
+
+	}
 
 	await togetherRepository.deleteEvent(id);
 	res.sendStatus(204);
@@ -92,7 +97,7 @@ export async function getTeam(req, res){
 export async function matching(req, res) {
 	const {eventId, teamNum } = req.body;
 	const create = await togetherRepository.findCreateUser(eventId);
-	if(create.createdBy !== req.userId)
+	if(create.createdId !== req.userId)
 		return res.status(400).json({message: 'UnAuthorization User'});
 	const check = await togetherRepository.findAttendByEventId(eventId)
 	if(check === undefined || check[0] === undefined || check[0].teamId !== null) //참석자가 없거나, 이미 매칭이 된경우

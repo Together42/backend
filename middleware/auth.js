@@ -21,7 +21,7 @@ export const isAuth = async (req, res, next) => {
 			if(error){
 				return res.status(401).json(AUTH_ERROR);
 			}
-			const user = await userRepository.findByLoginId(decoded.id);
+			const user = await userRepository.findByintraId(decoded.id);
 			if(!user){
 				return res.status(401).json(AUTH_ERROR);
 			}

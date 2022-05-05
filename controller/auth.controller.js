@@ -7,25 +7,25 @@ import { config } from '../config.js';
 //id pw email name gender location hobby
 
 export async function signUp(req, res) {
-	const { loginId, pw, email, url } = req.body;
-	const user = await userRepository.findByLoginId(loginId);
+	const { intraId, pw, email, url } = req.body;
+	const user = await userRepository.findByintraId(intraId);
 	if(user){ //이미 존재하는 사용자라면
-		return res.status(400).json({message: `${loginId} already exists`});
+		return res.status(400).json({message: `${intraId} already exists`});
 	}
 	const hashed = await bcrypt.hash(pw, config.bcrypt.saltRounds);
 	const userId = await userRepository.createUser({
-		loginId,
+		intraId,
 		pw: hashed,
 		email,
 		url,
 	});
 	const token = createJwtToken(userId);
-	res.status(201).json({token, loginId});
+	res.status(201).json({token, intraId});
 }
 
 export async function login(req, res) {
-	const { loginId, pw } = req.body;
-	const user = await userRepository.findByLoginId(loginId);
+	const { intraId, pw } = req.body;
+	const user = await userRepository.findByintraId(intraId);
 	if(!user){//사용자가 존재하는지 검사
 		return res.status(401).json({message: 'Invalid user or password'});
 	}
@@ -34,8 +34,8 @@ export async function login(req, res) {
 		return res.status(401).json({message: 'Invalid user or password'});
 	}
 	const url = user.url;
-	const token = createJwtToken(user.loginId);
-	res.status(200).json({token, loginId, url });
+	const token = createJwtToken(user.intraId);
+	res.status(200).json({token, intraId, url });
 	//,res.redirect('/'));
 }
 
@@ -48,7 +48,7 @@ export async function me(req, res) {
 	if(!user) {
 		return res.status(404).json({mesage: 'User not found'});
 	}
-	res.status(200).json({token: req.token, loginId:user.loginId});
+	res.status(200).json({token: req.token, intraId:user.intraId});
 }
 
 export async function uploadProfile(req, res) {
