@@ -28,10 +28,4 @@ jobs:
           username: ${{ secrets.USER }}
           password: ${{ secrets.PASSWORD }}
           script: |
-            cd Together
-            git reset --hard
-            git fetch
-            git pull
-            npm i
-            pm2 delete 0
-            pm2 start --no-daemon app.js
+            ./deploy.sh

@@ -4,18 +4,16 @@ import {} from 'express-async-errors';
 import * as userRepository from '../data/auth.js';
 import { config } from '../config.js';
 
-//id pw email name gender location hobby
-
 export async function signUp(req, res) {
-	const { intraId, pw, email, url } = req.body;
+	const { intraId, password, email, url } = req.body;
 	const user = await userRepository.findByintraId(intraId);
 	if(user){ //이미 존재하는 사용자라면
 		return res.status(400).json({message: `${intraId} already exists`});
 	}
-	const hashed = await bcrypt.hash(pw, config.bcrypt.saltRounds);
+	const hashed = await bcrypt.hash(password, config.bcrypt.saltRounds);
 	const userId = await userRepository.createUser({
 		intraId,
-		pw: hashed,
+		password: hashed,
 		email,
 		url,
 	});
@@ -24,12 +22,12 @@ export async function signUp(req, res) {
 }
 
 export async function login(req, res) {
-	const { intraId, pw } = req.body;
+	const { intraId, password } = req.body;
 	const user = await userRepository.findByintraId(intraId);
 	if(!user){//사용자가 존재하는지 검사
 		return res.status(401).json({message: 'Invalid user or password'});
 	}
-	const isValidPassword = await bcrypt.compare(pw, user.pw);
+	const isValidPassword = await bcrypt.compare(password, user.password);
 	if(!isValidPassword){//비밀먼호 검증
 		return res.status(401).json({message: 'Invalid user or password'});
 	}

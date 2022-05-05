@@ -22,7 +22,7 @@ const validateCredential = [
 		.notEmpty()
 		.isLength({min:2})
 		.withMessage('intraId should be at least 2 characters'),
-	body('pw')
+	body('password')
 		.trim()
 		.isLength({min:8})
 		.withMessage('password should be at least 5 characters'),

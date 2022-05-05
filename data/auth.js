@@ -13,10 +13,10 @@ export async function findByintraId(intraId) {
 }
 
 export async function createUser(user) {
-	const {intraId, pw, email, url} = user;
+	const {intraId, password, email, url} = user;
 	return db
-	.execute('INSERT INTO users (intraId, pw, email, url) VALUES (?,?,?,?)',
-	[intraId, pw, email, url]
+	.execute('INSERT INTO users (intraId, password, email, url) VALUES (?,?,?,?)',
+	[intraId, password, email, url]
 	)
 	.then((result) => result[0].insertId);
 }
