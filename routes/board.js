@@ -7,23 +7,27 @@ import * as boardController from '../controller/board.controller.js';
 
 const router = express.Router();
 
-//게시글 전체조회
-router.get('/',boardController.openBoardList);
-
-//게시글 상세조회
-router.get('/:id',boardController.openBoardDetail);
-
 //게시글 생성
-router.post('/write', isAuth ,boardController.createPost);
+router.post('/', isAuth ,boardController.createPost);
 
-//게시글 생성을 위한 조회
-router.get('/write', isAuth ,boardController.getBoardWrite);
+////게시글 생성을 위한 조회
+//router.get('/write', isAuth ,boardController.getPostInfo);
 
 //게시글 삭제
 router.delete('/:id', isAuth ,boardController.deletePost);
 
 //게시글 수정
 router.put('/:id', isAuth ,boardController.updatePost);
+
+////게시글 전체조회
+//router.get('/',boardController.getBoardList);
+
+////게시글 상세조회
+//router.get('/:id',boardController.getBoardDetail);
+
+
+
+
 
 
 export default router;

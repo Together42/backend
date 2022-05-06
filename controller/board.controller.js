@@ -1,116 +1,50 @@
 import * as boardRepository from '../data/board.js';
 import * as userRepository from '../data/auth.js';
 
-export async function createEvent(req, res) {
-	const { title, description } = req.body;
-	const user = await userRepository.findById(req.userId);
-	console.log(user);
-	const createdBy = user.id;
-	const event = await togetherRepository.createEvent({
+//게시글 생성
+export async function createPost(req, res) {
+	const { title, contents, image, eventId, attendMembers } = req.body;
+	const writerId = req.userId;
+	const post = await boardRepository.createPost({
+		writerId,
 		title,
-		description,
-		createdBy,
+		contents,
+		image,
+		eventId,
+		attendMembers
 	});
-	res.status(201).json({event});
+	res.status(201).json({post});
 }
 
-export async function deleteEvent(req, res){
+//게시글 삭제
+export async function deletePost(req, res){
 	const id = req.params.id;
-	const deleteId = await togetherRepository.findByEventId(id);
-	const user = await userRepository.findById(req.userId);
-	const createUser = user.id;
+	const deleteId = await boardRepository.findByPostId(id);
+	console.log(deleteId);
 
-	if(!deleteId) //삭제할 친바가 없다면
-		return res.status(404).json({message: 'Event not found'});
-	
-		//권한
-	if(deleteId.createdBy !== createUser)
+	if(!deleteId) //삭제할 글이 없다면
+		return res.status(404).json({message: 'Post not found'});
+	if(deleteId.writerId !== req.userId)//권한
 		return res.status(401).json({message: 'UnAuthorization User'});
 
-	await togetherRepository.deleteEvent(id);
+	await boardRepository.deletePost(id);
 	res.sendStatus(204);
 }
 
-export async function getEventList(req, res){
-	const EventList = await togetherRepository.getEventList();
-	res.status(200).json({EventList});
-}
-
-//상세조회 , 유저객체정보를 배열로 넘겨달라
-export async function getEvent(req, res){
+//게시글 수정
+//일단 제목, 내용만 수정가능, / 사진은 추후에
+export async function updatePost (req, res) {
 	const id = req.params.id;
-	const event = await togetherRepository.findByEventId(id);
-	if(!event) //조회할 친바가 없다면
-		return res.status(404).json({message: 'Event not found'});
-	const teamList = await getTeamList(id);
-
-	res.status(200).json({event, teamList});
-}
-
-export async function register(req, res){
-	const user = await userRepository.findById(req.userId);//토큰으로 받아온 아이디
-	const eventId = req.body.eventId;
-	const alreadyAttend = await togetherRepository.findByAttend(user.id, eventId)
-	if(alreadyAttend) //이미 참석했다면
-		return res.status(400).json({message: 'already attend'});
-	const attend = await togetherRepository.register(user.id, eventId);
-	res.status(201).json({attend});
-}
-
-export async function unregister(req, res){
-	const user = await userRepository.findById(req.userId);//토큰으로 받아온 아이디
-	const eventId = req.params.id;//event id
-	const alreadyAttend = await togetherRepository.findByAttend(user.id, eventId)
-	if(!alreadyAttend) //참석이 없으면
-		return res.status(400).json({message: 'Attend not found'});
-	//teamId가 있으면(즉 팀 매칭이 완료된경우)
-	if(alreadyAttend.teamId !== null)
-		return res.status(400).json({message: 'already matching'});
-
-	await togetherRepository.unregister(user.id, eventId);
-	res.sendStatus(204);
-}
-
-async function getTeamList(id) //중복되는 부분이여서 함수로빼냄
-{
-	const matchingList = await togetherRepository.getMatchingList(id);
-	//teamId(키)로 객체에서 배열 그룹화
-	let teamList = matchingList.reduce(function (r, a) {
-        r[a.teamId] = r[a.teamId] || [];
-        r[a.teamId].push(a);
-        return r;
-    }, Object.create(null));
-	return teamList;
-}
-
-export async function getTeam(req, res){
-	const id = req.params.id;//event id
-	const teamList = await getTeamList(id);
-	res.status(200).json({teamList});
-}
-
-export async function matching(req, res) {
-	const {eventId, teamNum } = req.body;
-	const check = await togetherRepository.findAttendByEventId(eventId)
-
-	if(check === undefined || check[0].teamId !== null) //참석자가 없거나, 이미 매칭이 된경우
-		return res.status(400).json({message: 'already matching or not exists'});
-
-	if(check.length < teamNum) //유저보다 팀 개수가 많을때
-		return res.status(400).json({message: 'Too few attendees'});
-	shuffle(check);//팀 셔플완료  이제 팀개수대로 팀 나눠야함
-
-	for(let i = 0; i < check.length; i++)
-	{
-		let teamId = i % teamNum + 1;
-		await togetherRepository.createTeam(teamId, check[i].id);
-		console.log(`id=${check[i].id}, team=${teamId}`);
+	const {title, contents, image, eventId, attendMembers} = req.body;
+	const updateId = await boardRepository.findByPostId(id);
+	if(!updateId) {//해당 게시글이 없다면 
+		return res.sendStatus(404);
 	}
-
-	res.status(201).json(await getTeamList(eventId));
+	if(updateId.writerId !== req.userId){
+		return res.sendStatus(403); //로그인됐지만 권한없을때
+	}
+	console.log("tkim");
+	const updated = await boardRepository.updatePost(id, title, contents, image, eventId, attendMembers);
+	res.status(200).json(updated);
 }
 
-//팀 셔플
-function shuffle(array){
-	array.sort(()=> Math.random() - 0.5);
-}
