@@ -1,6 +1,7 @@
 import * as togetherRepository from '../data/together.js';
 import * as userRepository from '../data/auth.js';
 
+//이벤트 생성
 export async function createEvent(req, res) {
 	const { title, description } = req.body;
 	const user = await userRepository.findById(req.userId);
@@ -14,6 +15,7 @@ export async function createEvent(req, res) {
 	res.status(201).json({event});
 }
 
+//이벤트 삭제
 export async function deleteEvent(req, res){
 	const id = req.params.id;
 	const deleteId = await togetherRepository.findByEventId(id);
@@ -21,37 +23,38 @@ export async function deleteEvent(req, res){
 	const createUser = user.id;
 
 	if(!deleteId) //삭제할 친바가 없다면
-		return res.status(404).json({message: 'Event not found'});
-	
-		//권한
+		return res.status(404).json({message: 'Event not found1'});
+	//권한
 	console.log(deleteId);
 	if(deleteId.createdId !== createUser)
 	{
 		console.log(`?? ${deleteId.createdId} user=${createUser}`);
 		return res.status(401).json({message: 'UnAuthorization User'});
-
 	}
 
 	await togetherRepository.deleteEvent(id);
 	res.sendStatus(204);
 }
 
+//전체 이벤트 조회
 export async function getEventList(req, res){
 	const EventList = await togetherRepository.getEventList();
 	res.status(200).json({EventList});
 }
 
-//상세조회 , 유저객체정보를 배열로 넘겨달라
+//이벤트 상세조회 , 유저객체정보를 배열로 넘겨달라
 export async function getEvent(req, res){
+	console.log("오잉?");
 	const id = req.params.id;
 	const event = await togetherRepository.findByEventId(id);
 	if(!event) //조회할 친바가 없다면
-		return res.status(404).json({message: 'Event not found'});
+		return res.status(404).json({message: 'Event not found2'});
 	const teamList = await getTeamList(id);
 
 	res.status(200).json({event, teamList});
 }
 
+//이벤트 참석
 export async function register(req, res){
 	const user = await userRepository.findById(req.userId);//토큰으로 받아온 아이디
 	const eventId = req.body.eventId;
@@ -61,7 +64,7 @@ export async function register(req, res){
 	const attend = await togetherRepository.register(user.id, eventId);
 	res.status(201).json({attend});
 }
-
+//이벤트 참석해제
 export async function unregister(req, res){
 	const user = await userRepository.findById(req.userId);//토큰으로 받아온 아이디
 	const eventId = req.params.id;//event id
@@ -119,4 +122,17 @@ export async function matching(req, res) {
 //팀 셔플
 function shuffle(array){
 	array.sort(()=> Math.random() - 0.5);
+}
+
+//게시글 작성을 위한 정보 조회 (모든 이벤트, 팀리스트)
+export async function getEventInfo (req, res) {
+	let eventList = await togetherRepository.getEventList();
+	console.log("hi");
+	for(let i = 0; i < eventList.length; i++)
+	{
+		const team = await getTeamList(eventList[i].id);
+		eventList[i].teamList = team;
+	}
+	console.log(eventList);
+	res.status(200).json(eventList);
 }

@@ -12,6 +12,12 @@ export async function findByintraId(intraId) {
 	.then((result) => result[0][0]);
 }
 
+export async function findByEmail(email) {
+	return db
+	.execute('SELECT * FROM users WHERE email=?',[email])
+	.then((result) => result[0][0]);
+}
+
 export async function createUser(user) {
 	const {intraId, password, email, url} = user;
 	return db

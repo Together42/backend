@@ -10,9 +10,6 @@ const router = express.Router();
 //게시글 생성
 router.post('/', isAuth ,boardController.createPost);
 
-////게시글 생성을 위한 조회
-//router.get('/write', isAuth ,boardController.getPostInfo);
-
 //게시글 삭제
 router.delete('/:id', isAuth ,boardController.deletePost);
 

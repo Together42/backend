@@ -1,5 +1,6 @@
 import * as boardRepository from '../data/board.js';
-import * as userRepository from '../data/auth.js';
+import * as togetherRepository from '../data/together.js';
+import * as togetherController from './together.controller.js';
 
 //게시글 생성
 export async function createPost(req, res) {
@@ -36,15 +37,19 @@ export async function deletePost(req, res){
 export async function updatePost (req, res) {
 	const id = req.params.id;
 	const {title, contents, image, eventId, attendMembers} = req.body;
+	//제목이 없을시 에러
+	if(title == '')
+		return res.status(400).json({message: 'title not found'});
+
 	const updateId = await boardRepository.findByPostId(id);
 	if(!updateId) {//해당 게시글이 없다면 
-		return res.sendStatus(404);
+		return res.status(404).json({message: 'Post not found'});
 	}
 	if(updateId.writerId !== req.userId){
-		return res.sendStatus(403); //로그인됐지만 권한없을때
+		return res.status(401).json({message: 'UnAuthorization User'});
 	}
-	console.log("tkim");
-	const updated = await boardRepository.updatePost(id, title, contents, image, eventId, attendMembers);
-	res.status(200).json(updated);
+	const updated = await boardRepository.updatePost({id, title, contents, image, eventId, attendMembers});
+	res.status(200).json({updated});
 }
+
 
