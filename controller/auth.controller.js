@@ -10,6 +10,11 @@ export async function signUp(req, res) {
 	if(user){ //이미 존재하는 사용자라면
 		return res.status(400).json({message: `${intraId} already exists`});
 	}
+	
+	const checkEmail = await userRepository.findByEmail(email);
+	if(checkEmail){ //이미 존재하는 이메일
+		return res.status(400).json({message: `${email} already exists`});
+	}
 	const hashed = await bcrypt.hash(password, config.bcrypt.saltRounds);
 	const userId = await userRepository.createUser({
 		intraId,

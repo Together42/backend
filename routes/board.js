@@ -7,19 +7,24 @@ import * as boardController from '../controller/board.controller.js';
 
 const router = express.Router();
 
-//게시글 조회
-router.get('/',boardController.getEventList);
-
-//게시글 상세조회
-router.get('/:id',boardController.getEvent);
-
 //게시글 생성
-router.post('/', isAuth ,boardController.createEvent);
-router.delete('/:id', isAuth ,boardController.deleteEvent);
-router.post('/register', isAuth ,boardController.register);
-router.delete('/unregister/:id', isAuth ,boardController.unregister);
-router.post('/matching', boardController.matching);
-router.get('/matching/:id', boardController.getTeam);
+router.post('/', isAuth ,boardController.createPost);
+
+//게시글 삭제
+router.delete('/:id', isAuth ,boardController.deletePost);
+
+//게시글 수정
+router.put('/:id', isAuth ,boardController.updatePost);
+
+////게시글 전체조회
+//router.get('/',boardController.getBoardList);
+
+////게시글 상세조회
+//router.get('/:id',boardController.getBoardDetail);
+
+
+
+
 
 
 export default router;

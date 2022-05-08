@@ -32,9 +32,6 @@ const validateCredential = [
 //회원가입 유효성 검사
 const validateSignup= [
 	...validateCredential,
-	//body('nickName')
-	//	.notEmpty()
-	//	.withMessage('nickName is missing'),
 	body('email')
 		.isEmail()
 		.normalizeEmail()
