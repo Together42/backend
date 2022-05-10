@@ -17,7 +17,7 @@ router.delete('/:id', isAuth ,boardController.deletePost);
 router.put('/:id', isAuth ,boardController.updatePost);
 
 ////게시글 전체조회
-//router.get('/',boardController.getBoardList);
+router.get('/',boardController.getBoardList);
 
 ////게시글 상세조회
 //router.get('/:id',boardController.getBoardDetail);

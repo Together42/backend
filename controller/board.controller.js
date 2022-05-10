@@ -5,15 +5,17 @@ import * as togetherController from './together.controller.js';
 //게시글 생성
 export async function createPost(req, res) {
 	const { title, contents, image, eventId, attendMembers } = req.body;
+	console.log(attendMembers);
 	const writerId = req.userId;
 	const post = await boardRepository.createPost({
 		writerId,
 		title,
 		contents,
 		image,
-		eventId,
-		attendMembers
+		eventId
 	});
+	console.log(post);
+	const attendMember = await boardRepository.createAttendMember(attendMembers, post);
 	res.status(201).json({post});
 }
 
@@ -51,5 +53,7 @@ export async function updatePost (req, res) {
 	const updated = await boardRepository.updatePost({id, title, contents, image, eventId, attendMembers});
 	res.status(200).json({updated});
 }
-
-
+export async function getBoardList(req, res){
+	const boardList = await boardRepository.getBoardList();
+	res.status(200).json({boardList});
+}

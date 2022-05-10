@@ -23,14 +23,11 @@ export async function deleteEvent(req, res){
 	const createUser = user.id;
 
 	if(!deleteId) //삭제할 친바가 없다면
-		return res.status(404).json({message: 'Event not found1'});
+		return res.status(404).json({message: 'Event not found'});
 	//권한
 	console.log(deleteId);
 	if(deleteId.createdId !== createUser)
-	{
-		console.log(`?? ${deleteId.createdId} user=${createUser}`);
 		return res.status(401).json({message: 'UnAuthorization User'});
-	}
 
 	await togetherRepository.deleteEvent(id);
 	res.sendStatus(204);
@@ -44,11 +41,10 @@ export async function getEventList(req, res){
 
 //이벤트 상세조회 , 유저객체정보를 배열로 넘겨달라
 export async function getEvent(req, res){
-	console.log("오잉?");
 	const id = req.params.id;
 	const event = await togetherRepository.findByEventId(id);
 	if(!event) //조회할 친바가 없다면
-		return res.status(404).json({message: 'Event not found2'});
+		return res.status(404).json({message: 'Event not found'});
 	const teamList = await getTeamList(id);
 
 	res.status(200).json({event, teamList});
@@ -127,12 +123,10 @@ function shuffle(array){
 //게시글 작성을 위한 정보 조회 (모든 이벤트, 팀리스트)
 export async function getEventInfo (req, res) {
 	let eventList = await togetherRepository.getEventList();
-	console.log("hi");
 	for(let i = 0; i < eventList.length; i++)
 	{
 		const team = await getTeamList(eventList[i].id);
 		eventList[i].teamList = team;
 	}
-	console.log(eventList);
 	res.status(200).json(eventList);
 }
