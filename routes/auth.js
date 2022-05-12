@@ -25,7 +25,7 @@ const validateCredential = [
 	body('password')
 		.trim()
 		.isLength({min:8})
-		.withMessage('password should be at least 5 characters'),
+		.withMessage('password should be at least 8 characters'),
 	validate,
 ];
 
