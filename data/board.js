@@ -29,14 +29,25 @@ export async function updatePost(post) {
 export async function getBoardList(){
 	return db
 	.query(`	
-SELECT board.id, board.eventId, board.title, 
-board.writerId, board.contents,board.createdAt, board.updatedAt, 
-board.image , bc.id as commentId, bc.writerId, bc.comments ,bam.intraId, us.url
-FROM board 
-LEFT JOIN board_comment as bc ON board.id=bc.boardId
-LEFT JOIN board_attend_members as bam ON board.id=bam.boardId
-LEFT JOIN users as us ON bam.intraId = us.intraId;
-			`)
+		SELECT 
+			board.id,
+			board.eventId,
+			board.title, 
+			board.writerId,
+			board.contents,
+			board.createdAt,
+			board.updatedAt, 
+			board.image,
+			bc.id as commentId,
+			bc.writerId,
+			bc.comments,
+			bam.intraId,
+			us.url
+		FROM board 
+		LEFT JOIN board_comment as bc ON board.id=bc.boardId
+		LEFT JOIN board_attend_members as bam ON board.id=bam.boardId
+		LEFT JOIN users as us ON bam.intraId = us.intraId;
+					`)
 	.then((result)=>result[0]);
 }
 
