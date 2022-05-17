@@ -26,7 +26,51 @@ export async function updatePost(post) {
 	.then(()=> findByPostId(id));
 }
 
-export async function getBoardList(){
+export async function getBoardList(eventId){
+	let query;
+	if(eventId){
+		query = `
+		SELECT 
+		board.id,
+		board.eventId,
+		board.title, 
+		board.writerId,
+		board.contents,
+		board.createdAt,
+		board.updatedAt, 
+		board.image,
+		count(board_comment.id) as commentNum,
+		us.url
+	FROM board
+	LEFT JOIN users as us ON board.writerId = us.id
+	LEFT JOIN board_comment ON board.id=board_comment.boardId
+	WHERE board.eventId = ${eventId}
+	GROUP BY board.id;`
+	}else {
+		query = `
+		SELECT 
+			board.id,
+			board.eventId,
+			board.title, 
+			board.writerId,
+			board.contents,
+			board.createdAt,
+			board.updatedAt, 
+			board.image,
+			count(board_comment.id) as commentNum,
+			us.url
+		FROM board
+		LEFT JOIN users as us ON board.writerId = us.id
+		LEFT JOIN board_comment ON board.id=board_comment.boardId
+		GROUP BY board.id;
+		`
+	}
+	return db
+	.query(`${query}`)
+	.then((result)=>result[0]);
+}
+
+export async function getBoard(boardId){
 	return db
 	.query(`	
 		SELECT 
@@ -38,16 +82,33 @@ export async function getBoardList(){
 			board.createdAt,
 			board.updatedAt, 
 			board.image,
-			bc.id as commentId,
-			bc.writerId,
-			bc.comments,
-			bam.intraId,
 			us.url
-		FROM board 
-		LEFT JOIN board_comment as bc ON board.id=bc.boardId
-		LEFT JOIN board_attend_members as bam ON board.id=bam.boardId
-		LEFT JOIN users as us ON bam.intraId = us.intraId;
-					`)
+		FROM board
+		LEFT JOIN users as us ON board.writerId = us.id
+		WHERE board.id = ?
+			`,[boardId])
+	.then((result)=>result[0][0]);
+}
+
+export async function getAttendMembers(boardId){
+	return db
+	.query(`	
+		SELECT users.intraId, users.url FROM board_attend_members as bam JOIN users ON users.intraId=bam.intraId WHERE boardId = ?
+			`,[boardId])
+	.then((result)=>result[0]);
+}
+
+export async function getComments(boardId){
+	return db
+	.query(`	
+		SELECT
+		users.intraId,
+		bc.comments
+		FROM board_comment as bc
+		JOIN users ON users.id=bc.writerId
+		WHERE boardId = ?
+		;
+			`,[boardId])
 	.then((result)=>result[0]);
 }
 

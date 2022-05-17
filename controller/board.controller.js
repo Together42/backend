@@ -54,6 +54,22 @@ export async function updatePost (req, res) {
 	res.status(200).json({updated});
 }
 export async function getBoardList(req, res){
-	const boardList = await boardRepository.getBoardList();
+	const eventId = req.query.eventId;
+	console.log(`eventId = ${eventId}`);
+	const boardList = await boardRepository.getBoardList(eventId);
+	console.log(boardList);
+	//const attendList = await boardRepository.getAttendList();
 	res.status(200).json({boardList});
+}
+
+export async function getBoardDetail(req, res){
+	const boardId = req.params.id;
+	const board = await boardRepository.getBoard(boardId);
+	const attendMembers = await boardRepository.getAttendMembers(boardId);
+	const comments = await boardRepository.getComments(boardId);
+	board.attendMembers = attendMembers;
+	board.comments = comments;
+	console.log(board);
+	
+	res.status(200).json(board);
 }

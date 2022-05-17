@@ -58,6 +58,7 @@ export async function register(req, res){
 	if(alreadyAttend) //이미 참석했다면
 		return res.status(400).json({message: 'already attend'});
 	const attend = await togetherRepository.register(user.id, eventId);
+	console.log(`${user.intraId}가 ${eventId}에 참석하다`);
 	res.status(201).json({attend});
 }
 //이벤트 참석해제
@@ -72,6 +73,7 @@ export async function unregister(req, res){
 		return res.status(400).json({message: 'already matching'});
 
 	await togetherRepository.unregister(user.id, eventId);
+	console.log(`${user.intraId}가 ${eventId}에 참석 취소하다`);
 	res.sendStatus(204);
 }
 
