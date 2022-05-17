@@ -7,6 +7,9 @@ import * as boardController from '../controller/board.controller.js';
 
 const router = express.Router();
 
+////게시글 전체조회
+router.get('/',boardController.getBoardList);
+
 //게시글 생성
 router.post('/', isAuth ,boardController.createPost);
 
@@ -16,11 +19,8 @@ router.delete('/:id', isAuth ,boardController.deletePost);
 //게시글 수정
 router.put('/:id', isAuth ,boardController.updatePost);
 
-////게시글 전체조회
-//router.get('/',boardController.getBoardList);
-
 ////게시글 상세조회
-//router.get('/:id',boardController.getBoardDetail);
+router.get('/:id',boardController.getBoardDetail);
 
 
 

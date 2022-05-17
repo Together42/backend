@@ -7,6 +7,7 @@ import { config } from '../config.js';
 export async function signUp(req, res) {
 	const { intraId, password, email, url } = req.body;
 	const user = await userRepository.findByintraId(intraId);
+	console.log(user);
 	if(user){ //이미 존재하는 사용자라면
 		return res.status(400).json({message: `${intraId} already exists`});
 	}
@@ -23,6 +24,7 @@ export async function signUp(req, res) {
 		url,
 	});
 	const token = createJwtToken(userId);
+	console.log(`signUp: ${intraId},  time : ${new Date()}`);
 	res.status(201).json({token, intraId});
 }
 
@@ -38,9 +40,9 @@ export async function login(req, res) {
 	}
 	const url = user.url;
 	const token = createJwtToken(user.intraId);
+	console.log(`login id : ${intraId},  time : ${new Date()}`);
 	res.status(200).json({token, intraId, url });
-	//,res.redirect('/'));
-}
+	}
 
 function createJwtToken(id) {
 	return jwt.sign({id}, config.jwt.secretKey, {expiresIn: config.jwt.expiresInSec});
