@@ -21,11 +21,11 @@ const validateCredential = [
 		.trim()
 		.notEmpty()
 		.isLength({min:2})
-		.withMessage('intraId should be at least 2 characters'),
+		.withMessage('intraId는 2글자 이상이어야 합니다'),
 	body('password')
 		.trim()
 		.isLength({min:8})
-		.withMessage('password should be at least 8 characters'),
+		.withMessage('password는 8글자 이상이어야 합니다'),
 	validate,
 ];
 
@@ -35,7 +35,7 @@ const validateSignup= [
 	body('email')
 		.isEmail()
 		.normalizeEmail()
-		.withMessage('invalid email'),
+		.withMessage('email 형식을 지켜주세요'),
 	validate,
 ];
 
