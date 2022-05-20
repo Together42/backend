@@ -26,4 +26,7 @@ export const config = {
 		database: required('DB_DATABASE'),
 		password: required('DB_PASSWORD'),
 	},
+	hostname: {
+		hostname: required('HOSTNAME','local'),
+	},
 };
