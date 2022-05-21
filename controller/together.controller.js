@@ -55,6 +55,10 @@ export async function register(req, res){
 	const user = await userRepository.findById(req.userId);//토큰으로 받아온 아이디
 	const eventId = req.body.eventId;
 	const alreadyAttend = await togetherRepository.findByAttend(user.id, eventId)
+	const matchCheck = await togetherRepository.findByEventId(eventId);
+
+	if(matchCheck.isMatching == 1) //이미 매칭됐다면
+		return res.status(400).json({message: 'already matching'});
 	if(alreadyAttend) //이미 참석했다면
 		return res.status(400).json({message: '이미 참석했습니다'});
 	const attend = await togetherRepository.register(user.id, eventId);

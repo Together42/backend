@@ -10,6 +10,10 @@ export async function deletePost(id) {
 	return db.execute('DELETE FROM board WHERE id=?',[id]);
 }
 
+export async function deleteComment(id) {
+	return db.execute('DELETE FROM board_comment WHERE id=?',[id]);
+}
+
 export async function createPost(post) {
 	const {writerId, title, contents, image, eventId} = post;
 	return db
@@ -19,11 +23,25 @@ export async function createPost(post) {
 	.then((result) => result[0].insertId);
 }
 
+export async function createComment(boardId, comment, writerId) {
+	return db
+	.execute('INSERT INTO board_comment (boardId, comments, writerId) VALUES (?,?,?)',
+	[boardId, comment, writerId]
+	)
+	.then((result) => result[0].insertId);
+}
+
 export async function updatePost(post) {
-	const {id, title, contents, image, eventId, attendMembers} = post;
-	return db.execute('UPDATE board SET title=? ,contents=? ,image=? ,eventId=? ,attendMembers=? WHERE id=?',
-	[title, contents, image, eventId, attendMembers, id])
+	const {id, title, contents, image, eventId } = post;
+	return db.execute('UPDATE board SET title=? ,contents=? ,image=? ,eventId=? WHERE id=?',
+	[title, contents, image, eventId, id])
 	.then(()=> findByPostId(id));
+}
+
+export async function updateComment(comment, id) {
+	return db.execute('UPDATE board_comment SET comments = ? WHERE id=?',
+	[comment, id])
+	.then(()=> findByCommentId(id));
 }
 
 export async function getBoardList(eventId){
@@ -31,10 +49,10 @@ export async function getBoardList(eventId){
 	if(eventId){
 		query = `
 		SELECT 
-		board.id,
+		board.id as boardId,
 		board.eventId,
 		board.title, 
-		board.writerId,
+		us.intraId,
 		board.contents,
 		board.createdAt,
 		board.updatedAt, 
@@ -49,10 +67,10 @@ export async function getBoardList(eventId){
 	}else {
 		query = `
 		SELECT 
-			board.id,
+			board.id as boardId,
 			board.eventId,
 			board.title, 
-			board.writerId,
+			us.intraId,
 			board.contents,
 			board.createdAt,
 			board.updatedAt, 
@@ -77,7 +95,7 @@ export async function getBoard(boardId){
 			board.id,
 			board.eventId,
 			board.title, 
-			board.writerId,
+			us.intraId,
 			board.contents,
 			board.createdAt,
 			board.updatedAt, 
@@ -102,6 +120,7 @@ export async function getComments(boardId){
 	return db
 	.query(`	
 		SELECT
+		bc.id,
 		users.intraId,
 		bc.comments
 		FROM board_comment as bc
@@ -119,4 +138,10 @@ export async function createAttendMember(members, boardId) {
 	return db
 	.query('INSERT INTO board_attend_members (intraId,boardId) VALUES ?',[values])
 	.then((result)=>result[0]);
+}
+
+export async function findByCommentId(id) {
+	return db
+	.execute('SELECT * FROM board_comment WHERE id=?',[id])
+	.then((result) => result[0][0]);
 }
