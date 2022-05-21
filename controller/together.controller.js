@@ -23,11 +23,11 @@ export async function deleteEvent(req, res){
 	const createUser = user.id;
 
 	if(!deleteId) //삭제할 친바가 없다면
-		return res.status(404).json({message: 'Event not found'});
+		return res.status(404).json({message: '이벤트가 없습니다'});
 	//권한
 	console.log(deleteId);
 	if(deleteId.createdId !== createUser)
-		return res.status(401).json({message: 'UnAuthorization User'});
+		return res.status(401).json({message: '권한이 없습니다'});
 
 	await togetherRepository.deleteEvent(id);
 	res.sendStatus(204);
@@ -44,7 +44,7 @@ export async function getEvent(req, res){
 	const id = req.params.id;
 	const event = await togetherRepository.findByEventId(id);
 	if(!event) //조회할 친바가 없다면
-		return res.status(404).json({message: 'Event not found'});
+		return res.status(404).json({message: '이벤트가 없습니다'});
 	const teamList = await getTeamList(id);
 
 	res.status(200).json({event, teamList});
@@ -60,7 +60,7 @@ export async function register(req, res){
 	if(matchCheck.isMatching == 1) //이미 매칭됐다면
 		return res.status(400).json({message: 'already matching'});
 	if(alreadyAttend) //이미 참석했다면
-		return res.status(400).json({message: 'already attend'});
+		return res.status(400).json({message: '이미 참석했습니다'});
 	const attend = await togetherRepository.register(user.id, eventId);
 	console.log(`${user.intraId}가 ${eventId}에 참석하다`);
 	res.status(201).json({attend});
@@ -71,10 +71,10 @@ export async function unregister(req, res){
 	const eventId = req.params.id;//event id
 	const alreadyAttend = await togetherRepository.findByAttend(user.id, eventId)
 	if(!alreadyAttend) //참석이 없으면
-		return res.status(400).json({message: 'Attend not found'});
+		return res.status(400).json({message: '참석자가 없습니다'});
 	//teamId가 있으면(즉 팀 매칭이 완료된경우)
 	if(alreadyAttend.teamId !== null)
-		return res.status(400).json({message: 'already matching'});
+		return res.status(400).json({message: '이미 매칭된 이벤트입니다'});
 
 	await togetherRepository.unregister(user.id, eventId);
 	console.log(`${user.intraId}가 ${eventId}에 참석 취소하다`);
@@ -103,13 +103,13 @@ export async function matching(req, res) {
 	const {eventId, teamNum } = req.body;
 	const create = await togetherRepository.findCreateUser(eventId);
 	if(create.createdId !== req.userId)
-		return res.status(400).json({message: 'UnAuthorization User'});
+		return res.status(400).json({message: '권한이 없습니다'});
 	const check = await togetherRepository.findAttendByEventId(eventId)
 	if(check === undefined || check[0] === undefined || check[0].teamId !== null) //참석자가 없거나, 이미 매칭이 된경우
-		return res.status(400).json({message: 'already matching or not exists'});
+		return res.status(400).json({message: '참석자가 없거나 이미 매칭됐습니다'});
 
 	if(check.length < teamNum) //유저보다 팀 개수가 많을때
-		return res.status(400).json({message: 'Too few attendees'});
+		return res.status(400).json({message: '팀 개수가 너무 많습니다'});
 	shuffle(check);//팀 셔플완료  이제 팀개수대로 팀 나눠야함
 	await togetherRepository.chagneEvent(eventId);
 	for(let i = 0; i < check.length; i++)

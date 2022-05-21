@@ -26,9 +26,9 @@ export async function deletePost(req, res){
 	console.log(deleteId);
 
 	if(!deleteId) //삭제할 글이 없다면
-		return res.status(404).json({message: 'Post not found'});
+		return res.status(404).json({message: '삭제할 게시글이 없습니다'});
 	if(deleteId.writerId !== req.userId)//권한
-		return res.status(401).json({message: 'UnAuthorization User'});
+		return res.status(401).json({message: '권한이 없습니다'});
 
 	await boardRepository.deletePost(id);
 	res.sendStatus(204);
@@ -41,14 +41,14 @@ export async function updatePost (req, res) {
 	const {title, contents, image, eventId, attendMembers} = req.body;
 	//제목이 없을시 에러
 	if(title == '')
-		return res.status(400).json({message: 'title not found'});
+		return res.status(400).json({message: '제목을 넣어주세요'});
 
 	const updateId = await boardRepository.findByPostId(id);
 	if(!updateId) {//해당 게시글이 없다면 
-		return res.status(404).json({message: 'Post not found'});
+		return res.status(404).json({message: '게시글이 없습니다'});
 	}
 	if(updateId.writerId !== req.userId){
-		return res.status(401).json({message: 'UnAuthorization User'});
+		return res.status(401).json({message: '권한이 없습니다'});
 	}
 	const updated = await boardRepository.updatePost({id, title, contents, image, eventId, attendMembers});
 	res.status(200).json({updated});
