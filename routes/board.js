@@ -22,7 +22,14 @@ router.put('/:id', isAuth ,boardController.updatePost);
 ////게시글 상세조회
 router.get('/:id',boardController.getBoardDetail);
 
+//댓글 생성
+router.post('/comment', isAuth, boardController.createComment);
 
+//댓글 수정
+router.put('/comment/:id', isAuth, boardController.updateComment);
+
+//댓글 삭제
+router.delete('/comment/:id', isAuth, boardController.deleteComment);
 
 
 

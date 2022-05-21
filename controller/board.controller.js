@@ -73,3 +73,42 @@ export async function getBoardDetail(req, res){
 	
 	res.status(200).json(board);
 }
+
+//comment
+
+export async function createComment(req, res){
+	const {boardId, comment} = req.body;
+	const writerId = req.userId;
+	console.log(`boardId = ${boardId}, comment = ${comment}, writerId = ${writerId}`);
+	const result = await boardRepository.createComment(boardId, comment, writerId);
+	
+	res.status(200).json({result});
+}
+
+export async function updateComment(req, res){
+	const id = req.params.id;
+	const comment = req.body.comment;
+	const writerId = req.userId;
+	console.log(`comment = ${comment}, writerId = ${writerId}`);
+	const commentId = await boardRepository.findByCommentId(id);
+	if(writerId !== commentId.writerId)
+		return res.status(401).json({message: '권한이 없습니다'});
+
+	const comments = await boardRepository.updateComment(comment,id);
+	console.log(comments);
+	res.status(200).json({comments});
+}
+
+export async function deleteComment(req, res){
+	const id = req.params.id;
+	const deleteId = await boardRepository.findByCommentId(id);
+	console.log(deleteId);
+
+	if(!deleteId) //삭제할 댓글이 없다면
+		return res.status(404).json({message: '삭제할 댓글이 없습니다'});
+	if(deleteId.writerId !== req.userId)//권한
+		return res.status(401).json({message: '권한이 없습니다'});
+
+	await boardRepository.deleteComment(id);
+	res.sendStatus(204);
+}
