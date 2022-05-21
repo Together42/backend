@@ -92,7 +92,7 @@ export async function getBoard(boardId){
 	return db
 	.query(`	
 		SELECT 
-			board.id,
+			board.id as boardId,
 			board.eventId,
 			board.title, 
 			us.intraId,
