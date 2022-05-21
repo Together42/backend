@@ -11,18 +11,18 @@ import https from 'https';
 
 // express configuration
 const app = express();
-if(config.hostname === 'ec2')
+let credentials;
+if(config.hostname.hostname === 'ec2')
 {
 	const privateKey = fs.readFileSync('/etc/letsencrypt/live/together.42jip.com/privkey.pem', 'utf8');
 	const certificate = fs.readFileSync('/etc/letsencrypt/live/together.42jip.com/cert.pem', 'utf8');
 	const ca = fs.readFileSync('/etc/letsencrypt/live/together.42jip.com/chain.pem', 'utf8');
-	const credentials = {
+	credentials = {
 		key: privateKey,
 		cert: certificate,
 		ca: ca
 	};
 }
-
 //parse JSON and url-encoded query
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
