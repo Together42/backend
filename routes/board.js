@@ -1,4 +1,5 @@
 import express from 'express';
+import multer from 'multer';
 import 'express-async-errors';
 import { body } from 'express-validator';
 import { validate } from '../middleware/validator.js'
@@ -6,6 +7,41 @@ import { isAuth } from '../middleware/auth.js';
 import * as boardController from '../controller/board.controller.js';
 
 const router = express.Router();
+const storage = multer.diskStorage({
+	destination: (req, file, cb) => {
+		cb(null, "./uploads/");
+	},
+	filename: (req, file, cb) => {
+		cb(null, `${Date.now()}_${file.originalname}`)
+	},
+});
+
+const fileSizeLimitErrorHandler = (err, req, res, next) => {
+	if (err) {
+		res.status(400).send({message: "파일의 크기가 너무 큽니다"});
+	} else {
+	  next()
+	}
+  }
+
+const fileFilter = (req, file, cb) => {
+    // mime type 체크하여 이미지만 필터링
+    if (file.mimetype == 'image/jpeg' || file.mimetype == 'image/png'||file.mimetype == 'image/jpg') {
+        req.fileValidationError = null;
+		cb(null, true);
+    } else {
+		req.fileValidationError = "jpeg, jpg, png 파일만 업로드 가능합니다.";
+        cb(null, false);
+    }
+}
+
+const upload = multer({ 
+	storage: storage,
+	fileFilter: fileFilter,
+	limits: {
+		fileSize: 10 * 1024 * 1024 
+	},	
+});
 
 ////게시글 전체조회
 router.get('/',boardController.getBoardList);
@@ -31,7 +67,8 @@ router.put('/comment/:id', isAuth, boardController.updateComment);
 //댓글 삭제
 router.delete('/comment/:id', isAuth, boardController.deleteComment);
 
-
+//사진 업로드
+router.post('/upload', upload.array("image",8), fileSizeLimitErrorHandler, boardController.upload);
 
 
 export default router;
