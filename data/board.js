@@ -148,12 +148,13 @@ export async function findByCommentId(id) {
 
 //upload
 
-export async function imageUpload(boardId, image) {
-	const {path, originalname, mimetype, size} = image;
-	console.log(`${path}, ${originalname}, ${mimetype}, ${size}`);
+export async function imageUpload(boardId, images) {
+	const values = images.map(image => {
+		return [boardId, image.path, image.originalname, image.mimetype, image.size]
+	})
+	console.log(values);
 	return db
-	.execute('INSERT INTO image_info (boardId, filePath, fileName, fileType, fileSize) VALUES (?,?,?,?,?)',
-	[boardId, path, originalname, mimetype, size]
-	)
-	.then((result) => result[0].insertId);
+	.query('INSERT INTO image_info (boardId, filePath, fileName, fileType, fileSize) VALUES ?',
+	[values])
+	.then((result) => result[0]);
 }
