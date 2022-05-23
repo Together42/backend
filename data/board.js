@@ -49,7 +49,7 @@ export async function getBoardList(eventId){
 	if(eventId){
 		query = `
 		SELECT 
-		board.id as boardId,
+		board.id as boardNum,
 		board.eventId,
 		board.title, 
 		us.intraId,
@@ -57,7 +57,8 @@ export async function getBoardList(eventId){
 		board.createdAt,
 		board.updatedAt,
 		count(board_comment.id) as commentNum,
-		us.url
+		us.url,
+		(SELECT filePath FROM image_info WHERE boardId = boardNum LIMIT 1) as filePath
 	FROM board
 	LEFT JOIN users as us ON board.writerId = us.id
 	LEFT JOIN board_comment ON board.id=board_comment.boardId
@@ -66,7 +67,7 @@ export async function getBoardList(eventId){
 	}else {
 		query = `
 		SELECT 
-			board.id as boardId,
+			board.id as boardNum,
 			board.eventId,
 			board.title, 
 			us.intraId,
@@ -74,7 +75,8 @@ export async function getBoardList(eventId){
 			board.createdAt,
 			board.updatedAt,
 			count(board_comment.id) as commentNum,
-			us.url
+			us.url,
+			(SELECT filePath FROM image_info WHERE boardId = boardNum LIMIT 1) as filePath
 		FROM board
 		LEFT JOIN users as us ON board.writerId = us.id
 		LEFT JOIN board_comment ON board.id=board_comment.boardId
@@ -155,4 +157,12 @@ export async function imageUpload(boardId, images) {
 	.query('INSERT INTO image_info (boardId, filePath, fileName, fileType, fileSize) VALUES ?',
 	[values])
 	.then((result) => result[0]);
+}
+
+export async function getImages(boardId){
+	return db
+	.query(`	
+		SELECT id, boardId, filePath FROM image_info WHERE boardId = ?
+			`,[boardId])
+	.then((result)=>result[0]);
 }

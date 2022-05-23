@@ -66,10 +66,16 @@ export async function getBoardDetail(req, res){
 	const board = await boardRepository.getBoard(boardId);
 	if(!board)
 		return res.status(400).json({message: '게시글이 없습니다'});
-	const attendMembers = await boardRepository.getAttendMembers(boardId);
-	const comments = await boardRepository.getComments(boardId);
-	board.attendMembers = attendMembers;
-	board.comments = comments;
+	try {
+		const attendMembers = await boardRepository.getAttendMembers(boardId);
+		const comments = await boardRepository.getComments(boardId);
+		const image = await boardRepository.getImages(boardId);
+		board.images = image;
+		board.attendMembers = attendMembers;
+		board.comments = comments;
+	} catch (error) {
+		return res.status(400).json({message: '상세조회 실패'});
+	}
 	console.log(board);
 	
 	res.status(200).json(board);
