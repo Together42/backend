@@ -64,6 +64,8 @@ export async function getBoardList(req, res){
 export async function getBoardDetail(req, res){
 	const boardId = req.params.id;
 	const board = await boardRepository.getBoard(boardId);
+	if(!board)
+		return res.status(400).json({message: '게시글이 없습니다'});
 	const attendMembers = await boardRepository.getAttendMembers(boardId);
 	const comments = await boardRepository.getComments(boardId);
 	board.attendMembers = attendMembers;

@@ -90,7 +90,7 @@ export async function getBoard(boardId){
 	return db
 	.query(`	
 		SELECT 
-			board.id,
+			board.id as boardId,
 			board.eventId,
 			board.title, 
 			us.intraId,
@@ -119,7 +119,8 @@ export async function getComments(boardId){
 		SELECT
 		bc.id,
 		users.intraId,
-		bc.comments
+		bc.comments,
+		bc.updatedAt
 		FROM board_comment as bc
 		JOIN users ON users.id=bc.writerId
 		WHERE boardId = ?
