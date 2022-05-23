@@ -116,11 +116,11 @@ export async function deleteComment(req, res){
 //파일 업로드
 
 export async function upload(req, res, err) {
-
+	const boardId = req.body.boardId;
 	const image = req.files;
 	console.log(typeof(image.length));
 	console.log(req.fileValidationError);
-	console.log(image);
+	console.log(image[0]);
 	const path = image.map(img => img.path);
 	if(req.fileValidationError){
 		return res.status(400).send({message: req.fileValidationError});
@@ -128,6 +128,7 @@ export async function upload(req, res, err) {
 	if(image.length < 1){
 		return res.status(400).send(util.fail(400, "이미지가 없습니다"));
 	}
+		const result = await boardRepository.imageUpload(boardId, image[0] )
 		return res.status(200).send(util.success(200, "업로드를 완료했습니다", path));
 }
 

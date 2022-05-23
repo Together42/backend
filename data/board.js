@@ -145,3 +145,15 @@ export async function findByCommentId(id) {
 	.execute('SELECT * FROM board_comment WHERE id=?',[id])
 	.then((result) => result[0][0]);
 }
+
+//upload
+
+export async function imageUpload(boardId, image) {
+	const {path, originalname, mimetype, size} = image;
+	console.log(`${path}, ${originalname}, ${mimetype}, ${size}`);
+	return db
+	.execute('INSERT INTO image_info (boardId, filePath, fileName, fileType, fileSize) VALUES (?,?,?,?,?)',
+	[boardId, path, originalname, mimetype, size]
+	)
+	.then((result) => result[0].insertId);
+}
