@@ -4,18 +4,17 @@ import * as togetherController from './together.controller.js';
 
 //게시글 생성
 export async function createPost(req, res) {
-	const { title, contents, image, eventId, attendMembers } = req.body;
+	const { title, contents, eventId, attendMembers } = req.body;
 	console.log(attendMembers);
 	const writerId = req.userId;
 	const post = await boardRepository.createPost({
 		writerId,
 		title,
 		contents,
-		image,
 		eventId
 	});
 	console.log(post);
-	const attendMember = await boardRepository.createAttendMember(attendMembers, post);
+	await boardRepository.createAttendMember(attendMembers, post);
 	res.status(201).json({post});
 }
 
@@ -38,7 +37,7 @@ export async function deletePost(req, res){
 //일단 제목, 내용만 수정가능, / 사진은 추후에
 export async function updatePost (req, res) {
 	const id = req.params.id;
-	const {title, contents, image, eventId, attendMembers} = req.body;
+	const {title, contents, eventId, attendMembers} = req.body;
 	//제목이 없을시 에러
 	if(title == '')
 		return res.status(400).json({message: '제목을 넣어주세요'});
@@ -50,7 +49,7 @@ export async function updatePost (req, res) {
 	if(updateId.writerId !== req.userId){
 		return res.status(401).json({message: '권한이 없습니다'});
 	}
-	const updated = await boardRepository.updatePost({id, title, contents, image, eventId, attendMembers});
+	const updated = await boardRepository.updatePost({id, title, contents, eventId, attendMembers});
 	res.status(200).json({updated});
 }
 export async function getBoardList(req, res){
@@ -67,10 +66,16 @@ export async function getBoardDetail(req, res){
 	const board = await boardRepository.getBoard(boardId);
 	if(!board)
 		return res.status(400).json({message: '게시글이 없습니다'});
-	const attendMembers = await boardRepository.getAttendMembers(boardId);
-	const comments = await boardRepository.getComments(boardId);
-	board.attendMembers = attendMembers;
-	board.comments = comments;
+	try {
+		const attendMembers = await boardRepository.getAttendMembers(boardId);
+		const comments = await boardRepository.getComments(boardId);
+		const image = await boardRepository.getImages(boardId);
+		board.images = image;
+		board.attendMembers = attendMembers;
+		board.comments = comments;
+	} catch (error) {
+		return res.status(400).json({message: '상세조회 실패'});
+	}
 	console.log(board);
 	
 	res.status(200).json(board);
@@ -113,4 +118,42 @@ export async function deleteComment(req, res){
 
 	await boardRepository.deleteComment(id);
 	res.sendStatus(204);
+}
+4
+//파일 업로드
+
+export async function upload(req, res, err) {
+	const boardId = req.body.boardId;
+	const image = req.files;
+	console.log(image.length);
+	console.log(req.fileValidationError);
+	console.log(image[0]);
+	const path = image.map(img => img.path);
+	console.log(`path = ${path}`);
+	if(req.fileValidationError){//파일이 크거나 형식이 다를때
+		return res.status(400).send({message: req.fileValidationError});
+	}
+	if(image.length < 1){//이미지가 없을때 
+		return res.status(400).send(util.fail(400, "이미지가 없습니다"));
+	}
+		const result = await boardRepository.imageUpload(boardId, image )
+		return res.status(200).send(util.success(200, "업로드를 완료했습니다", path));
+}
+
+const util = {
+	success: (status, message, data) => {
+		return {
+			status: status,
+			success: true,
+			message: message,
+			data: data
+		}
+	},
+	fail: (status, message) => {
+		return {
+			status: status,
+			success: false,
+			message: message
+		}
+	}
 }

@@ -15,10 +15,10 @@ export async function deleteComment(id) {
 }
 
 export async function createPost(post) {
-	const {writerId, title, contents, image, eventId} = post;
+	const {writerId, title, contents, eventId} = post;
 	return db
-	.execute('INSERT INTO board (writerId, title, contents, image, eventId) VALUES (?,?,?,?,?)',
-	[writerId, title, contents, image, eventId]
+	.execute('INSERT INTO board (writerId, title, contents, eventId) VALUES (?,?,?,?)',
+	[writerId, title, contents, eventId]
 	)
 	.then((result) => result[0].insertId);
 }
@@ -32,9 +32,9 @@ export async function createComment(boardId, comment, writerId) {
 }
 
 export async function updatePost(post) {
-	const {id, title, contents, image, eventId } = post;
-	return db.execute('UPDATE board SET title=? ,contents=? ,image=? ,eventId=? WHERE id=?',
-	[title, contents, image, eventId, id])
+	const {id, title, contents, eventId } = post;
+	return db.execute('UPDATE board SET title=? ,contents=? ,eventId=? WHERE id=?',
+	[title, contents, eventId, id])
 	.then(()=> findByPostId(id));
 }
 
@@ -49,16 +49,16 @@ export async function getBoardList(eventId){
 	if(eventId){
 		query = `
 		SELECT 
-		board.id as boardId,
+		board.id as boardNum,
 		board.eventId,
 		board.title, 
 		us.intraId,
 		board.contents,
 		board.createdAt,
-		board.updatedAt, 
-		board.image,
+		board.updatedAt,
 		count(board_comment.id) as commentNum,
-		us.url
+		us.url,
+		(SELECT filePath FROM image_info WHERE boardId = boardNum LIMIT 1) as filePath
 	FROM board
 	LEFT JOIN users as us ON board.writerId = us.id
 	LEFT JOIN board_comment ON board.id=board_comment.boardId
@@ -67,16 +67,16 @@ export async function getBoardList(eventId){
 	}else {
 		query = `
 		SELECT 
-			board.id as boardId,
+			board.id as boardNum,
 			board.eventId,
 			board.title, 
 			us.intraId,
 			board.contents,
 			board.createdAt,
-			board.updatedAt, 
-			board.image,
+			board.updatedAt,
 			count(board_comment.id) as commentNum,
-			us.url
+			us.url,
+			(SELECT filePath FROM image_info WHERE boardId = boardNum LIMIT 1) as filePath
 		FROM board
 		LEFT JOIN users as us ON board.writerId = us.id
 		LEFT JOIN board_comment ON board.id=board_comment.boardId
@@ -98,8 +98,7 @@ export async function getBoard(boardId){
 			us.intraId,
 			board.contents,
 			board.createdAt,
-			board.updatedAt, 
-			board.image,
+			board.updatedAt,
 			us.url
 		FROM board
 		LEFT JOIN users as us ON board.writerId = us.id
@@ -145,4 +144,25 @@ export async function findByCommentId(id) {
 	return db
 	.execute('SELECT * FROM board_comment WHERE id=?',[id])
 	.then((result) => result[0][0]);
+}
+
+//upload
+
+export async function imageUpload(boardId, images) {
+	const values = images.map(image => {
+		return [boardId, image.path, image.originalname, image.mimetype, image.size]
+	})
+	console.log(values);
+	return db
+	.query('INSERT INTO image_info (boardId, filePath, fileName, fileType, fileSize) VALUES ?',
+	[values])
+	.then((result) => result[0]);
+}
+
+export async function getImages(boardId){
+	return db
+	.query(`	
+		SELECT id, boardId, filePath FROM image_info WHERE boardId = ?
+			`,[boardId])
+	.then((result)=>result[0]);
 }
