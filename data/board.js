@@ -122,7 +122,8 @@ export async function getComments(boardId){
 		SELECT
 		bc.id,
 		users.intraId,
-		bc.comments
+		bc.comments,
+		bc.updatedAt
 		FROM board_comment as bc
 		JOIN users ON users.id=bc.writerId
 		WHERE boardId = ?
