@@ -164,7 +164,7 @@ export async function getImages(boardId){
 	console.log(`getImage = ${boardId}`);
 	return db
 	.query(`	
-		SELECT id, boardNum, filePath FROM image_info WHERE boardNum = ?
+		SELECT id as imageId, boardNum as boardId, filePath FROM image_info WHERE boardNum = ?
 			`,[boardId])
 	.then((result)=>result[0]);
 }
