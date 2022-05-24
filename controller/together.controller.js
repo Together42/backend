@@ -117,8 +117,9 @@ export async function matching(req, res) {
 		let teamId = i % teamNum + 1;
 		await togetherRepository.createTeam(teamId, check[i].id);
 	}
+	const teamList = await getTeamList(eventId);
 
-	res.status(201).json(await getTeamList(eventId));
+	res.status(201).json({eventId, teamList});
 }
 
 //팀 셔플
