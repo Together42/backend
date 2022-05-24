@@ -1,4 +1,5 @@
 import { db } from '../db/database.js';
+import {config} from '../config.js';
 
 export async function findByPostId(id) {
 	return db
@@ -150,7 +151,7 @@ export async function findByCommentId(id) {
 
 export async function imageUpload(boardId, images) {
 	const values = images.map(image => {
-		return [boardId, image.path, image.originalname, image.mimetype, image.size]
+		return [boardId, `${config.serverUrl.serverUrl}${image.path}`, image.originalname, image.mimetype, image.size]
 	})
 	console.log(values);
 	return db

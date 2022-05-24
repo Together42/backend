@@ -29,4 +29,7 @@ export const config = {
 	hostname: {
 		hostname: required('HOSTNAME','local'),
 	},
+	serverUrl: {
+		serverUrl: required('SERVER_URL','http://localhost:8080/')
+	}
 };
