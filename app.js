@@ -1,16 +1,17 @@
 import express from 'express';
 import morgan from 'morgan';
+import path from 'path';
+import cors from 'cors';
+import * as fs  from 'fs';
 import { config } from './config.js';
 import authRouter from './routes/auth.js';
 import togetherRouter from './routes/together.js';
 import boardRouter from './routes/board.js';
 import { stream } from './config/winston.js';
-import cors from 'cors';
-import * as fs  from 'fs';
 import https from 'https';
-
 // express configuration
 const app = express();
+const __dirname = path.resolve();
 let credentials;
 if(config.hostname.hostname === 'ec2')
 {
@@ -28,7 +29,7 @@ app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 app.use(cors());
 app.use(morgan('combined', {stream}));
-
+app.use('/uploads', express.static(__dirname + '/uploads'));
 app.use('/api/auth', authRouter);
 app.use('/api/together', togetherRouter);
 app.use('/api/board', boardRouter);

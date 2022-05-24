@@ -1,6 +1,4 @@
 import * as boardRepository from '../data/board.js';
-import * as togetherRepository from '../data/together.js';
-import * as togetherController from './together.controller.js';
 
 //게시글 생성
 export async function createPost(req, res) {
