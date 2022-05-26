@@ -59,7 +59,7 @@ export async function getBoardList(eventId){
 		board.updatedAt,
 		count(board_comment.id) as commentNum,
 		us.url,
-		(SELECT filePath FROM image_info WHERE boardNum = boardId LIMIT 1) as filePath
+		(SELECT filePath FROM image_info WHERE boardNum = board.id LIMIT 1) as filePath
 	FROM board
 	LEFT JOIN users as us ON board.writerId = us.id
 	LEFT JOIN board_comment ON board.id=board_comment.boardId
@@ -77,7 +77,7 @@ export async function getBoardList(eventId){
 			board.updatedAt,
 			count(board_comment.id) as commentNum,
 			us.url,
-			(SELECT filePath FROM image_info WHERE boardNum = boardId LIMIT 1) as filePath
+			(SELECT filePath FROM image_info WHERE boardNum = board.id LIMIT 1) as filePath
 		FROM board
 		LEFT JOIN users as us ON board.writerId = us.id
 		LEFT JOIN board_comment ON board.id=board_comment.boardId
