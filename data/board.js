@@ -151,11 +151,11 @@ export async function findByCommentId(id) {
 
 export async function imageUpload(boardId, images) {
 	const values = images.map(image => {
-		return [boardId, `${config.serverUrl.serverUrl}${image.path}`, image.originalname, image.mimetype, image.size]
+		return [boardId, image.location, image.originalname, image.mimetype, image.size, image.key]
 	})
-	console.log(values);
+	console.log(`value : ${values}`);
 	return db
-	.query('INSERT INTO image_info (boardNum, filePath, fileName, fileType, fileSize) VALUES ?',
+	.query('INSERT INTO image_info (boardNum, filePath, fileName, fileType, fileSize, fileKey) VALUES ?',
 	[values])
 	.then((result) => result[0]);
 }

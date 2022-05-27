@@ -126,7 +126,7 @@ export async function upload(req, res, err) {
 	console.log(image.length);
 	console.log(req.fileValidationError);
 	console.log(image[0]);
-	const path = image.map(img => img.path);
+	const path = image.map(img => img.location);
 	console.log(`path = ${path}`);
 	if(req.fileValidationError){//파일이 크거나 형식이 다를때
 		return res.status(400).send({message: req.fileValidationError});
