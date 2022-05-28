@@ -27,7 +27,13 @@ if(config.hostname.hostname === 'ec2')
 //parse JSON and url-encoded query
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+	origin: [
+	  'http://localhost:4242',
+	  'https://together42.github.io/frontend/',
+	],
+	credentials: true,
+  }));
 app.use(morgan('combined', {stream}));
 app.use('/uploads', express.static(__dirname + '/uploads'));
 app.use('/api/auth', authRouter);
