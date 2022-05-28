@@ -30,7 +30,7 @@ app.use(express.json());
 app.use(cors({
 	origin: [
 	  'http://localhost:3050',
-	  'https://together42.github.io/frontend',
+	  'https://together42.github.io',
 	],
 	credentials: true,
   }));
