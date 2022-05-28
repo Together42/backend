@@ -31,5 +31,10 @@ export const config = {
 	},
 	serverUrl: {
 		serverUrl: required('SERVER_URL','http://localhost:8080/')
+	},
+	s3: {
+		access_key_id: required('ACCESS_KEY_ID'),
+		secret_access_key: required('SECRET_ACCESS_KEY'),
+		region: required('REGION'),
 	}
 };
