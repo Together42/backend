@@ -1,5 +1,5 @@
 import * as boardRepository from '../data/board.js';
-
+import {s3} from '../s3.js';
 //게시글 생성
 export async function createPost(req, res) {
 	const { title, contents, eventId, attendMembers } = req.body;
@@ -117,25 +117,42 @@ export async function deleteComment(req, res){
 	await boardRepository.deleteComment(id);
 	res.sendStatus(204);
 }
-4
+
 //파일 업로드
 
 export async function upload(req, res, err) {
 	const boardId = req.body.boardId;
 	const image = req.files;
-	console.log(image.length);
-	console.log(req.fileValidationError);
+	console.log(`image length = ${image.length}, fileValidationError = ${req.fileValidationError}`);
 	console.log(image[0]);
-	const path = image.map(img => img.path);
-	console.log(`path = ${path}`);
+	const path = image.map(img => img.location);
 	if(req.fileValidationError){//파일이 크거나 형식이 다를때
 		return res.status(400).send({message: req.fileValidationError});
 	}
 	if(image.length < 1){//이미지가 없을때 
 		return res.status(400).send(util.fail(400, "이미지가 없습니다"));
 	}
-		const result = await boardRepository.imageUpload(boardId, image )
-		return res.status(200).send(util.success(200, "업로드를 완료했습니다", path));
+		const imageId = await boardRepository.imageUpload(boardId, image )
+		return res.status(200).send(util.success(200, "업로드를 완료했습니다", { imageId: imageId, path: path}));
+}
+
+export async function deleteImage(req, res){
+	const id = req.params.id;
+	const deleteId = await boardRepository.findByImageId(id);
+	console.log(deleteId);
+
+	if(!deleteId) //삭제할 이미지가 없다면
+		return res.status(404).json({message: '삭제할 사진이 없습니다'});
+	s3.deleteObject({
+		Bucket: 'together42',
+		Key: deleteId.fileKey
+	}, function(err, data){
+		if(err)
+			console.log(err);
+		console.log(data);
+	});
+	await boardRepository.deleteImage(id);
+	res.sendStatus(204);
 }
 
 const util = {

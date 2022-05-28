@@ -1,12 +1,20 @@
 import express from 'express';
 import multer from 'multer';
+import multerS3 from 'multer-s3';
+//import aws from 'aws-sdk';
+import path from 'path';
 import 'express-async-errors';
 import { body } from 'express-validator';
 import { validate } from '../middleware/validator.js'
 import { isAuth } from '../middleware/auth.js';
 import * as boardController from '../controller/board.controller.js';
+import { s3 } from '../s3.js';
 
+const __dirname = path.resolve();
 const router = express.Router();
+//aws.config.loadFromPath(__dirname + '/awsconfig.json');
+
+//const s3 = new aws.S3();
 const storage = multer.diskStorage({
 	destination: (req, file, cb) => {
 		cb(null, "./uploads/");
@@ -35,13 +43,29 @@ const fileFilter = (req, file, cb) => {
     }
 }
 
-const upload = multer({ 
+const upload2 = multer({ 
 	storage: storage,
 	fileFilter: fileFilter,
 	limits: {
 		fileSize: 10 * 1024 * 1024 
 	},	
 });
+
+const upload = multer({ 
+	storage: multerS3({
+		s3: s3,
+		bucket: 'together42',
+		acl: 'public-read',
+		key: function(req, file, cb){
+			cb(null, `uploads/${Date.now()}_${file.originalname}`);
+		}
+	}),
+	fileFilter:fileFilter,
+	limits: {
+		fileSize: 10 * 1024 * 1024
+	}
+
+},'NONE');
 
 ////게시글 전체조회
 router.get('/',boardController.getBoardList);
@@ -70,5 +94,7 @@ router.delete('/comment/:id', isAuth, boardController.deleteComment);
 //사진 업로드
 router.post('/upload', upload.array("image",8), fileSizeLimitErrorHandler, boardController.upload);
 
+//사진 삭제
+router.delete('/image/remove/:id', boardController.deleteImage);
 
 export default router;

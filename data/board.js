@@ -151,13 +151,13 @@ export async function findByCommentId(id) {
 
 export async function imageUpload(boardId, images) {
 	const values = images.map(image => {
-		return [boardId, `${config.serverUrl.serverUrl}${image.path}`, image.originalname, image.mimetype, image.size]
+		return [boardId, image.location, image.originalname, image.mimetype, image.size, image.key]
 	})
-	console.log(values);
+	console.log(`value : ${values}`);
 	return db
-	.query('INSERT INTO image_info (boardNum, filePath, fileName, fileType, fileSize) VALUES ?',
+	.query('INSERT INTO image_info (boardNum, filePath, fileName, fileType, fileSize, fileKey) VALUES ?',
 	[values])
-	.then((result) => result[0]);
+	.then((result) => result[0].insertId);
 }
 
 export async function getImages(boardId){
@@ -167,4 +167,14 @@ export async function getImages(boardId){
 		SELECT id as imageId, boardNum as boardId, filePath FROM image_info WHERE boardNum = ?
 			`,[boardId])
 	.then((result)=>result[0]);
+}
+
+export async function findByImageId(id) {
+	return db
+	.execute('SELECT * FROM image_info WHERE id=?',[id])
+	.then((result) => result[0][0]);
+}
+
+export async function deleteImage(id) {
+	return db.execute('DELETE FROM image_info WHERE id=?',[id]);
 }
