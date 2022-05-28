@@ -29,8 +29,8 @@ app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 app.use(cors({
 	origin: [
-	  'http://localhost:4242',
-	  'https://together42.github.io/frontend/',
+	  'http://localhost:3050',
+	  'https://together42.github.io/frontend',
 	],
 	credentials: true,
   }));
