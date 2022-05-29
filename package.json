@@ -36,7 +36,10 @@
     "multer-s3": "^2.10.0",
     "mysql2": "^2.3.3",
     "nodemon": "^2.0.15",
+    "swagger-jsdoc": "^6.2.1",
+    "swagger-ui-express": "^4.4.0",
     "winston": "^3.7.2",
-    "winston-daily-rotate-file": "^4.6.1"
+    "winston-daily-rotate-file": "^4.6.1",
+    "yamljs": "^0.3.0"
   }
 }

@@ -9,6 +9,9 @@ import togetherRouter from './routes/together.js';
 import boardRouter from './routes/board.js';
 import { stream } from './config/winston.js';
 import https from 'https';
+import yaml from 'yamljs';
+import swaggerUI from 'swagger-ui-express';
+
 // express configuration
 const app = express();
 const __dirname = path.resolve();
@@ -24,6 +27,9 @@ if(config.hostname.hostname === 'ec2')
 		ca: ca
 	};
 }
+
+const openAPIDocument = yaml.load('./api/openapi.yaml');
+
 //parse JSON and url-encoded query
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
@@ -32,9 +38,12 @@ app.use(cors({
 	  'http://localhost:3050',
 	  'https://together42.github.io',
 	],
-	credentials: true,
+	credentials: true,//allow the Access-Control-Allow-Credentials
   }));
 app.use(morgan('combined', {stream}));
+
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(openAPIDocument));
+
 app.use('/uploads', express.static(__dirname + '/uploads'));
 app.use('/api/auth', authRouter);
 app.use('/api/together', togetherRouter);
