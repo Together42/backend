@@ -5,6 +5,11 @@ export async function createPost(req, res) {
 	const { title, contents, eventId, attendMembers } = req.body;
 	console.log(attendMembers);
 	const writerId = req.userId;
+	
+	const check = await boardRepository.checkAttendMember(attendMembers);//참석유저검증
+	if(check.length !== attendMembers.length)
+		return res.status(400).json({message: "없는 유저입니다"});
+
 	const post = await boardRepository.createPost({
 		writerId,
 		title,
@@ -12,6 +17,7 @@ export async function createPost(req, res) {
 		eventId
 	});
 	console.log(post);
+
 	await boardRepository.createAttendMember(attendMembers, post);
 	res.status(201).json({post});
 }

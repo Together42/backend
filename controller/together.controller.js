@@ -105,11 +105,12 @@ export async function matching(req, res) {
 	if(create.createdId !== req.userId)
 		return res.status(400).json({message: '권한이 없습니다'});
 	const check = await togetherRepository.findAttendByEventId(eventId)
-	if(check === undefined || check[0] === undefined || check[0].teamId !== null) //참석자가 없거나, 이미 매칭이 된경우
+	if(check === undefined || check[0] === undefined || check[0].teamId !== null)//참석자가 없거나, 이미 매칭이 된경우
 		return res.status(400).json({message: '참석자가 없거나 이미 매칭됐습니다'});
-
 	if(check.length < teamNum) //유저보다 팀 개수가 많을때
 		return res.status(400).json({message: '팀 개수가 너무 많습니다'});
+	if(teamNum === 0 || teamNum === '0') //유저보다 팀 개수가 많을때
+		return res.status(400).json({message: '팀 개수 0개 입니다'});
 	shuffle(check);//팀 셔플완료  이제 팀개수대로 팀 나눠야함
 	await togetherRepository.chagneEvent(eventId);
 	for(let i = 0; i < check.length; i++)
