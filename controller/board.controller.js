@@ -56,6 +56,7 @@ export async function updatePost (req, res) {
 	const updated = await boardRepository.updatePost({id, title, contents, eventId, attendMembers});
 	res.status(200).json({updated});
 }
+
 export async function getBoardList(req, res){
 	const eventId = req.query.eventId;
 	console.log(`eventId = ${eventId}`);
@@ -138,8 +139,10 @@ export async function upload(req, res, err) {
 	if(image.length < 1){//이미지가 없을때 
 		return res.status(400).send(util.fail(400, "이미지가 없습니다"));
 	}
-		const imageId = await boardRepository.imageUpload(boardId, image )
-		return res.status(200).send(util.success(200, "업로드를 완료했습니다", { imageId: imageId, path: path}));
+	const imageId = await boardRepository.imageUpload(boardId, image )
+	if(imageId.errno)
+		return res.status(400).send({message: "잘못된 boardId입니다"});
+	return res.status(200).send(util.success(200, "업로드를 완료했습니다", { imageId: imageId, path: path}));
 }
 
 export async function deleteImage(req, res){

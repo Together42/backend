@@ -166,7 +166,8 @@ export async function imageUpload(boardId, images) {
 	return db
 	.query('INSERT INTO image_info (boardNum, filePath, fileName, fileType, fileSize, fileKey) VALUES ?',
 	[values])
-	.then((result) => result[0].insertId);
+	.then((result) => result[0].insertId)
+	.catch((error) => error);
 }
 
 export async function getImages(boardId){
