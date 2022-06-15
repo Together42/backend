@@ -9,7 +9,8 @@ export async function createPost(req, res) {
 	const check = await boardRepository.checkAttendMember(attendMembers);//참석유저검증
 	if(check.length !== attendMembers.length)
 		return res.status(400).json({message: "없는 유저입니다"});
-
+	if(title == '')
+		return res.status(400).json({message: '제목을 넣어주세요'});
 	const post = await boardRepository.createPost({
 		writerId,
 		title,
