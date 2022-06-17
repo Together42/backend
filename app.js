@@ -31,6 +31,7 @@ app.use(cors({
 	origin: [
 	  'http://localhost:3050',
 	  'http://10.18.245.57:3050',
+	  'http://10.19.230.111:3050',
 	  'https://together42.github.io',
 	],
 	credentials: true,
