@@ -5,7 +5,7 @@ import * as userRepository from '../data/auth.js';
 import { config } from '../config.js';
 
 export async function signUp(req, res) {
-	const { intraId, password, email, url } = req.body;
+	const { intraId, password, email, profile } = req.body;
 	const user = await userRepository.findByintraId(intraId);
 	console.log(user);
 	if(user){ //이미 존재하는 사용자라면
@@ -21,7 +21,7 @@ export async function signUp(req, res) {
 		intraId,
 		password: hashed,
 		email,
-		url,
+		profile,
 	});
 	const token = createJwtToken(userId);
 	console.log(`signUp: ${intraId},  time : ${new Date()}`);
