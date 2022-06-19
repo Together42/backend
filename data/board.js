@@ -58,7 +58,7 @@ export async function getBoardList(eventId){
 		board.createdAt,
 		board.updatedAt,
 		count(board_comment.id) as commentNum,
-		us.url,
+		us.profile,
 		(SELECT filePath FROM image_info WHERE boardNum = board.id LIMIT 1) as filePath
 	FROM board
 	LEFT JOIN users as us ON board.writerId = us.id
@@ -76,7 +76,7 @@ export async function getBoardList(eventId){
 			board.createdAt,
 			board.updatedAt,
 			count(board_comment.id) as commentNum,
-			us.url,
+			us.profile,
 			(SELECT filePath FROM image_info WHERE boardNum = board.id LIMIT 1) as filePath
 		FROM board
 		LEFT JOIN users as us ON board.writerId = us.id
@@ -100,7 +100,7 @@ export async function getBoard(boardId){
 			board.contents,
 			board.createdAt,
 			board.updatedAt,
-			us.url
+			us.profile
 		FROM board
 		LEFT JOIN users as us ON board.writerId = us.id
 		WHERE board.id = ?
@@ -111,7 +111,7 @@ export async function getBoard(boardId){
 export async function getAttendMembers(boardId){
 	return db
 	.query(`	
-		SELECT users.intraId, users.url FROM board_attend_members as bam JOIN users ON users.intraId=bam.intraId WHERE boardId = ?
+		SELECT users.intraId, users.profile FROM board_attend_members as bam JOIN users ON users.intraId=bam.intraId WHERE boardId = ?
 			`,[boardId])
 	.then((result)=>result[0]);
 }
