@@ -58,8 +58,7 @@ export async function getBoardList(eventId){
 		board.createdAt,
 		board.updatedAt,
 		count(board_comment.id) as commentNum,
-		us.profile,
-		(SELECT filePath FROM image_info WHERE boardNum = board.id LIMIT 1) as filePath
+		us.profile
 	FROM board
 	LEFT JOIN users as us ON board.writerId = us.id
 	LEFT JOIN board_comment ON board.id=board_comment.boardId
@@ -76,8 +75,7 @@ export async function getBoardList(eventId){
 			board.createdAt,
 			board.updatedAt,
 			count(board_comment.id) as commentNum,
-			us.profile,
-			(SELECT filePath FROM image_info WHERE boardNum = board.id LIMIT 1) as filePath
+			us.profile
 		FROM board
 		LEFT JOIN users as us ON board.writerId = us.id
 		LEFT JOIN board_comment ON board.id=board_comment.boardId
@@ -171,7 +169,7 @@ export async function imageUpload(boardId, images) {
 }
 
 export async function getImages(boardId){
-	console.log(`getImage = ${boardId}`);
+	//console.log(`getImage = ${boardId}`);
 	return db
 	.query(`	
 		SELECT id as imageId, boardNum as boardId, filePath FROM image_info WHERE boardNum = ?
