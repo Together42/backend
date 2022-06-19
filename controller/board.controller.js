@@ -60,10 +60,19 @@ export async function updatePost (req, res) {
 
 export async function getBoardList(req, res){
 	const eventId = req.query.eventId;
+	let boardList;
 	console.log(`eventId = ${eventId}`);
-	const boardList = await boardRepository.getBoardList(eventId);
-	console.log(boardList);
-	//const attendList = await boardRepository.getAttendList();
+	try{
+		const list = await boardRepository.getBoardList(eventId);
+		boardList = await Promise.all(
+			list.map(async board => {
+				const imageList = await boardRepository.getImages(board.boardId)
+				board.images = imageList;
+				return board;
+		}));
+	} catch(error){
+		return res.status(400).json({message: '게시판 조회 실패'});
+	}
 	res.status(200).json({boardList});
 }
 
