@@ -31,7 +31,7 @@ export async function deletePost(req, res){
 
 	if(!deleteId) //삭제할 글이 없다면
 		return res.status(404).json({message: '삭제할 게시글이 없습니다'});
-	if(deleteId.writerId !== req.userId)//권한
+	if(deleteId.writerId !== req.userId && !req.isAdmin)//권한
 		return res.status(401).json({message: '권한이 없습니다'});
 
 	await boardRepository.deletePost(id);
@@ -128,7 +128,7 @@ export async function deleteComment(req, res){
 
 	if(!deleteId) //삭제할 댓글이 없다면
 		return res.status(404).json({message: '삭제할 댓글이 없습니다'});
-	if(deleteId.writerId !== req.userId)//권한
+	if(deleteId.writerId !== req.userId && !req.isAdmin)//권한
 		return res.status(401).json({message: '권한이 없습니다'});
 
 	await boardRepository.deleteComment(id);

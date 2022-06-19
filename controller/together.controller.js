@@ -26,7 +26,7 @@ export async function deleteEvent(req, res){
 		return res.status(404).json({message: '이벤트가 없습니다'});
 	//권한
 	console.log(deleteId);
-	if(deleteId.createdId !== createUser)
+	if(deleteId.createdId !== createUser && !req.isAdmin)
 		return res.status(401).json({message: '권한이 없습니다'});
 
 	await togetherRepository.deleteEvent(id);
@@ -102,7 +102,7 @@ export async function getTeam(req, res){
 export async function matching(req, res) {
 	const {eventId, teamNum } = req.body;
 	const create = await togetherRepository.findCreateUser(eventId);
-	if(create.createdId !== req.userId)
+	if(create.createdId !== req.userId && !req.isAdmin)
 		return res.status(400).json({message: '권한이 없습니다'});
 	const check = await togetherRepository.findAttendByEventId(eventId)
 	if(check === undefined || check[0] === undefined || check[0].teamId !== null)//참석자가 없거나, 이미 매칭이 된경우
