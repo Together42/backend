@@ -38,10 +38,10 @@ export async function login(req, res) {
 	if(!isValidPassword){//비밀먼호 검증
 		return res.status(401).json({message: '아이디와 비밀번호가 틀렸습니다'});
 	}
-	const url = user.url;
+	const profile = user.profile;
 	const token = createJwtToken(user.intraId);
 	console.log(`login id : ${intraId},  time : ${new Date()}`);
-	res.status(200).json({token, intraId, url });
+	res.status(200).json({token, intraId, profile });
 	}
 
 function createJwtToken(id) {

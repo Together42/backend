@@ -67,7 +67,7 @@ export async function chagneEvent(eventId) {
 export async function getMatchingList(id)
 {
 	return db
-	.execute('SELECT us.intraId, us.url, at.teamId from attendance_info as at JOIN users as us ON at.userId=us.id WHERE at.eventId=? ORDER BY at.teamId',
+	.execute('SELECT us.intraId, us.profile, at.teamId from attendance_info as at JOIN users as us ON at.userId=us.id WHERE at.eventId=? ORDER BY at.teamId',
 	[id]
 	)
 	.then((result) => result[0]);
