@@ -2,7 +2,82 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import {} from 'express-async-errors';
 import * as userRepository from '../data/auth.js';
-import { config } from '../config.js';
+import { config, smtpTransport } from '../config.js';
+import nodemailer from 'nodemailer';
+
+let generateRandom = function(min, max) {
+	let ranNum = Math.floor(Math.random() * (max - min+1)) + min;
+	return ranNum;
+}
+
+export async function cert(req, res){
+	console.log(req);
+	const CEA = req.body.CEA;
+	//console.log(CEA);
+	const hashNum = req.cookies.hasnNum;
+
+	try{
+		if(bcrypt.compareSync(CEA, hashNum)){
+			res.send({result : 'success'});
+		}else{
+			res.send({ result: 'fail'});
+		}
+	}catch(err){
+		res.send({result: 'fail'});
+		console.error(err);
+		//next(err);
+	}
+}
+
+export async function mailAuthentication(req, res){
+	//이메일 보내기
+	const { sendEmail } = req.body;
+	console.log(sendEmail);
+
+	const number = generateRandom(111111,999999)
+	console.log(number);
+	console.log(config.bcrypt.saltRounds);
+
+	const hashNum = await bcrypt.hash(toString(number), config.bcrypt.saltRounds);
+	console.log(hashNum);
+
+	res.cookie('hashNum', hashNum, {
+		maxAge: 30000
+	});
+
+	const mailOptions = {
+		from: "dev_tkim@naver.com",
+		to: sendEmail,
+		subject: "[친바]인증 관련 이메일 입니다",
+		text: "인증번호는 " + number + " 입니다.",
+		html: "<div style='font-family: 'Apple SD Gothic Neo', 'sans-serif' !important; width: 540px; height: 600px; border-top: 4px solid #348fe2; margin: 100px auto; padding: 30px 0; box-sizing: border-box;'>"+
+		"<h1 style='margin: 0; padding: 0 5px; font-size: 28px; font-weight: 400;'>"+
+		"<span style='font-size: 15px; margin: 0 0 10px 3px;'>Together42</span><br />"+
+		"<span style='color: #348fe2;'>인증번호</span> 안내입니다."+
+		"</h1>"+
+		"<p style='font-size: 16px; line-height: 26px; margin-top: 50px; padding: 0 5px;'>"+
+		"안녕하세요.<br />"+
+		"요청하신 인증번호가 생성되었습니다.<br />"+
+		"감사합니다."+
+		"</p>"+
+		
+		"<p style='font-size: 16px; margin: 40px 5px 20px; line-height: 28px;'>"+
+		"인증번호: <br />"+
+		"<span style='font-size: 24px;'>"+number+"</span>"+
+		"</p>"+
+		"<div style='border-top: 1px solid #DDD; padding: 5px;'>"+
+		"</div>"+
+		"</div>",
+	};
+	await smtpTransport.sendMail(mailOptions, (err, res) => { // 메일을 보내는 코드
+		if (err) {
+			console.log(err);
+			res.status(400).json({ data: "err" });
+		}
+		smtpTransport.close();
+	});
+	res.status(200).send({ data: "success" });
+}
 
 export async function signUp(req, res) {
 	const { intraId, password, email, profile } = req.body;
