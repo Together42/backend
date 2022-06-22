@@ -4,28 +4,27 @@ import {} from 'express-async-errors';
 import * as userRepository from '../data/auth.js';
 import { config, smtpTransport } from '../config.js';
 import nodemailer from 'nodemailer';
+import urlencoded from 'urlencode';
 
-let generateRandom = function(min, max) {
-	let ranNum = Math.floor(Math.random() * (max - min+1)) + min;
-	return ranNum;
+const generateRandom = function(min, max) {
+	const ranNum = Math.floor(Math.random() * (max - min+1)) + min;
+	return ranNum.toString();
 }
 
 export async function cert(req, res){
-	console.log(req);
 	const CEA = req.body.CEA;
-	//console.log(CEA);
-	const hashNum = req.cookies.hasnNum;
+	const hashNum = urlencoded.decode(req.headers.cookie);
+	const compare = await bcrypt.compare(CEA, hashNum);
 
 	try{
-		if(bcrypt.compareSync(CEA, hashNum)){
-			res.send({result : 'success'});
+		if(compare){
+			res.status(200).send({result : 'success'});
 		}else{
-			res.send({ result: 'fail'});
+			res.status(400).send({ result: 'fail'});
 		}
 	}catch(err){
-		res.send({result: 'fail'});
+		res.status(400).send({result: 'fail'});
 		console.error(err);
-		//next(err);
 	}
 }
 
@@ -34,14 +33,10 @@ export async function mailAuthentication(req, res){
 	const { sendEmail } = req.body;
 	console.log(sendEmail);
 
-	const number = generateRandom(111111,999999)
-	console.log(number);
-	console.log(config.bcrypt.saltRounds);
-
-	const hashNum = await bcrypt.hash(toString(number), config.bcrypt.saltRounds);
+	let number = generateRandom(111111,999999);
+	const hashNum = await bcrypt.hash(number, config.bcrypt.saltRounds);
 	console.log(hashNum);
-
-	res.cookie('hashNum', hashNum, {
+	res.cookie('hashNum', hashNum.toString(), {
 		maxAge: 30000
 	});
 
