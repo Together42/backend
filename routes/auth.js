@@ -40,4 +40,7 @@ router.post('/login', authController.login);
 //GET /me
 router.get('/me', isAuth,  authController.me);
 
+router.post('/mail', authController.mailAuthentication);
+router.post('/cert', authController.cert);
+
 export default router;
