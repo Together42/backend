@@ -32,14 +32,17 @@ const fileSizeLimitErrorHandler = (err, req, res, next) => {
 	}
   }
 
+function isType(file)
+{
+	return (file.mimetype == 'image/jpeg' || file.mimetype == 'image/png'|| file.mimetype == 'image/jpg' || file.mimetype == 'image/svg+xml' || file.mimetype == 'image/gif' || file.mimetype == 'video/mp4')
+}
 const fileFilter = (req, file, cb) => {
     // mime type 체크하여 이미지만 필터링
-
-    if (file.mimetype == 'image/jpeg' || file.mimetype == 'image/png'|| file.mimetype == 'image/jpg' || file.mimetype == 'image/svg+xml' || file.mimetype == 'image/gif') {
+    if (isType(file)) {
         req.fileValidationError = null;
 		cb(null, true);
     } else {
-		req.fileValidationError = "jpeg, jpg, png, svg, gif 파일만 업로드 가능합니다.";
+		req.fileValidationError = "jpeg, jpg, png, svg, gif, mp4 파일만 업로드 가능합니다.";
         cb(null, false);
     }
 }
