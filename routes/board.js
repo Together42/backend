@@ -34,11 +34,12 @@ const fileSizeLimitErrorHandler = (err, req, res, next) => {
 
 const fileFilter = (req, file, cb) => {
     // mime type 체크하여 이미지만 필터링
-    if (file.mimetype == 'image/jpeg' || file.mimetype == 'image/png'|| file.mimetype == 'image/jpg' || file.mimetype == 'image/svg+xml') {
+
+    if (file.mimetype == 'image/jpeg' || file.mimetype == 'image/png'|| file.mimetype == 'image/jpg' || file.mimetype == 'image/svg+xml' || file.mimetype == 'image/gif') {
         req.fileValidationError = null;
 		cb(null, true);
     } else {
-		req.fileValidationError = "jpeg, jpg, png, svg 파일만 업로드 가능합니다.";
+		req.fileValidationError = "jpeg, jpg, png, svg, gif 파일만 업로드 가능합니다.";
         cb(null, false);
     }
 }
