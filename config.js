@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import nodemailer from 'nodemailer';
 dotenv.config();
 
 function required(key, defaultValue = undefined) {
@@ -8,6 +9,7 @@ function required(key, defaultValue = undefined) {
 	}
 	return value;
 }
+
 
 export const config = {
 	jwt: {
@@ -36,5 +38,22 @@ export const config = {
 		access_key_id: required('ACCESS_KEY_ID'),
 		secret_access_key: required('SECRET_ACCESS_KEY'),
 		region: required('REGION'),
+	},
+	naver: {
+		id: required('NAVER_ID'),
+		pw: required('NAVER_PW')
 	}
 };
+
+export const smtpTransport = nodemailer.createTransport({
+	service: "Naver",
+	host: "smtp.naver.com",
+	port: 587,
+	auth: {
+		user: config.naver.id,
+		pass: config.naver.pw
+	},
+	tls: {
+		rejectUnauthorized: false
+	}
+});
