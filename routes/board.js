@@ -26,7 +26,7 @@ const storage = multer.diskStorage({
 
 const fileSizeLimitErrorHandler = (err, req, res, next) => {
 	if (err) {
-		res.status(400).send({message: "파일의 크기가 너무 큽니다"});
+		res.status(400).send({message: "파일의 최대 크기는 50MB입니다"});
 	} else {
 		next()
 	}
