@@ -28,32 +28,28 @@ const fileSizeLimitErrorHandler = (err, req, res, next) => {
 	if (err) {
 		res.status(400).send({message: "파일의 크기가 너무 큽니다"});
 	} else {
-	  next()
+		next()
 	}
-  }
+}
 
 function isType(file)
 {
-	return (file.mimetype == 'image/jpeg' || file.mimetype == 'image/png'|| file.mimetype == 'image/jpg' || file.mimetype == 'image/svg+xml' || file.mimetype == 'image/gif' || file.mimetype == 'video/mp4')
+	return (file.mimetype == 'image/jpeg' || file.mimetype == 'image/png'|| 
+	file.mimetype == 'image/gif' || file.mimetype == 'video/mp4' || 
+	file.mimetype == 'image/jpg' || file.mimetype == 'image/svg+xml' || 
+	file.mimetype == 'video/quicktime')
 }
+
 const fileFilter = (req, file, cb) => {
     // mime type 체크하여 이미지만 필터링
     if (isType(file)) {
         req.fileValidationError = null;
 		cb(null, true);
     } else {
-		req.fileValidationError = "jpeg, jpg, png, svg, gif, mp4 파일만 업로드 가능합니다.";
+		req.fileValidationError = "jpeg, jpg, png, svg, gif, mp4, mov 파일만 업로드 가능합니다.";
         cb(null, false);
     }
 }
-
-const upload2 = multer({ 
-	storage: storage,
-	fileFilter: fileFilter,
-	limits: {
-		fileSize: 10 * 1024 * 1024 
-	},	
-});
 
 const upload = multer({ 
 	storage: multerS3({
@@ -66,12 +62,12 @@ const upload = multer({
 	}),
 	fileFilter:fileFilter,
 	limits: {
-		fileSize: 10 * 1024 * 1024
+		fileSize: 50 * 1024 * 1024 //50mb
 	}
 
 },'NONE');
 
-////게시글 전체조회
+//게시글 전체조회
 router.get('/',boardController.getBoardList);
 
 //게시글 생성
@@ -83,7 +79,7 @@ router.delete('/:id', isAuth ,boardController.deletePost);
 //게시글 수정
 router.put('/:id', isAuth ,boardController.updatePost);
 
-////게시글 상세조회
+//게시글 상세조회
 router.get('/:id',boardController.getBoardDetail);
 
 //댓글 생성
