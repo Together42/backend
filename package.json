@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/Together42/Together#readme",
   "dependencies": {
+    "@slack/web-api": "^6.7.2",
     "aws-sdk": "^2.1144.0",
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
