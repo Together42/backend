@@ -7,6 +7,7 @@ import { config } from './config.js';
 import authRouter from './routes/auth.js';
 import togetherRouter from './routes/together.js';
 import boardRouter from './routes/board.js';
+import slackRouter from './routes/slack.js';
 import { stream } from './config/winston.js';
 import https from 'https';
 // express configuration
@@ -37,10 +38,10 @@ app.use(cors({
 	credentials: true,
   }));
 app.use(morgan('combined', {stream}));
-app.use('/uploads', express.static(__dirname + '/uploads'));
 app.use('/api/auth', authRouter);
 app.use('/api/together', togetherRouter);
 app.use('/api/board', boardRouter);
+app.use('/api/slack', slackRouter);
 
 if(config.hostname.hostname === 'ec2')
 {

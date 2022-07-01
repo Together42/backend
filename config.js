@@ -42,6 +42,11 @@ export const config = {
 	naver: {
 		id: required('NAVER_ID'),
 		pw: required('NAVER_PW')
+	},
+	slack: {
+		jip : required('SLACK_JIP'),
+		tkim : required('SLACK_TKIM'),
+		slack_token : required('BOT_USER_OAUTH_ACCESS_TOKEN')
 	}
 };
 

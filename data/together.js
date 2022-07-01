@@ -13,6 +13,12 @@ export async function findByEventId(id) {
 	.then((result) => result[0][0]);
 }
 
+export async function getByEventTitle(id) {
+	return db
+	.execute('SELECT title FROM event_info WHERE id=?',[id])
+	.then((result) => result[0][0]);
+}
+
 export async function deleteEvent(id) {
 	return db.execute('DELETE FROM event_info WHERE id=?',[id]);
 }

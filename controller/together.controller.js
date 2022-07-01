@@ -1,5 +1,7 @@
 import * as togetherRepository from '../data/together.js';
 import * as userRepository from '../data/auth.js';
+import {publishMessage} from './slack.controller.js';
+import {config} from '../config.js';
 
 //이벤트 생성
 export async function createEvent(req, res) {
@@ -12,6 +14,8 @@ export async function createEvent(req, res) {
 		description,
 		createdId,
 	});
+	let str = `:aaw_yeah: 친바 공지 !! :aaw_yeah:\n\n새로운 이벤트가 생성되었습니다. 서둘러 참석해주세요`
+	await publishMessage(config.slack.tkim, str);
 	res.status(201).json({event});
 }
 
@@ -104,6 +108,7 @@ export async function matching(req, res) {
 	const create = await togetherRepository.findCreateUser(eventId);
 	if(create.createdId !== req.userId)
 		return res.status(400).json({message: '권한이 없습니다'});
+	const eventTitle = await togetherRepository.getByEventTitle(eventId);
 	const check = await togetherRepository.findAttendByEventId(eventId)
 	if(check === undefined || check[0] === undefined || check[0].teamId !== null)//참석자가 없거나, 이미 매칭이 된경우
 		return res.status(400).json({message: '참석자가 없거나 이미 매칭됐습니다'});
@@ -119,7 +124,19 @@ export async function matching(req, res) {
 		await togetherRepository.createTeam(teamId, check[i].id);
 	}
 	const teamList = await getTeamList(eventId);
+	console.log(eventTitle);
+	let str = `:aaw_yeah: 친바 공지 !! :aaw_yeah:\n\n[${eventTitle.title}] 팀 매칭이 완료되었습니다.\n서둘러 자신의 팀원들과 연락해보세요! :ultra_fast_parrot:\n\n`;
+	for (let key in teamList) {
+  		const value = teamList[key]
+		const test = value.map(team => team.intraId)
+		str += key;
+		str += '팀 : ';
+		str += test.join(", ");
+		str += '\n';
+	}
 
+	console.log(`문자열 출력 ${str}`);
+	await publishMessage(config.slack.jip, str);
 	res.status(201).json({eventId, teamList});
 }
 
