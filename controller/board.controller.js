@@ -1,4 +1,5 @@
 import * as boardRepository from '../data/board.js';
+import {publishMessage} from './slack.controller.js';
 import {s3} from '../s3.js';
 //게시글 생성
 export async function createPost(req, res) {
@@ -17,6 +18,12 @@ export async function createPost(req, res) {
 		contents,
 		eventId
 	});
+	let str = `:aaw_yeah: 친바 공지 !! :aaw_yeah:\n\n${title} 게시글이 생성되었습니다.`
+
+	check.map(async (member)=>{//슬랙봇 메시지 보내기
+		if(member.slackId)
+			await publishMessage(member.slackId, str);
+	})
 	console.log(post);
 
 	await boardRepository.createAttendMember(attendMembers, post);
