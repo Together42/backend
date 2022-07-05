@@ -142,7 +142,7 @@ export async function checkAttendMember(members)
 {
 	const values = members.map(member => {
 		return [`"${member.intraId}"`]});
-	const sql = `SELECT intraId FROM users WHERE intraId IN (${values.toString()})`
+	const sql = `SELECT intraId, slackId FROM users WHERE intraId IN (${values.toString()})`
 	return db
 	.query(sql)
 	.then((result)=>result[0]);
