@@ -19,10 +19,10 @@ export async function findByEmail(email) {
 }
 
 export async function createUser(user) {
-	const {intraId, password, email, url} = user;
+	const {intraId, password, email, profile} = user;
 	return db
-	.execute('INSERT INTO users (intraId, password, email, url) VALUES (?,?,?,?)',
-	[intraId, password, email, url]
+	.execute('INSERT INTO users (intraId, password, email, profile) VALUES (?,?,?,?)',
+	[intraId, password, email, profile]
 	)
 	.then((result) => result[0].insertId);
 }
