@@ -3,7 +3,6 @@ import bcrypt from 'bcrypt';
 import {} from 'express-async-errors';
 import * as userRepository from '../data/auth.js';
 import { config, smtpTransport } from '../config.js';
-import nodemailer from 'nodemailer';
 import urlencoded from 'urlencode';
 
 const generateRandom = function(min, max) {
