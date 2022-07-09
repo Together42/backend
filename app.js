@@ -2,7 +2,10 @@ import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 import * as fs  from 'fs';
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
 import router from './routes/index.js';
+import swaggerOptions from './swagger/swagger.js';
 import { config } from './config.js';
 import { stream } from './config/winston.js';
 import https from 'https';
@@ -33,6 +36,14 @@ app.use(cors({
 	credentials: true,
   }));
 app.use(morgan('combined', {stream}));
+
+//Swagger 연결
+const specs = swaggerJSDoc(swaggerOptions);
+app.use(
+	'/swagger',
+	swaggerUi.serve,
+	swaggerUi.setup(specs, { explorer: true }),
+  );
 
 //route
 app.use('/api', router);

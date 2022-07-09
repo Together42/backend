@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import authRouter from './auth.js';
-import togetherRouter from './together.js';
-import boardRouter from './board.js';
-import slackRouter from './slack.js';
+import authRouter from './auth.routes.js';
+import togetherRouter from './together.routes.js';
+import boardRouter from './board.routes.js';
+import slackRouter from './slack.routes.js';
 
 const router = Router();
 
