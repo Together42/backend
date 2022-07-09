@@ -1,57 +1,13 @@
 import express from 'express';
-import multer from 'multer';
-import multerS3 from 'multer-s3';
 import 'express-async-errors';
 import { body } from 'express-validator';
 import { validate } from '../middleware/validator.js'
 import { isAuth } from '../middleware/auth.js';
 import * as boardController from '../controller/board.controller.js';
-import { s3 } from '../s3.js';
+import { fileSizeLimitErrorHandler, upload} from '../middleware/uploads.js';
 
 const router = express.Router();
 
-const fileSizeLimitErrorHandler = (err, req, res, next) => {
-	if (err) {
-		res.status(400).send({message: "파일의 최대 크기는 50MB입니다"});
-	} else {
-		next()
-	}
-}
-
-function isType(file)
-{
-	return (file.mimetype == 'image/jpeg' || file.mimetype == 'image/png'|| 
-	file.mimetype == 'image/gif' || file.mimetype == 'video/mp4' || 
-	file.mimetype == 'image/jpg' || file.mimetype == 'image/svg+xml' || 
-	file.mimetype == 'video/quicktime')
-}
-
-const fileFilter = (req, file, cb) => {
-    // mime type 체크하여 이미지만 필터링
-    if (isType(file)) {
-        req.fileValidationError = null;
-		cb(null, true);
-    } else {
-		req.fileValidationError = "jpeg, jpg, png, svg, gif, mp4, mov 파일만 업로드 가능합니다.";
-        cb(null, false);
-    }
-}
-
-const upload = multer({ 
-	storage: multerS3({
-		s3: s3,
-		bucket: 'together42',
-		acl: 'public-read',
-		key: function(req, file, cb){
-			cb(null, `uploads/${Date.now()}_${file.originalname}`);
-		}
-	}),
-	fileFilter:fileFilter,
-	limits: {
-		fileSize: 50 * 1024 * 1024 //50mb
-	}
-
-},'NONE');
 
 //게시글 전체조회
 router.get('/',boardController.getBoardList);
@@ -69,15 +25,15 @@ router.put('/:id', isAuth ,boardController.updatePost);
 
   /**
    * @openapi
-   * /api/books/info/{id}:
+   * /api/board/{id}:
    *    get:
-   *      description: 책 한 종류의 정보를 가져온다.
+   *      description: 게시글 조회(상세)
    *      tags:
-   *      - books
+   *      - board
    *      parameters:
    *      - name: id
    *        in: path
-   *        description: 책의 id
+   *        description: 게시글의 id
    *        schema:
    *          type: integer
    *      responses:
@@ -88,80 +44,108 @@ router.put('/:id', isAuth ,boardController.updatePost);
    *              schema:
    *                type: object
    *                properties:
-   *                  id:
-   *                    description: 책의 id
+   *                  boardId:
+   *                    description: 게시글의 id
    *                    type: integer
-   *                    example: 4261
+   *                    example: 131
+   *                  eventId:
+   *                    description: 이벤트의 id
+   *                    type: integer
+   *                    example: 76
    *                  title:
-   *                    description: 제목
+   *                    description: 게시글 제목
    *                    type: string
-   *                    example: 12가지 인생의 법칙
-   *                  author:
-   *                    description: 저자
+   *                    example: 6회 친바 1팀 인증샷!!!
+   *                  intraId:
+   *                    description: 작성자 인트라 id
    *                    type: string
-   *                    example: 조던 B. 피터슨
-   *                  publisher:
-   *                    description: 출판사
+   *                    example: tkim
+   *                  contents:
+   *                    description: 내용
    *                    type: string
-   *                    example: 메이븐
-   *                  image:
-   *                    description: 이미지 주소
+   *                    example: 깐부치킨 갔습니다 \n넘나 맛있는 치킨!
+   *                  createdAt:
+   *                    description: 생성 시간
+   *                    type: date
+   *                    example: 2022-07-07 04:11:31
+   *                  updatedAt:
+   *                    description: 수정 시간
+   *                    type: date
+   *                    example: 2022-07-07 04:11:31
+   *                  profile:
+   *                    description: 프로필
    *                    type: string
-   *                    example: https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F3943658%3Ftimestamp%3D20210706194852
-   *                  category:
-   *                    description: 카테고리
-   *                    type: string
-   *                    example: 프로그래밍
-   *                  publishedAt:
-   *                    description: 출판일자
-   *                    type: string
-   *                    example: 2018년 10월
-   *                  isbn:
-   *                    descriptoin: isbn
-   *                    type: string
-   *                    example: '9791196067694'
-   *                  books:
-   *                    description: 비치된 책들
+   *                    example: https://together42.github.io/frontend/c92880655d4055aafb2e2f8c8437232a.jpg
+   *                  images:
+   *                    description: 게시글 이미지
+   *                    type: array
+   *                    items:
+   *                      type: object
+   *                      properties:
+   *                        imageId:
+   *                          description: 이미지의 id
+   *                          type: integer
+   *                          example: 133
+   *                        boardId:
+   *                          description: 게시글의 id
+   *                          type: integer
+   *                          example: 131
+   *                        filepath:
+   *                          description: 게시글 path
+   *                          type: string
+   *                          example: https://together42.s3.ap-northeast-2.amazonaws.com/uploads/1657167091659_KakaoTalk_Photo_2022-07-07-12-40-23%20001.jpeg
+   *                  attendMembers:
+   *                    description: 태그인원
+   *                    type: array
+   *                    items:
+   *                      type: object
+   *                      properties:
+   *                        intraId:
+   *                          description: 인트라 id
+   *                          type: string
+   *                          example: tkim
+   *                        profile:
+   *                          description: 프로필
+   *                          type: string
+   *                          example: https://together42.github.io/frontend/c92880655d4055aafb2e2f8c8437232a.jpg
+   *                  comments:
+   *                    description: 댓글
    *                    type: array
    *                    items:
    *                      type: object
    *                      properties:
    *                        id:
-   *                          description: 실물 책의 id
+   *                          description: 댓글 id
    *                          type: integer
-   *                          example: 3
-   *                        callSign:
-   *                          description: 청구기호
+   *                          example: 99
+   *                        intraId:
+   *                          description: 인트라 id
    *                          type: string
-   *                          example: h1.18.v1.c1
-   *                        donator:
-   *                          description: 책의 기부자
+   *                          example: kyungsle
+   *                        comments:
+   *                          description: 댓글 내용
    *                          type: string
-   *                          example: seongyle
-   *                        dueDate:
-   *                          description: 반납 예정 일자, 대출가능 시 '-'
+   *                          example: with 옆자리에서 치킨 먹은 현잔, 위, 경슬, 선글
+   *                        updatedAt:
+   *                          description: 수정 시간
    *                          type: date
-   *                          example: 21.08.05
-   *                        isLendable:
-   *                          description: 책의 대출가능여부
-   *                          type: boolean
-   *                          example: 1
+   *                          example: 2022-07-07 06:36:04
    *        '400_case1':
-   *          description: id가 숫자가 아니다.
+   *          description: 게시글이 없습니다
    *          content:
    *            application/json:
    *              schema:
    *                type: json
    *                description: error decription
-   *                example: { errorCode: 300 }
+   *                example: { "message": "게시글이 없습니다" }
    *        '400_case2':
-   *          description: 유효하지않은 infoId 값.
+   *          description: 상세조회 실패
    *          content:
    *            application/json:
    *              schema:
    *                type: json
    *                description: error decription
-   *                example: { errorCode: 304 }
+   *                example: { "message": "상세조회 실패" }
    */
 router.get('/:id',boardController.getBoardDetail);
 
