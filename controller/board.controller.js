@@ -18,7 +18,7 @@ export async function createPost(req, res) {
 		contents,
 		eventId
 	});
-	let str = `:aaw_yeah: 친바 공지 !! :aaw_yeah:\n\n${title} 게시글이 생성되었습니다.`
+	let str = `:aaw_yeah: 친바 공지 !! :aaw_yeah:\n\n${title} 게시글이 생성되었습니다.\nhttps://together42.github.io/frontend/`
 
 	check.map(async (member)=>{//슬랙봇 메시지 보내기
 		if(member.slackId)
