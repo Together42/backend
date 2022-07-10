@@ -8,6 +8,108 @@ const router = express.Router();
 
 
 //게시글 전체조회
+  /**
+   * @openapi
+   * /api/board:
+   *    get:
+   *      description: 게시글 조회
+   *      tags:
+   *      - board
+   *      responses:
+   *        '200':
+   *          description: 조회 결과를 반환한다.
+   *          content:
+   *            application/json:
+   *              schema:
+   *                type: object
+   *                properties:
+   *                  boardList:
+   *                    description: 게시글 리스트
+   *                    type: array
+   *                    items:
+   *                      type: object
+   *                      properties:
+   *                        boardId:
+   *                          description: 게시글의 id
+   *                          type: integer
+   *                          example: 76
+   *                        eventId:
+   *                          description: 이벤트의 id
+   *                          type: integer
+   *                          example: 76
+   *                        title:
+   *                          description: 게시글 제목
+   *                          type: string
+   *                          example: 6회 친바 1팀 인증샷!!!
+   *                        intraId:
+   *                          description: 작성자 인트라 id
+   *                          type: string
+   *                          example: tkim
+   *                        contents:
+   *                          description: 내용
+   *                          type: string
+   *                          example: 깐부치킨 갔습니다 \n넘나 맛있는 치킨!
+   *                        createdAt:
+   *                          description: 생성 시간
+   *                          type: date
+   *                          example: 2022-07-07 04:11:31
+   *                        updatedAt:
+   *                          description: 수정 시간
+   *                          type: date
+   *                          example: 2022-07-07 04:11:31
+   *                        profile:
+   *                          description: 프로필
+   *                          type: string
+   *                          example: https://together42.github.io/frontend/c92880655d4055aafb2e2f8c8437232a.jpg
+   *                        images:
+   *                          description: 게시글 이미지
+   *                          type: array
+   *                          items:
+   *                            type: object
+   *                            properties:
+   *                              imageId:
+   *                                description: 이미지의 id
+   *                                type: integer
+   *                                example: 133
+   *                              boardId:
+   *                                description: 게시글의 id
+   *                                type: integer
+   *                                example: 131
+   *                              filepath:
+   *                                description: 게시글 path
+   *                                type: string
+   *                                example: https://together42.s3.ap-northeast-2.amazonaws.com/uploads/1657167091659_KakaoTalk_Photo_2022-07-07-12-40-23%20001.jpeg
+   *                        attendMembers:
+   *                          description: 태그인원
+   *                          type: array
+   *                          items:
+   *                            type: object
+   *                            properties:
+   *                              intraId:
+   *                                description: 인트라 id
+   *                                type: string
+   *                                example: tkim
+   *                              profile:
+   *                                description: 프로필
+   *                                type: string
+   *                                example: https://together42.github.io/frontend/c92880655d4055aafb2e2f8c8437232a.jpg
+   *        '400_case1':
+   *          description: 게시글이 없습니다
+   *          content:
+   *            application/json:
+   *              schema:
+   *                type: json
+   *                description: error decription
+   *                example: { "message": "게시글이 없습니다" }
+   *        '400_case2':
+   *          description: 상세조회 실패
+   *          content:
+   *            application/json:
+   *              schema:
+   *                type: json
+   *                description: error decription
+   *                example: { "message": "상세조회 실패" }
+   */
 router.get('/',boardController.getBoardList);
 
 //게시글 생성
