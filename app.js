@@ -10,6 +10,7 @@ import boardRouter from './routes/board.js';
 import slackRouter from './routes/slack.js';
 import { stream } from './config/winston.js';
 import https from 'https';
+import rateLimit from './middleware/rate-limiter.js';
 // express configuration
 const app = express();
 const __dirname = path.resolve();
@@ -38,6 +39,7 @@ app.use(cors({
 	credentials: true,
   }));
 app.use(morgan('combined', {stream}));
+app.use(rateLimit)
 app.use('/api/auth', authRouter);
 app.use('/api/together', togetherRouter);
 app.use('/api/board', boardRouter);
