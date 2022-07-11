@@ -9,6 +9,8 @@ export const publishMessage = async (slackId, msg) => {
 	  token,
 	  channel: slackId,
 	  text: msg,
+	}).catch((e)=>{
+		console.log(e);
 	});
   };
 

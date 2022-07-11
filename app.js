@@ -1,18 +1,17 @@
 import express from 'express';
 import morgan from 'morgan';
-import path from 'path';
 import cors from 'cors';
 import * as fs  from 'fs';
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
+import router from './routes/index.js';
+import swaggerOptions from './swagger/swagger.js';
 import { config } from './config.js';
-import authRouter from './routes/auth.js';
-import togetherRouter from './routes/together.js';
-import boardRouter from './routes/board.js';
-import slackRouter from './routes/slack.js';
 import { stream } from './config/winston.js';
 import https from 'https';
+import rateLimit from './middleware/rate-limiter.js';
 // express configuration
 const app = express();
-const __dirname = path.resolve();
 let credentials;
 if(config.hostname.hostname === 'ec2')
 {
@@ -38,10 +37,18 @@ app.use(cors({
 	credentials: true,
   }));
 app.use(morgan('combined', {stream}));
-app.use('/api/auth', authRouter);
-app.use('/api/together', togetherRouter);
-app.use('/api/board', boardRouter);
-app.use('/api/slack', slackRouter);
+app.use(rateLimit)
+
+//Swagger 연결
+const specs = swaggerJSDoc(swaggerOptions);
+app.use(
+	'/swagger',
+	swaggerUi.serve,
+	swaggerUi.setup(specs, { explorer: true }),
+  );
+
+//route
+app.use('/api', router);
 
 if(config.hostname.hostname === 'ec2')
 {

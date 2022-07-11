@@ -28,6 +28,7 @@
     "ejs": "^3.1.6",
     "express": "^4.17.3",
     "express-async-errors": "^3.1.1",
+    "express-rate-limit": "^6.4.0",
     "express-session": "^1.17.2",
     "express-validator": "^6.14.0",
     "fs": "^0.0.1-security",
@@ -41,5 +42,9 @@
     "urlencode": "^1.1.0",
     "winston": "^3.7.2",
     "winston-daily-rotate-file": "^4.6.1"
+  },
+  "devDependencies": {
+    "swagger-jsdoc": "^6.2.1",
+    "swagger-ui-express": "^4.4.0"
   }
 }

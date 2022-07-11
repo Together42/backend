@@ -47,6 +47,10 @@ export const config = {
 		jip : required('SLACK_JIP'),
 		tkim : required('SLACK_TKIM'),
 		slack_token : required('BOT_USER_OAUTH_ACCESS_TOKEN')
+	},
+	rateLimit: {
+		windowMs: 60 * 1000,//1분
+		maxRequest: 100,//ip 1개당 100번
 	}
 };
 
