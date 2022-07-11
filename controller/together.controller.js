@@ -15,7 +15,7 @@ export async function createEvent(req, res) {
 		createdId,
 	});
 	let str = `:aaw_yeah: 친바 공지 !! :aaw_yeah:\n\n${title} 이벤트가 생성되었습니다. \nhttps://together42.github.io/frontend/\n서둘러 참석해주세요`
-	await publishMessage(config.slack.tkim, str);
+	await publishMessage(config.slack.jip, str)
 	res.status(201).json({event});
 }
 
