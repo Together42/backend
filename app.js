@@ -9,6 +9,7 @@ import swaggerOptions from './swagger/swagger.js';
 import { config } from './config.js';
 import { stream } from './config/winston.js';
 import https from 'https';
+import rateLimit from './middleware/rate-limiter.js';
 // express configuration
 const app = express();
 let credentials;
@@ -36,6 +37,7 @@ app.use(cors({
 	credentials: true,
   }));
 app.use(morgan('combined', {stream}));
+app.use(rateLimit)
 
 //Swagger 연결
 const specs = swaggerJSDoc(swaggerOptions);
