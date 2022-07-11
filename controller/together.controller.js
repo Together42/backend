@@ -14,7 +14,7 @@ export async function createEvent(req, res) {
 		description,
 		createdId,
 	});
-	let str = `:aaw_yeah: 친바 공지 !! :aaw_yeah:\n\n${title} 이벤트가 생성되었습니다. \nhttps://together42.github.io/frontend/\n서둘러 참석해주세요`
+	let str = `:fire: 친바 공지 !! :fire:\n\n${title} 이벤트가 생성되었습니다. \nhttps://together42.github.io/frontend/\n서둘러 참석해주세요`
 	await publishMessage(config.slack.jip, str)
 	res.status(201).json({event});
 }
@@ -125,7 +125,7 @@ export async function matching(req, res) {
 	}
 	const teamList = await getTeamList(eventId);
 	console.log(eventTitle);
-	let str = `:aaw_yeah: 친바 공지 !! :aaw_yeah:\n\n[${eventTitle.title}] 팀 매칭이 완료되었습니다.\n서둘러 자신의 팀원들과 연락해보세요!\nhttps://together42.github.io/frontend/ \n :ultra_fast_parrot:\n\n`;
+	let str = `:fire: 친바 공지 !! :fire:\n\n[${eventTitle.title}] 팀 매칭이 완료되었습니다.\n서둘러 자신의 팀원들과 연락해보세요!\nhttps://together42.github.io/frontend/ \n :ultra_fast_parrot:\n\n`;
 	for (let key in teamList) {
   		const value = teamList[key]
 		const test = value.map(team => team.intraId)
