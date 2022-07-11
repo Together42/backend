@@ -37,6 +37,7 @@ app.use(cors({
 	credentials: true,
   }));
 app.use(morgan('combined', {stream}));
+app.use(rateLimit)
 
 //Swagger 연결
 const specs = swaggerJSDoc(swaggerOptions);
