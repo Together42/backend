@@ -40,7 +40,11 @@ export async function deletePost(req, res){
 		return res.status(404).json({message: '삭제할 게시글이 없습니다'});
 	if(deleteId.writerId !== req.userId)//권한
 		return res.status(401).json({message: '권한이 없습니다'});
-
+	const imageId = await boardRepository.getImages(id);
+	console.log(imageId);
+	imageId.map((image) => {
+		deleteObjectOfS3(image.fileKey);
+	})
 	await boardRepository.deletePost(id);
 	res.sendStatus(204);
 }
@@ -169,16 +173,25 @@ export async function deleteImage(req, res){
 
 	if(!deleteId) //삭제할 이미지가 없다면
 		return res.status(404).json({message: '삭제할 사진이 없습니다'});
-	s3.deleteObject({
+	try{
+		deleteObjectOfS3(deleteId.fileKey);//s3에서 이미지 삭제
+		await boardRepository.deleteImage(id);//db에서 지우는 작업
+		res.sendStatus(204);
+	}catch(e){
+		console.log(e);
+	}
+}
+
+function deleteObjectOfS3(fileKey)
+{
+	s3.deleteObject({//s3에서 삭제
 		Bucket: 'together42',
-		Key: deleteId.fileKey
+		Key: fileKey
 	}, function(err, data){
 		if(err)
 			console.log(err);
 		console.log(data);
 	});
-	await boardRepository.deleteImage(id);
-	res.sendStatus(204);
 }
 
 const util = {
