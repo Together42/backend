@@ -1,8 +1,8 @@
-import aws from 'aws-sdk';
-import { config } from './config.js';
+import aws from 'aws-sdk'
+import { config } from './config.js'
 
 export const s3 = new aws.S3({
-	accessKeyId: config.s3.access_key_id,
-	secretAccessKey: config.s3.secret_access_key,
-	region: config.s3.region
+  accessKeyId: config.s3.access_key_id,
+  secretAccessKey: config.s3.secret_access_key,
+  region: config.s3.region,
 })
