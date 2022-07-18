@@ -2,12 +2,12 @@
   "name": "together42",
   "version": "1.0.0",
   "description": "서먹서먹한 사람들이 친해지기 위해 밥 한 끼 먹게 해주는 랜덤매칭 웹 서비스",
-  "main": "app.js",
+  "main": "src/app.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "sudo node app.js",
-    "dev": "nodemon app.js"
+    "start": "sudo node src/app.js",
+    "dev": "nodemon src/app.js"
   },
   "repository": {
     "type": "git",
@@ -44,6 +44,9 @@
     "winston-daily-rotate-file": "^4.6.1"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.30.6",
+    "@typescript-eslint/parser": "^5.30.6",
+    "eslint": "^8.20.0",
     "swagger-jsdoc": "^6.2.1",
     "swagger-ui-express": "^4.4.0"
   }
