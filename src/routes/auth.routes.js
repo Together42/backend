@@ -21,4 +21,7 @@ router.post('/mail', authController.mailAuthentication)
 //메일 인증확인
 router.post('/cert', authController.cert)
 
+//GET 유저리스트 조회
+router.get('/userList', authController.getByUserList)
+
 export default router
