@@ -26,3 +26,9 @@ export async function createUser(user) {
     )
     .then((result) => result[0].insertId)
 }
+
+export async function getByUserList() {
+  return db
+    .execute('SELECT id, intraId, profile FROM users')
+    .then((result) => result[0])
+}

@@ -124,3 +124,12 @@ export async function me(req, res) {
   }
   res.status(200).json({token: req.token, intraId:user.intraId})
 }
+
+
+export async function getByUserList(req, res) {
+  const userList = await userRepository.getByUserList()
+  if(!userList) {
+    return res.status(404).json({mesage: '사용자가 없습니다'})
+  }
+  res.status(200).json({userList: userList})
+}
