@@ -1,14 +1,14 @@
-import express from 'express';
-import 'express-async-errors';
-import { isAuth } from '../middleware/auth.js';
-import * as boardController from '../controller/board.controller.js';
-import { fileSizeLimitErrorHandler, upload} from '../middleware/uploads.js';
+import express from 'express'
+import 'express-async-errors'
+import { isAuth } from '../middleware/auth.js'
+import * as boardController from '../controller/board.controller.js'
+import { fileSizeLimitErrorHandler, upload} from '../middleware/uploads.js'
 
-const router = express.Router();
+const router = express.Router()
 
 
 //게시글 전체조회
-  /**
+/**
    * @openapi
    * /api/board:
    *    get:
@@ -110,20 +110,20 @@ const router = express.Router();
    *                description: error decription
    *                example: { "message": "상세조회 실패" }
    */
-router.get('/',boardController.getBoardList);
+router.get('/',boardController.getBoardList)
 
 //게시글 생성
-router.post('/', isAuth ,boardController.createPost);
+router.post('/', isAuth ,boardController.createPost)
 
 //게시글 삭제
-router.delete('/:id', isAuth ,boardController.deletePost);
+router.delete('/:id', isAuth ,boardController.deletePost)
 
 //게시글 수정
-router.put('/:id', isAuth ,boardController.updatePost);
+router.put('/:id', isAuth ,boardController.updatePost)
 
 //게시글 상세조회
 
-  /**
+/**
    * @openapi
    * /api/board/{id}:
    *    get:
@@ -247,21 +247,21 @@ router.put('/:id', isAuth ,boardController.updatePost);
    *                description: error decription
    *                example: { "message": "상세조회 실패" }
    */
-router.get('/:id',boardController.getBoardDetail);
+router.get('/:id',boardController.getBoardDetail)
 
 //댓글 생성
-router.post('/comment', isAuth, boardController.createComment);
+router.post('/comment', isAuth, boardController.createComment)
 
 //댓글 수정
-router.put('/comment/:id', isAuth, boardController.updateComment);
+router.put('/comment/:id', isAuth, boardController.updateComment)
 
 //댓글 삭제
-router.delete('/comment/:id', isAuth, boardController.deleteComment);
+router.delete('/comment/:id', isAuth, boardController.deleteComment)
 
 //사진 업로드
-router.post('/upload', upload.array("image",8), fileSizeLimitErrorHandler, boardController.upload);
+router.post('/upload', upload.array('image',8), fileSizeLimitErrorHandler, boardController.upload)
 
 //사진 삭제
-router.delete('/image/remove/:id', boardController.deleteImage);
+router.delete('/image/remove/:id', boardController.deleteImage)
 
-export default router;
+export default router
