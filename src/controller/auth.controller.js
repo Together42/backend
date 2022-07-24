@@ -92,7 +92,7 @@ export async function signUp(req, res) {
     email,
     profile,
   })
-  const token = createJwtToken(userId)
+  const token = createJwtToken(userId, 0)//가입 후 isAdmin 디폴트값은 0
   console.log(`signUp: ${intraId},  time : ${new Date()}`)
   res.status(201).json({token, intraId})
 }
@@ -108,13 +108,13 @@ export async function login(req, res) {
     return res.status(401).json({message: '아이디와 비밀번호가 틀렸습니다'})
   }
   const profile = user.profile
-  const token = createJwtToken(user.intraId)
+  const token = createJwtToken(user.intraId, user.isAdmin)
   console.log(`login id : ${intraId},  time : ${new Date()}`)
   res.status(200).json({token, intraId, profile })
 }
 
-function createJwtToken(id) {
-  return jwt.sign({id}, config.jwt.secretKey, {expiresIn: config.jwt.expiresInSec})
+function createJwtToken(id, isAdmin) {
+  return jwt.sign({id, isAdmin}, config.jwt.secretKey, {expiresIn: config.jwt.expiresInSec})
 }
 
 export async function me(req, res) {
