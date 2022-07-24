@@ -38,7 +38,7 @@ export async function deletePost(req, res){
 
   if(!deleteId) //삭제할 글이 없다면
     return res.status(404).json({message: '삭제할 게시글이 없습니다'})
-  if(deleteId.writerId !== req.userId)//권한
+  if(deleteId.writerId !== req.userId && !req.isAdmin)//권한
     return res.status(401).json({message: '권한이 없습니다'})
   const imageId = await boardRepository.getImages(id)
   console.log(imageId)
@@ -62,7 +62,7 @@ export async function updatePost (req, res) {
   if(!updateId) {//해당 게시글이 없다면 
     return res.status(404).json({message: '게시글이 없습니다'})
   }
-  if(updateId.writerId !== req.userId){
+  if(updateId.writerId !== req.userId && !req.isAdmin){
     return res.status(401).json({message: '권한이 없습니다'})
   }
   const updated = await boardRepository.updatePost({id, title, contents, eventId, attendMembers})
@@ -139,7 +139,7 @@ export async function deleteComment(req, res){
 
   if(!deleteId) //삭제할 댓글이 없다면
     return res.status(404).json({message: '삭제할 댓글이 없습니다'})
-  if(deleteId.writerId !== req.userId)//권한
+  if(deleteId.writerId !== req.userId && !req.isAdmin)//권한
     return res.status(401).json({message: '권한이 없습니다'})
 
   await boardRepository.deleteComment(id)
