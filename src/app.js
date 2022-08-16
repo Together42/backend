@@ -10,6 +10,7 @@ import { config } from './config.js'
 import { stream } from './config/winston.js'
 import https from 'https'
 import rateLimit from './middleware/rate-limiter.js'
+
 // express configuration
 const app = express()
 let credentials
@@ -23,6 +24,7 @@ if (config.hostname.hostname === 'ec2') {
     ca: ca,
   }
 }
+
 //parse JSON and url-encoded query
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
