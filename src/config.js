@@ -1,5 +1,6 @@
 import dotenv from 'dotenv'
 import nodemailer from 'nodemailer'
+
 dotenv.config()
 
 function required(key, defaultValue = undefined) {
@@ -9,7 +10,6 @@ function required(key, defaultValue = undefined) {
   }
   return value
 }
-
 
 export const config = {
   jwt: {
