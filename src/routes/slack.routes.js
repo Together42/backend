@@ -6,6 +6,4 @@ const router = express.Router()
 
 router.post('/',slackController.publishMessages)
 
-
-
 export default router
