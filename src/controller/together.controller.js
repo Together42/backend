@@ -15,7 +15,7 @@ export async function createEvent(req, res) {
     createdId,
   })
   let str = `:fire: 친바 공지 !! :fire:\n\n${title} 이벤트가 생성되었습니다. \nhttps://together42.github.io/frontend/\n서둘러 참석해주세요`
-  await publishMessage(config.slack.jip, str)
+  await publishMessage(config.slack.ywee, str)
   res.status(201).json({ event })
 }
 
@@ -135,7 +135,7 @@ export async function matching(req, res) {
   }
 
   console.log(`문자열 출력 ${str}`)
-  await publishMessage(config.slack.jip, str)
+  await publishMessage(config.slack.ywee, str)
   res.status(201).json({ eventId, teamList })
 }
 

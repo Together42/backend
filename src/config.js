@@ -46,6 +46,7 @@ export const config = {
   slack: {
     jip : required('SLACK_JIP'),
     tkim : required('SLACK_TKIM'),
+    ywee : required('SLACK_YWEE'),
     slack_token : required('BOT_USER_OAUTH_ACCESS_TOKEN'),
   },
   rateLimit: {

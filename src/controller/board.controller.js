@@ -20,10 +20,10 @@ export async function createPost(req, res) {
   })
   let str = `:fire: 친바 공지 !! :fire:\n\n${title} 게시글이 생성되었습니다.\nhttps://together42.github.io/frontend/`
 
-  check.map(async (member)=>{//슬랙봇 메시지 보내기
-    if(member.slackId)
-      await publishMessage(member.slackId, str)
-  })
+  //check.map(async (member)=>{//슬랙봇 메시지 보내기
+  //  if(member.slackId)
+  //    await publishMessage(member.slackId, str)
+  //})
   console.log(post)
 
   await boardRepository.createAttendMember(attendMembers, post)
