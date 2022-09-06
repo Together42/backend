@@ -118,7 +118,7 @@ export async function createComment(req, res){
   if (result) {
     try {
       const matchedPost = await boardRepository.findByPostId(boardId)
-      const writerInfo = await userRepository.findUserById(writerId)
+      const writerInfo = await userRepository.findUserById(matchedPost.writerId)
       let str = `${matchedPost.title} 게시글에 댓글이 달렸습니다.\nhttps://together42.github.io/frontend/review`
       await publishMessage(writerInfo.slackId, str)
     } catch (error) {
