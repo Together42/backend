@@ -1,4 +1,5 @@
 import * as boardRepository from '../data/board.js'
+import * as userRepository from '../data/user.js'
 import {publishMessage} from './slack.controller.js'
 import {s3} from '../s3.js'
 //게시글 생성
@@ -114,7 +115,16 @@ export async function createComment(req, res){
   const writerId = req.userId
   console.log(`boardId = ${boardId}, comment = ${comment}, writerId = ${writerId}`)
   const result = await boardRepository.createComment(boardId, comment, writerId)
-	
+  if (result) {
+    try {
+      const matchedPost = await boardRepository.findByPostId(boardId)
+      const writerInfo = await userRepository.findUserById(writerId)
+      let str = `${matchedPost.title} 게시글에 댓글이 달렸습니다.\nhttps://together42.github.io/frontend/review`
+      await publishMessage(writerInfo.slackId, str)
+    } catch (error) {
+      console.log('Slack 메세지 보내기 실패.')
+    }
+  }
   res.status(200).json({result})
 }
 
