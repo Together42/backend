@@ -259,7 +259,7 @@ router.put('/comment/:id', isAuth, boardController.updateComment)
 router.delete('/comment/:id', isAuth, boardController.deleteComment)
 
 //사진 업로드
-router.post('/upload', upload.array('image',8), fileSizeLimitErrorHandler, boardController.upload)
+router.post('/upload', upload.array('image',10), fileSizeLimitErrorHandler, boardController.upload)
 
 //사진 삭제
 router.delete('/image/remove/:id', boardController.deleteImage)
