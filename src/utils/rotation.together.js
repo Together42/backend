@@ -1,6 +1,12 @@
 import * as togetherRepository from '../data/together.js'
 import * as userRepository from '../data/user.js'
 
+// 반환 값:
+// monthArray : 다음 달의 주차 별 평일을 담은 이차원 배열.
+// 평일 당 두 명의 사서가 들어가기 때문에, 각 주차 당 10개의 요소가 들어간다.
+// ex) 첫 번쨰 주차는 평일이 5일이고, 마지막 주차는 평일이 3일인 경우
+// [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ... [0, 0, 0, 0, 0, 0]]
+// nextMonth : 다음 달이 몇월인지 나타낸다.
 function initMonthArray() {
   let year = new Date().getFullYear()
   const month = new Date().getMonth()
@@ -31,6 +37,9 @@ function shuffle(array) {
   array.sort(() => Math.random() - 0.5)
 }
 
+// 반환 값:
+// monthArray : 주차 별 사서들이 담긴 이차원 배열.
+// participant : 이번 달 로테이션에 참여하는 사서의 정보.
 async function setAttendance(attendance, monthArray) {
   let canDuplicate = false
   if (attendance.length < 10)
@@ -67,7 +76,8 @@ async function setAttendance(attendance, monthArray) {
           j -= 1
       } else {
         monthArray[i][j] = participant.userId
-        // DB 내 Team은 본인이 근무하는 가장 마지막 주차가 됩니다. 칼럼 설정 상 주차를 여러 개 포함할 수가 없어서...
+        // DB 내 Team은 본인이 근무하는 가장 마지막 주차가 됩니다.
+        // 칼럼 설정 상 주차를 여러 개 포함할 수가 없어서...
         await togetherRepository.createTeam(i + 1, participant.id)
         participant = undefined
       }
