@@ -1,18 +1,25 @@
 import * as togetherRepository from '../data/together.js'
 import * as userRepository from '../data/user.js'
 
+
+// 반환 값:
+// monthArray : 다음 달의 주차 별 평일을 담은 이차원 배열.
+// 평일 당 두 명의 사서가 들어가기 때문에, 각 주차 당 10개의 요소가 들어간다.
+// ex) 첫 번쨰 주차는 평일이 5일이고, 마지막 주차는 평일이 3일인 경우
+// [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ... [0, 0, 0, 0, 0, 0]]
+// nextMonth : 다음 달이 몇월인지 나타낸다.
 function initMonthArray() {
   let year = new Date().getFullYear()
   const month = new Date().getMonth()
   const nextMonth = (month + 1) % 12 + 1
   if (nextMonth === 1)
     year += 1
-  const monthDays = new Date(year, nextMonth, 0).getDate() // 다음 달 마지막 일을 보여줌
-  // const firstDay =  new Date(year, nextMonth - 1, 1).getDay() // 필요한 값은 아님...
-  // console.log(`year: ${year}, next month: ${nextMonth},\nnext month days: ${monthDays}, first day of next month: ${firstDay}\n`)
-  const tmpMonthArray = [] // 이차원 배열
+  const monthDays = new Date(year, nextMonth, 0).getDate()
+  const tmpMonthArray = []
   let tmp = []
-  // 주중 요일만을 담은 배열을 만듬.
+  const monthDays = new Date(year, nextMonth, 0).getDate()
+  const tmpMonthArray = []
+  let tmp = []
   for (let i = 1; i <= monthDays; i++) {
     if (new Date(year, nextMonth - 1, i).getDay() > 0 &&
       new Date(year, nextMonth - 1, i).getDay() < 6) {
@@ -30,27 +37,24 @@ function initMonthArray() {
   return ({monthArray: result, nextMonth: nextMonth})
 }
 
-//팀 셔플
 function shuffle(array) {
   array.sort(() => Math.random() - 0.5)
 }
 
+
+// 반환 값:
+// monthArray : 주차 별 사서들이 담긴 이차원 배열.
+// participant : 이번 달 로테이션에 참여하는 사서의 정보.
 async function setAttendance(attendance, monthArray) {
-  //console.log(attendance, monthArray, weekdays)
   let canDuplicate = false
   if (attendance.length < 10)
     canDuplicate = true
   let participation = 1
   let participants = []
-  // 참가자 id와 참여 횟수를 담은 새로운 객체 생성
   for (let idx = 0; idx < attendance.length; idx++) {
     participants.push({id: attendance[idx].id, userId: attendance[idx].userId, attend: 0})
   }
   shuffle(participants)
-  // 이차원 배열을 돌면서, participants 객체를 훑으며,
-  // 한 주에 겹치는 유저가 없도록 배열에 유저를 추가함.
-  // 동시에 공평하게 참가를 시키기 위해, 모두 비슷한 참여 횟수로 배치함.
-  // 만약 참가자가 10명 이하일 경우, 반드시 한 주에 중복되는 참가자가 발생할 수밖에 없음.
   for (let i = 0; i < monthArray.length; i++) {
     for (let j = 0; j < monthArray[i].length; j++) {
       let participant = undefined
@@ -71,20 +75,20 @@ async function setAttendance(attendance, monthArray) {
           }
         }
       }
-      // 만약 모든 참가자가 한 번씩 참가하였다면, 필참 횟수 기준을 1 높임.
       if (participant === undefined) {
         participation += 1
         if (!canDuplicate)
           j -= 1
       } else {
         monthArray[i][j] = participant.userId
-        await togetherRepository.createTeam(i + 1, participant.id) // DB 내 Team은 본인이 근무하는 가장 마지막 주차가 됩니다. 칼럼 설정 상 주차를 여러 개 포함할 수가 없어서...
+        // DB 내 Team은 본인이 근무하는 가장 마지막 주차가 됩니다.
+        // 칼럼 설정 상 주차를 여러 개 포함할 수가 없어서...
+        await togetherRepository.createTeam(i + 1, participant.id)
         participant = undefined
       }
     }
     shuffle(participants)
   }
-  // console.log(monthArray, participants)
   return ({monthArray: monthArray, participants: participants})
 }
 
