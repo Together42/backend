@@ -1,6 +1,7 @@
 import * as togetherRepository from '../data/together.js'
 import * as userRepository from '../data/user.js'
 
+
 // 반환 값:
 // monthArray : 다음 달의 주차 별 평일을 담은 이차원 배열.
 // 평일 당 두 명의 사서가 들어가기 때문에, 각 주차 당 10개의 요소가 들어간다.
@@ -13,6 +14,9 @@ function initMonthArray() {
   const nextMonth = (month + 1) % 12 + 1
   if (nextMonth === 1)
     year += 1
+  const monthDays = new Date(year, nextMonth, 0).getDate()
+  const tmpMonthArray = []
+  let tmp = []
   const monthDays = new Date(year, nextMonth, 0).getDate()
   const tmpMonthArray = []
   let tmp = []
@@ -36,6 +40,7 @@ function initMonthArray() {
 function shuffle(array) {
   array.sort(() => Math.random() - 0.5)
 }
+
 
 // 반환 값:
 // monthArray : 주차 별 사서들이 담긴 이차원 배열.
