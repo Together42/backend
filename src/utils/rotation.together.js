@@ -17,9 +17,6 @@ function initMonthArray() {
   const monthDays = new Date(year, nextMonth, 0).getDate()
   const tmpMonthArray = []
   let tmp = []
-  const monthDays = new Date(year, nextMonth, 0).getDate()
-  const tmpMonthArray = []
-  let tmp = []
   for (let i = 1; i <= monthDays; i++) {
     if (new Date(year, nextMonth - 1, i).getDay() > 0 &&
       new Date(year, nextMonth - 1, i).getDay() < 6) {
