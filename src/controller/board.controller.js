@@ -1,4 +1,5 @@
 import * as boardRepository from '../data/board.js'
+import * as userRepository from '../data/user.js'
 import {publishMessage} from './slack.controller.js'
 import {s3} from '../s3.js'
 //게시글 생성
@@ -20,10 +21,10 @@ export async function createPost(req, res) {
   })
   let str = `:fire: 친바 공지 !! :fire:\n\n${title} 게시글이 생성되었습니다.\nhttps://together42.github.io/frontend/`
 
-  check.map(async (member)=>{//슬랙봇 메시지 보내기
-    if(member.slackId)
-      await publishMessage(member.slackId, str)
-  })
+  //check.map(async (member)=>{//슬랙봇 메시지 보내기
+  //  if(member.slackId)
+  //    await publishMessage(member.slackId, str)
+  //})
   console.log(post)
 
   await boardRepository.createAttendMember(attendMembers, post)
@@ -114,7 +115,15 @@ export async function createComment(req, res){
   const writerId = req.userId
   console.log(`boardId = ${boardId}, comment = ${comment}, writerId = ${writerId}`)
   const result = await boardRepository.createComment(boardId, comment, writerId)
-	
+  // 게시글에 댓글이 달리면 슬랙 메세지를 보낸다.
+  const matchedPost = await boardRepository.findByPostId(boardId)
+  const writerInfo = await userRepository.findUserById(matchedPost.writerId)
+  if (writerInfo.slackId) {
+    let str = `${matchedPost.title} 게시글에 댓글이 달렸습니다.\nhttps://together42.github.io/frontend/review`
+    await publishMessage(writerInfo.slackId, str)
+  } else {
+    console.log('board.controller.js : Slack 댓글 알림 메세지 보내기 실패.')
+  }
   res.status(200).json({result})
 }
 
