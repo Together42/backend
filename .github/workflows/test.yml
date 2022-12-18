@@ -9,7 +9,7 @@ on:
 env:
   DOCKER_IMAGE: ghcr.io/${{ github.actor }}/together-test
   VERSION: ${{ github.sha }}
-  NAME: go_cicd
+  NAME: test-together
 
 jobs:
   # 빌드 Job
@@ -20,6 +20,11 @@ jobs:
     steps:
       # github repository에서 checkout
       - uses: actions/checkout@v2
+      # Node 환경을 설정하여 npm 커맨드를 사용할 수 있도록 하는 Action을 불러옵니다.
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "18"
+
       - name: create .env file
         run: |
           echo "DB_DATABASE=${{ secrets.TEST_DATABASE }}
@@ -36,7 +41,7 @@ jobs:
           BOT_USER_OAUTH_ACCESS_TOKEN=${{ secrets.BOT_USER_OAUTH_ACCESS_TOKEN }}
           SLACK_JIP=${{ secrets.SLACK_JIP }}
           SLACK_TKIM=${{ secrets.SLACK_TKIM }}
-          SLACK_YWEE=${{ secrets.SLACK_YWEE }} " > .env
+          SLACK_YWEE=${{ secrets.SLACK_YWEE }}" > .env
       # docker build 수행
       - name: Set up docker buildx
         id: buildx
@@ -78,4 +83,4 @@ jobs:
       - name: Docker run
         run: |
           docker stop ${{ env.NAME }} && docker rm ${{ env.NAME }} && docker rmi ${{ env.DOCKER_IMAGE }}:latest
-          docker run -d -p 9999:9999 --name go_cicd --restart always ${{ env.DOCKER_IMAGE }}:latest
+          docker run -d -p 9999:9999 --name test-together --restart always ${{ env.DOCKER_IMAGE }}:latest
