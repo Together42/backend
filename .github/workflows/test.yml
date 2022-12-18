@@ -19,6 +19,23 @@ jobs:
     steps:
       # github repository에서 checkout
       - uses: actions/checkout@v2
+      - name: create .env file
+        run: |
+          echo "DB_DATABASE=${{ secrets.TEST_DATABASE }}
+          DB_USER=${{ secrets.TEST_DATABASE_USER }}
+          DB_PASSWORD=${{ secrets.TEST_DATABASE_PASSWORD }}
+          DB_HOST=${{ secrets.TEST_DB_HOST }}
+          DB_PORT=${{ secrets.TEST_DB_PORT }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          JWT_EXPIRES_SEC=${{ secrets.JWT_EXPIRES_SEC }}
+          BCRYPT_SALT_ROUNDS=${{ secrets.BCRYPT_SALT_ROUNDS }}
+          HOST_PORT=${{ secrets.TEST_PORT }}
+          NAVER_ID=${{ secrets.NAVER_ID }}
+          NAVER_PW=${{ secrets.NAVER_PW }}
+          BOT_USER_OAUTH_ACCESS_TOKEN=${{ secrets.BOT_USER_OAUTH_ACCESS_TOKEN }}
+          SLACK_JIP=${{ secrets.SLACK_JIP }}
+          SLACK_TKIM=${{ secrets.SLACK_TKIM }}
+          SLACK_YWEE=${{ secrets.SLACK_YWEE }} " > .env
       # docker build 수행
       - name: Set up docker buildx
         id: buildx
