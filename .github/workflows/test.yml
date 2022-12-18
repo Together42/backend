@@ -41,7 +41,7 @@ jobs:
           BOT_USER_OAUTH_ACCESS_TOKEN=${{ secrets.BOT_USER_OAUTH_ACCESS_TOKEN }}
           SLACK_JIP=${{ secrets.SLACK_JIP }}
           SLACK_TKIM=${{ secrets.SLACK_TKIM }}
-          SLACK_YWEE=${{ secrets.SLACK_YWEE }}" > .env
+          SLACK_YWEE=${{ secrets.SLACK_YWEE }}" > /home/ubuntu/actions-runner/test-together/.env
       # docker build 수행
       - name: Set up docker buildx
         id: buildx
