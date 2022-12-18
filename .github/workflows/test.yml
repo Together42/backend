@@ -16,6 +16,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    environment: together42
     steps:
       # github repository에서 checkout
       - uses: actions/checkout@v2
