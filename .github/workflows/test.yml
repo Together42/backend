@@ -48,7 +48,7 @@ jobs:
   deploy:
     needs: build # build 후에 실행되도록 정의
     name: Deploy
-    runs-on: [self-hosted, label-go] # AWS ./configure에서 사용할 label명
+    runs-on: [self-hosted, label-test] # AWS ./configure에서 사용할 label명
     steps:
       - name: Login to ghcr
         uses: docker/login-action@v1
