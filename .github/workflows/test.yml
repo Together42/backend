@@ -1,87 +1,87 @@
-name: CI/CD Docker
+#name: CI/CD Docker
 
-# 트리거를 수행할 브랜치를 지정합니다.
-on:
-  push:
-    branches: [test]
+## 트리거를 수행할 브랜치를 지정합니다.
+#on:
+#  push:
+#    branches: [test]
 
-# 환경설정
-env:
-  DOCKER_IMAGE: ghcr.io/${{ github.actor }}/together-test
-  VERSION: ${{ github.sha }}
-  NAME: test-together
+## 환경설정
+#env:
+#  DOCKER_IMAGE: ghcr.io/${{ github.actor }}/together-test
+#  VERSION: ${{ github.sha }}
+#  NAME: test-together
 
-jobs:
-  # 빌드 Job
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    environment: together42
-    steps:
-      # github repository에서 checkout
-      - uses: actions/checkout@v2
-      # Node 환경을 설정하여 npm 커맨드를 사용할 수 있도록 하는 Action을 불러옵니다.
-      - uses: actions/setup-node@v2
-        with:
-          node-version: "18"
+#jobs:
+#  # 빌드 Job
+#  build:
+#    name: Build
+#    runs-on: ubuntu-latest
+#    environment: together42
+#    steps:
+#      # github repository에서 checkout
+#      - uses: actions/checkout@v2
+#      # Node 환경을 설정하여 npm 커맨드를 사용할 수 있도록 하는 Action을 불러옵니다.
+#      - uses: actions/setup-node@v2
+#        with:
+#          node-version: "18"
 
-      - name: create .env file
-        run: |
-          echo "DB_DATABASE=${{ secrets.TEST_DATABASE }}
-          DB_USER=${{ secrets.TEST_DATABASE_USER }}
-          DB_PASSWORD=${{ secrets.TEST_DATABASE_PASSWORD }}
-          DB_HOST=${{ secrets.TEST_DB_HOST }}
-          DB_PORT=${{ secrets.TEST_DB_PORT }}
-          JWT_SECRET=${{ secrets.JWT_SECRET }}
-          JWT_EXPIRES_SEC=${{ secrets.JWT_EXPIRES_SEC }}
-          BCRYPT_SALT_ROUNDS=${{ secrets.BCRYPT_SALT_ROUNDS }}
-          HOST_PORT=${{ secrets.TEST_PORT }}
-          NAVER_ID=${{ secrets.NAVER_ID }}
-          NAVER_PW=${{ secrets.NAVER_PW }}
-          BOT_USER_OAUTH_ACCESS_TOKEN=${{ secrets.BOT_USER_OAUTH_ACCESS_TOKEN }}
-          SLACK_JIP=${{ secrets.SLACK_JIP }}
-          SLACK_TKIM=${{ secrets.SLACK_TKIM }}
-          SLACK_YWEE=${{ secrets.SLACK_YWEE }}" > .env
-          pwd .env
-      # docker build 수행
-      - name: Set up docker buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Cache docker layers
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ env.VERSION }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-      # GitHub 컨테이너 레지스트리에 로그인 후 빌드 & 푸시
-      - name: Login to ghcr
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_TOKEN }}
-      - name: Build and push
-        id: docker_build
-        uses: docker/build-push-action@v2
-        with:
-          builder: ${{ steps.buildx.outputs.name }}
-          push: true
-          tags: ${{ env.DOCKER_IMAGE }}:latest
-  # 배포 Job
-  deploy:
-    needs: build # build 후에 실행되도록 정의
-    name: Deploy
-    runs-on: [self-hosted, label-test] # AWS ./configure에서 사용할 label명
-    steps:
-      - name: Login to ghcr
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_TOKEN }}
-      # 3000 -> 80 포트로 수행하도록 지정
-      - name: Docker run
-        run: |
-          docker stop ${{ env.NAME }} && docker rm ${{ env.NAME }} && docker rmi ${{ env.DOCKER_IMAGE }}:latest
-          docker run -d -p 9999:9999 --name test-together --restart always ${{ env.DOCKER_IMAGE }}:latest
+#      - name: create .env file
+#        run: |
+#          echo "DB_DATABASE=${{ secrets.TEST_DATABASE }}
+#          DB_USER=${{ secrets.TEST_DATABASE_USER }}
+#          DB_PASSWORD=${{ secrets.TEST_DATABASE_PASSWORD }}
+#          DB_HOST=${{ secrets.TEST_DB_HOST }}
+#          DB_PORT=${{ secrets.TEST_DB_PORT }}
+#          JWT_SECRET=${{ secrets.JWT_SECRET }}
+#          JWT_EXPIRES_SEC=${{ secrets.JWT_EXPIRES_SEC }}
+#          BCRYPT_SALT_ROUNDS=${{ secrets.BCRYPT_SALT_ROUNDS }}
+#          HOST_PORT=${{ secrets.TEST_PORT }}
+#          NAVER_ID=${{ secrets.NAVER_ID }}
+#          NAVER_PW=${{ secrets.NAVER_PW }}
+#          BOT_USER_OAUTH_ACCESS_TOKEN=${{ secrets.BOT_USER_OAUTH_ACCESS_TOKEN }}
+#          SLACK_JIP=${{ secrets.SLACK_JIP }}
+#          SLACK_TKIM=${{ secrets.SLACK_TKIM }}
+#          SLACK_YWEE=${{ secrets.SLACK_YWEE }}" > .env
+#          pwd .env
+#      # docker build 수행
+#      - name: Set up docker buildx
+#        id: buildx
+#        uses: docker/setup-buildx-action@v1
+#      - name: Cache docker layers
+#        uses: actions/cache@v2
+#        with:
+#          path: /tmp/.buildx-cache
+#          key: ${{ runner.os }}-buildx-${{ env.VERSION }}
+#          restore-keys: |
+#            ${{ runner.os }}-buildx-
+#      # GitHub 컨테이너 레지스트리에 로그인 후 빌드 & 푸시
+#      - name: Login to ghcr
+#        uses: docker/login-action@v1
+#        with:
+#          registry: ghcr.io
+#          username: ${{ github.actor }}
+#          password: ${{ secrets.GHCR_TOKEN }}
+#      - name: Build and push
+#        id: docker_build
+#        uses: docker/build-push-action@v2
+#        with:
+#          builder: ${{ steps.buildx.outputs.name }}
+#          push: true
+#          tags: ${{ env.DOCKER_IMAGE }}:latest
+#  # 배포 Job
+#  deploy:
+#    needs: build # build 후에 실행되도록 정의
+#    name: Deploy
+#    runs-on: [self-hosted, label-test] # AWS ./configure에서 사용할 label명
+#    steps:
+#      - name: Login to ghcr
+#        uses: docker/login-action@v1
+#        with:
+#          registry: ghcr.io
+#          username: ${{ github.actor }}
+#          password: ${{ secrets.GHCR_TOKEN }}
+#      # 3000 -> 80 포트로 수행하도록 지정
+#      - name: Docker run
+#        run: |
+#          docker stop ${{ env.NAME }} && docker rm ${{ env.NAME }} && docker rmi ${{ env.DOCKER_IMAGE }}:latest
+#          docker run -d -p 9999:9999 --name test-together --restart always ${{ env.DOCKER_IMAGE }}:latest
