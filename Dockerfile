@@ -1,4 +1,4 @@
-FROM node:18.12.1
+FROM $DOCKER_IMAGE
 
 RUN mkdir -p /app
 WORKDIR /app
