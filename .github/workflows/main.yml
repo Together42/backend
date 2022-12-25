@@ -4,7 +4,7 @@ on:
 
 jobs:
   build:
-    name: App Test
+    name: Docker build
     runs-on: ubuntu-latest
 
     steps:
@@ -32,6 +32,8 @@ jobs:
           docker tag $LAYER_NAME:latest $REPO/$LAYER_NAME:latest
           docker push $REPO/$LAYER_NAME:latest
   SSH:
+    needs: build
+    name: deploy
     runs-on: ubuntu-latest
     environment: together42
 
@@ -45,6 +47,32 @@ jobs:
           key: ${{ secrets.AWS_KYU_KEY }}
           port: 22
           script: |
-            whoami
-            ls -al
-            pwd
+            mkdir -p test_server
+            echo "DB_DATABASE=${{ secrets.TEST_DATABASE }}
+            DB_USER=${{ secrets.TEST_DATABASE_USER }}
+            DB_PASSWORD=${{ secrets.TEST_DATABASE_PASSWORD }}
+            DB_HOST=${{ secrets.TEST_DB_HOST }}
+            DB_PORT=${{ secrets.TEST_DB_PORT }}
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            JWT_EXPIRES_SEC=${{ secrets.JWT_EXPIRES_SEC }}
+            BCRYPT_SALT_ROUNDS=${{ secrets.BCRYPT_SALT_ROUNDS }}
+            HOST_PORT=${{ secrets.TEST_PORT }}
+            NAVER_ID=${{ secrets.NAVER_ID }}
+            NAVER_PW=${{ secrets.NAVER_PW }}
+            BOT_USER_OAUTH_ACCESS_TOKEN=${{ secrets.BOT_USER_OAUTH_ACCESS_TOKEN }}
+            SLACK_JIP=${{ secrets.SLACK_JIP }}
+            SLACK_TKIM=${{ secrets.SLACK_TKIM }}
+            SLACK_YWEE=${{ secrets.SLACK_YWEE }}" > ./test_server/.env
+            cat <<EOF > ./test_server/docker-compose.yaml
+            version: "3"
+            services:
+              backend:
+                container_name: backend_test
+                image: ${{ secrets.DOCKER_IMAGE }}
+                volumes:
+                  - ./logs:/logs
+                ports:
+                  - 9999:9999
+                env_file: .env
+            EOF
+            cd test_server && docker-compose up -d
