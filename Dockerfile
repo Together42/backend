@@ -1,4 +1,4 @@
-FROM $DOCKER_IMAGE
+FROM kth2624/together-test:latest
 
 RUN mkdir -p /app
 WORKDIR /app
