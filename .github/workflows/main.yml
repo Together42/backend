@@ -41,7 +41,9 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.KYU_HOST }}
-          username: ${{ secrets.USER }}
+          username: ubuntu
           key: ${{ secrets.AWS_KYU_KEY }}
+          port: 22
           script: |
-            ls
+            whoami
+            ls -al
