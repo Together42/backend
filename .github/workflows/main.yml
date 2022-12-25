@@ -1,33 +1,33 @@
-on:
-  push:
-    branches: [test]
+#on:
+#  push:
+#    branches: [test]
 
-jobs:
-  deploy:
-    name: App Test
-    runs-on: ubuntu-latest
+#jobs:
+#  deploy:
+#    name: App Test
+#    runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Set up Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: "18"
-      - name: test
-        run: |
-          ls
-          pwd
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: build and release to DockerHub
-        env: # 환경변수로 값을 지정하여 사용할 수 있습니다.
-          REPO: kth2624
-          LAYER_NAME: together-test
-        run: |
-          docker build -t $LAYER_NAME  .
-          docker tag $LAYER_NAME:latest $REPO/$LAYER_NAME:latest
-          docker push $REPO/$LAYER_NAME:latest
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v2
+#      - name: Set up Node
+#        uses: actions/setup-node@v2
+#        with:
+#          node-version: "18"
+#      - name: test
+#        run: |
+#          ls
+#          pwd
+#      - name: Login to DockerHub
+#        uses: docker/login-action@v1
+#        with:
+#          username: ${{ secrets.DOCKERHUB_USERNAME }}
+#          password: ${{ secrets.DOCKERHUB_TOKEN }}
+#      - name: build and release to DockerHub
+#        env: # 환경변수로 값을 지정하여 사용할 수 있습니다.
+#          REPO: kth2624
+#          LAYER_NAME: together-test
+#        run: |
+#          docker build -t $LAYER_NAME  .
+#          docker tag $LAYER_NAME:latest $REPO/$LAYER_NAME:latest
+#          docker push $REPO/$LAYER_NAME:latest
