@@ -1,66 +1,58 @@
-# This is a basic workflow to help you get started with Actions
+## This is a basic workflow to help you get started with Actions
 
-name: CI
+#name: CI
 
-# Controls when the workflow will run
-on:
-  # 지정한 branch에서 push/pull_request 에 해당하는 command가 수행되면 이 workflow가 동작 합니다.
-  # 여기서는 간단히 main 브런치에서 push되면서 이 workflow가 실행 되도록 하겠습니다.
-  push:
-    branches: [test]
+## Controls when the workflow will run
+#on:
+#  # 지정한 branch에서 push/pull_request 에 해당하는 command가 수행되면 이 workflow가 동작 합니다.
+#  # 여기서는 간단히 main 브런치에서 push되면서 이 workflow가 실행 되도록 하겠습니다.
+#  push:
+#    branches: [test]
 
-  # 이부분은 위의 trigger가 없어도 수동으로 동작 할 수 있게끔 해주는 역할을 합니다.
-  workflow_dispatch:
-env:
-  AWS_REGION: ap-northeast-2
-  S3_BUCKET_NAME: together42-s3
-  CODE_DEPLOY_APPLICATION_NAME: together-deploy
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: together-deploy-group
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
-jobs:
-  # This workflow contains a single job called "build"
-  build:
-    runs-on: ubuntu-latest
+#  # 이부분은 위의 trigger가 없어도 수동으로 동작 할 수 있게끔 해주는 역할을 합니다.
+#  workflow_dispatch:
+#env:
+#  AWS_REGION: ap-northeast-2
+#  S3_BUCKET_NAME: together42-s3
+#  CODE_DEPLOY_APPLICATION_NAME: together-deploy
+#  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: together-deploy-group
+## A workflow run is made up of one or more jobs that can run sequentially or in parallel
+#jobs:
+#  # This workflow contains a single job called "build"
+#  build:
+#    runs-on: ubuntu-latest
 
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: checkout release
-        uses: actions/checkout@v3
+#    steps:
+#      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+#      - name: checkout release
+#        uses: actions/checkout@v3
 
-      # Runs a single command using the runners shell
-      - name: Set up Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: "18"
+#      # Runs a single command using the runners shell
+#      - name: Set up Node
+#        uses: actions/setup-node@v2
+#        with:
+#          node-version: "18"
 
-      - name: AWS configure credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.ACCESS_KEY_KYU }}
-          aws-secret-access-key: ${{ secrets.SECRET_KEY_KYU }}
-          aws-region: ap-northeast-2
+#      - name: AWS configure credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.ACCESS_KEY_KYU }}
+#          aws-secret-access-key: ${{ secrets.SECRET_KEY_KYU }}
+#          aws-region: ap-northeast-2
 
-      # (5) 빌드 결과물을 S3 버킷에 업로드
-      - name: Upload to AWS S3
-        run: |
-          aws deploy push \
-            --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
-            --ignore-hidden-files \
-            --s3-location s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip \
-            --source .
-
-      #- name: deploy with AWS codeDeploy
-      #  run: aws deploy create-deployment
-      #    --application-name together-deploy
-      #    --deployment-config-name CodeDeployDefault.OneAtATime
-      #    --deployment-group-name together-deploy-group
-      #    --s3-location bucket=github-action-codedeploy-s3,bundleType=tgz,key=archive/drcloud.tar.gz
-
-      # (6) S3 버킷에 있는 파일을 대상으로 CodeDeploy 실행
-      - name: Deploy to AWS EC2 from S3
-        run: |
-          aws deploy create-deployment \
-            --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
-            --deployment-config-name CodeDeployDefault.AllAtOnce \
-            --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
-            --s3-location bucket=$S3_BUCKET_NAME,key=$GITHUB_SHA.zip,bundleType=zip
+#      # (5) 빌드 결과물을 S3 버킷에 업로드
+#      - name: Upload to AWS S3
+#        run: |
+#          aws deploy push \
+#            --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+#            --ignore-hidden-files \
+#            --s3-location s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip \
+#            --source .
+#      # (6) S3 버킷에 있는 파일을 대상으로 CodeDeploy 실행
+#      - name: Deploy to AWS EC2 from S3
+#        run: |
+#          aws deploy create-deployment \
+#            --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+#            --deployment-config-name CodeDeployDefault.AllAtOnce \
+#            --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
+#            --s3-location bucket=$S3_BUCKET_NAME,key=$GITHUB_SHA.zip,bundleType=zip
