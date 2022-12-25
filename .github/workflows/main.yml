@@ -59,10 +59,16 @@ jobs:
             HOST_PORT=${{ secrets.TEST_PORT }}
             NAVER_ID=${{ secrets.NAVER_ID }}
             NAVER_PW=${{ secrets.NAVER_PW }}
+            ACCESS_KEY_ID=${{ secrets.ACCESS_KEY_ID }}
+            SECRET_ACCESS_KEY=${{ secrets.SECRET_ACCESS_KEY }}
             BOT_USER_OAUTH_ACCESS_TOKEN=${{ secrets.BOT_USER_OAUTH_ACCESS_TOKEN }}
             SLACK_JIP=${{ secrets.SLACK_JIP }}
             SLACK_TKIM=${{ secrets.SLACK_TKIM }}
             SLACK_YWEE=${{ secrets.SLACK_YWEE }}" > ./test_server/.env
+            echo "start docker"
+            docker stop backend_test || true
+            docker rm backend_test || true
+            docker image prune
             cat <<EOF > ./test_server/docker-compose.yaml
             version: "3"
             services:
