@@ -1,4 +1,4 @@
-FROM node:18
+FROM kth2624/together:latest
 
 RUN mkdir -p /app
 WORKDIR /app

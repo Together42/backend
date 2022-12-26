@@ -1,4 +1,4 @@
-name: deploy
+name: main-deploy
 
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
@@ -56,7 +56,7 @@ jobs:
             JWT_SECRET=${{ secrets.JWT_SECRET }}
             JWT_EXPIRES_SEC=${{ secrets.JWT_EXPIRES_SEC }}
             BCRYPT_SALT_ROUNDS=${{ secrets.BCRYPT_SALT_ROUNDS }}
-            HOST_PORT=${{ secrets.TEST_PORT }}
+            HOST_PORT=${{ secrets.KYU_SERVER_PORT }}
             NAVER_ID=${{ secrets.NAVER_ID }}
             NAVER_PW=${{ secrets.NAVER_PW }}
             ACCESS_KEY_ID=${{ secrets.ACCESS_KEY_ID }}
@@ -80,7 +80,7 @@ jobs:
                 volumes:
                   - ./logs:/logs
                 ports:
-                  - 3001:3000
+                  - 3000:3000
                 env_file: .env
             EOF
             cd backend && docker-compose up -d
