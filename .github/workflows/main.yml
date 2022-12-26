@@ -76,7 +76,7 @@ jobs:
             services:
               backend:
                 container_name: backend
-                image: ${{ secrets.DOCKER_IMAGE }}
+                image: ${{ secrets.KYU_DOCKER_IMAGE }}
                 volumes:
                   - ./logs:/logs
                 ports:
