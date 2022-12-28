@@ -1,0 +1,81 @@
+on:
+  push:
+    branches: [test]
+
+jobs:
+  build:
+    name: Docker build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: "18"
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: build and release to DockerHub
+        env: # 환경변수로 값을 지정하여 사용할 수 있습니다.
+          REPO: kth2624
+          LAYER_NAME: together-test
+        run: |
+          docker build -t $LAYER_NAME  .
+          docker tag $LAYER_NAME:latest $REPO/$LAYER_NAME:latest
+          docker push $REPO/$LAYER_NAME:latest
+  SSH:
+    needs: build
+    name: deploy
+    runs-on: ubuntu-latest
+    environment: together42
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run scripts in server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.KYU_HOST }}
+          username: ubuntu
+          key: ${{ secrets.AWS_KYU_KEY }}
+          port: 22
+          script: |
+            mkdir -p test_server
+            echo "DB_DATABASE=${{ secrets.TEST_DATABASE }}
+            DB_USER=${{ secrets.TEST_DATABASE_USER }}
+            DB_PASSWORD=${{ secrets.TEST_DATABASE_PASSWORD }}
+            DB_HOST=${{ secrets.TEST_DB_HOST }}
+            DB_PORT=${{ secrets.TEST_DB_PORT }}
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            JWT_EXPIRES_SEC=${{ secrets.JWT_EXPIRES_SEC }}
+            BCRYPT_SALT_ROUNDS=${{ secrets.BCRYPT_SALT_ROUNDS }}
+            HOST_PORT=${{ secrets.TEST_PORT }}
+            NAVER_ID=${{ secrets.NAVER_ID }}
+            NAVER_PW=${{ secrets.NAVER_PW }}
+            ACCESS_KEY_ID=${{ secrets.ACCESS_KEY_ID }}
+            SECRET_ACCESS_KEY=${{ secrets.SECRET_ACCESS_KEY }}
+            REGION=${{ secrets.AWS_REGION }}
+            DOCKER_IMAGE=${{ secrets.DOCKER_IMAGE }}
+            BOT_USER_OAUTH_ACCESS_TOKEN=${{ secrets.BOT_USER_OAUTH_ACCESS_TOKEN }}
+            SLACK_JIP=${{ secrets.SLACK_JIP }}
+            SLACK_TKIM=${{ secrets.SLACK_TKIM }}
+            SLACK_YWEE=${{ secrets.SLACK_YWEE }}" > ./test_server/.env
+            echo "start docker"
+            docker stop backend_test || true
+            docker rm backend_test || true
+            docker image prune
+            cat <<EOF > ./test_server/docker-compose.yaml
+            version: "3"
+            services:
+              backend:
+                container_name: backend_test
+                image: ${{ secrets.DOCKER_IMAGE }}
+                volumes:
+                  - ./logs:/logs
+                ports:
+                  - 9999:9999
+                env_file: .env
+            EOF
+            cd test_server && docker-compose up -d

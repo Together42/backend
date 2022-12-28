@@ -1,5 +1,23 @@
 version: 0.0
 os: linux
+
 files:
-  - source:  /
-    destination: /home/ubuntu/build/
+  - source: / #인스턴스에 복사할 디렉토리 경로
+    destination: /home/ubuntu/app #인스턴스에 파일이복사되는 위치
+    overwrite: yes #파일이 있는경우 대체
+
+permissions:
+  - object: / #권한이 지정되는 파일 or 폴더
+    pattern: "**" # 매칭되는 패턴에만 권한 부여
+    owner: ubuntu # 소유자
+    group: ubuntu # 그룹
+
+hooks:
+  AfterInstall:
+    - location: scripts/stop.sh
+      timeout: 60
+      runas: ubuntu
+  ApplicationStart:
+    - location: scripts/start.sh
+      timeout: 60
+      runas: ubuntu

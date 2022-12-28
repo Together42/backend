@@ -3,6 +3,7 @@ import 'express-async-errors'
 import * as timelineController from '../controller/timeline.controller.js'
 import { fileSizeLimitErrorHandler, timelineUpload } from '../middleware/uploads.js'
 
+
 const router = express.Router()
 
 //타임라인 사진 가져오기
