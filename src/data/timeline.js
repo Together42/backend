@@ -1,7 +1,7 @@
 import { db } from '../db/database.js'
 
-export async function findByImageFileName(fileName) {
+export async function listAllImages() {
   return db
-    .execute('SELECT * FROM image_info where fileName=?',[fileName])
-    .then((result) => result[0][0])
+    .execute('SELECT filePath FROM image_info WHERE (filekey REGEXP "^timeline*")')
+    .then((result) => result[0])
 }
