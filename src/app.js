@@ -1,14 +1,13 @@
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
-import * as fs from "fs";
-import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import router from "./routes/index.js";
-import swaggerOptions from "./swagger/swagger.js";
+import swaggerFile from "./swagger/swagger-docs.json" assert { type: "json" };
 import { config } from "./config.js";
 import { stream } from "./config/winston.js";
 import rateLimit from "./middleware/rate-limiter.js";
+import expressBasicAuth from "express-basic-auth";
 
 // express configuration
 const app = express();
@@ -30,13 +29,18 @@ app.use(
 app.use(morgan("combined", { stream }));
 app.use(rateLimit);
 
-//Swagger 연결
-const specs = swaggerJSDoc(swaggerOptions);
 app.use(
-  "/swagger",
-  swaggerUi.serve,
-  swaggerUi.setup(specs, { explorer: true })
+  ['/swagger'],
+  expressBasicAuth({
+    challenge: true,
+    users: {
+      [process.env.SWAGGER_USER]: process.env.SWAGGER_PASSWORD,
+    },
+  }),
 );
+
+//Swagger 연결
+app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerFile, { explorer: true }));
 
 //route
 app.use("/api", router);
