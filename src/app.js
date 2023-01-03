@@ -41,7 +41,9 @@ app.use(
 );
 
 //Swagger 연결
-app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerFile, { explorer: true }));
+app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerFile, { explorer: true, swaggerOptions: {
+  persistAuthorization: true,
+} }));
 
 //route
 app.use("/api", router);

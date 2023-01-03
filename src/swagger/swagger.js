@@ -15,7 +15,8 @@ const options = {
   schemes: ['http'],
   securityDefinitions: {
     bearerAuth: {
-      type: 'http',
+      type: 'apiKey',
+      name: 'Authorization',
       scheme: 'bearer',
       in: 'header',
       bearerFormat: 'JWT',
