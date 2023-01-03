@@ -5,6 +5,11 @@
     "version": "1.0.0",
     "description": "Together42 web service, Express and documented with Swagger"
   },
+  "servers": [
+    {
+      "url": "https://dev.together.42jip.net/"
+    }
+  ],
   "paths": {
     "/api/auth/signup": {
       "post": {
