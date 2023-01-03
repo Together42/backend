@@ -1,9 +1,22 @@
 {
-  "openapi": "3.0.0",
+  "swagger": "2.0",
   "info": {
     "title": "Together42 web service API",
     "version": "1.0.0",
     "description": "Together42 web service, Express and documented with Swagger"
+  },
+  "host": "dev.together.42jip.net",
+  "basePath": "/",
+  "schemes": [
+    "https"
+  ],
+  "securityDefinitions": {
+    "bearerAuth": {
+      "type": "https",
+      "scheme": "bearer",
+      "in": "header",
+      "bearerFormat": "JWT"
+    }
   },
   "paths": {
     "/api/auth/signup": {
