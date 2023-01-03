@@ -1,13 +1,12 @@
 import swaggerAutogen from 'swagger-autogen'
 
 const options = {
-  openapi: '3.0.0',
   info: {
     title : 'Together42 web service API',
     version: '1.0.0',
     description: 'Together42 web service, Express and documented with Swagger',
   },
-  host: 'http://localhost:9999',
+  host: 'localhost:9999',
   contact: {
     name: 'tkim',
     url: 'https://github.com/kth2624',
