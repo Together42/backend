@@ -7,13 +7,13 @@ const options = {
     version: '1.0.0',
     description: 'Together42 web service, Express and documented with Swagger',
   },
-  host: 'http://localhost:9999',
+  host: 'dev.together.42jip.net',
   contact: {
     name: 'tkim',
     url: 'https://github.com/kth2624',
     email: 'dev.tkim42@gmail.com',
   },
-  schemes: ['http'],
+  schemes: ['https'],
   securityDefinitions: {
     bearerAuth: {
       type: 'http',
