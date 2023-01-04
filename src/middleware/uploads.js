@@ -40,6 +40,22 @@ export const upload = multer({
   }),
   fileFilter:fileFilter,
   limits: {
-    fileSize: 50 * 1024 * 1024, //50mb
+    fileSize: 100 * 1024 * 1024, //50mb
+  },
+},'NONE')
+
+export const timelineUpload = multer({ 
+  storage: multerS3({
+    s3: s3,
+    bucket: 'together42',
+    acl: 'public-read',
+    key: function(req, file, cb){
+      console.log(file)
+      cb(null, `timeline/${Date.now()}_${file.originalname}`)
+    },
+  }),
+  fileFilter:fileFilter,
+  limits: {
+    fileSize: 100 * 1024 * 1024, //50mb
   },
 },'NONE')

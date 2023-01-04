@@ -6,3 +6,9 @@ export async function getUserList() {
     .execute('SELECT id, intraId, profile FROM users')
     .then((result) => result[0])
 }
+
+export async function findUserById(id) {
+  return db
+    .execute('SELECT * FROM users WHERE id=?',[id])
+    .then((result) => result[0][0])
+}
