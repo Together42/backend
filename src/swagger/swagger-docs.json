@@ -5,10 +5,10 @@
     "version": "1.0.0",
     "description": "Together42 web service, Express and documented with Swagger"
   },
-  "host": "localhost:9999",
+  "host": "dev.together.42jip.net",
   "basePath": "/",
   "schemes": [
-    "http"
+    "https"
   ],
   "securityDefinitions": {
     "bearerAuth": {
@@ -183,6 +183,48 @@
         }
       }
     },
+    "/api/together/": {
+      "get": {
+        "tags": ["together"],
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": ["together"],
+        "security": [{"bearerAuth": []}],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "example": "any"
+                },
+                "description": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/api/together/register": {
       "post": {
         "tags": ["together"],
@@ -347,6 +389,66 @@
           },
           "404": {
             "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/board/": {
+      "get": {
+        "tags": ["board"],
+        "description": "",
+        "parameters": [
+          {
+            "name": "eventId",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "post": {
+        "tags": ["board"],
+        "security": [{"bearerAuth": []}],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "example": "any"
+                },
+                "contents": {
+                  "example": "any"
+                },
+                "eventId": {
+                  "example": "any"
+                },
+                "attendMembers": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -588,6 +690,35 @@
         }
       }
     },
+    "/api/slack/": {
+      "post": {
+        "tags": ["slack"],
+        "security": [{"bearerAuth": []}],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "slackId": {
+                  "example": "any"
+                },
+                "msg": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
     "/api/user/userList": {
       "get": {
         "tags": ["user"],
@@ -599,6 +730,21 @@
           },
           "404": {
             "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/timeline/": {
+      "get": {
+        "tags": ["timeline"],
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
           }
         }
       }
