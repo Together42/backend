@@ -5,14 +5,15 @@
     "version": "1.0.0",
     "description": "Together42 web service, Express and documented with Swagger"
   },
-  "host": "dev.together.42jip.net",
+  "host": "localhost:9999",
   "basePath": "/",
   "schemes": [
-    "https"
+    "http"
   ],
   "securityDefinitions": {
     "bearerAuth": {
-      "type": "https",
+      "type": "apiKey",
+      "name": "Authorization",
       "scheme": "bearer",
       "in": "header",
       "bearerFormat": "JWT"
@@ -90,6 +91,7 @@
     "/api/auth/me": {
       "get": {
         "tags": ["auth"],
+        "security": [{"bearerAuth": []}],
         "description": "",
         "parameters": [],
         "responses": {
@@ -181,50 +183,10 @@
         }
       }
     },
-    "/api/together/": {
-      "get": {
-        "tags": ["together"],
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "post": {
-        "tags": ["together"],
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "title": {
-                  "example": "any"
-                },
-                "description": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      }
-    },
     "/api/together/register": {
       "post": {
         "tags": ["together"],
+        "security": [{"bearerAuth": []}],
         "description": "",
         "parameters": [
           {
@@ -256,6 +218,7 @@
     "/api/together/unregister/{id}": {
       "delete": {
         "tags": ["together"],
+        "security": [{"bearerAuth": []}],
         "description": "",
         "parameters": [
           {
@@ -281,6 +244,7 @@
     "/api/together/matching": {
       "post": {
         "tags": ["together"],
+        "security": [{"bearerAuth": []}],
         "description": "",
         "parameters": [
           {
@@ -364,6 +328,7 @@
       },
       "delete": {
         "tags": ["together"],
+        "security": [{"bearerAuth": []}],
         "description": "",
         "parameters": [
           {
@@ -386,68 +351,10 @@
         }
       }
     },
-    "/api/board/": {
-      "get": {
-        "tags": ["board"],
-        "description": "",
-        "parameters": [
-          {
-            "name": "eventId",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      },
-      "post": {
-        "tags": ["board"],
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "title": {
-                  "example": "any"
-                },
-                "contents": {
-                  "example": "any"
-                },
-                "eventId": {
-                  "example": "any"
-                },
-                "attendMembers": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      }
-    },
     "/api/board/{id}": {
       "delete": {
         "tags": ["board"],
+        "security": [{"bearerAuth": []}],
         "description": "",
         "parameters": [
           {
@@ -471,6 +378,7 @@
       },
       "put": {
         "tags": ["board"],
+        "security": [{"bearerAuth": []}],
         "description": "",
         "parameters": [
           {
@@ -540,6 +448,7 @@
     "/api/board/comment": {
       "post": {
         "tags": ["board"],
+        "security": [{"bearerAuth": []}],
         "description": "",
         "parameters": [
           {
@@ -571,6 +480,7 @@
     "/api/board/comment/{id}": {
       "put": {
         "tags": ["board"],
+        "security": [{"bearerAuth": []}],
         "description": "",
         "parameters": [
           {
@@ -603,6 +513,7 @@
       },
       "delete": {
         "tags": ["board"],
+        "security": [{"bearerAuth": []}],
         "description": "",
         "parameters": [
           {
@@ -628,6 +539,7 @@
     "/api/board/upload": {
       "post": {
         "tags": ["board"],
+        "security": [{"bearerAuth": []}],
         "description": "",
         "parameters": [
           {
@@ -656,6 +568,7 @@
     "/api/board/image/remove/{id}": {
       "delete": {
         "tags": ["board"],
+        "security": [{"bearerAuth": []}],
         "description": "",
         "parameters": [
           {
@@ -675,34 +588,6 @@
         }
       }
     },
-    "/api/slack/": {
-      "post": {
-        "tags": ["slack"],
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "slackId": {
-                  "example": "any"
-                },
-                "msg": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No Content"
-          }
-        }
-      }
-    },
     "/api/user/userList": {
       "get": {
         "tags": ["user"],
@@ -716,31 +601,6 @@
             "description": "Not Found"
           }
         }
-      }
-    },
-    "/api/timeline/": {
-      "get": {
-        "tags": ["timeline"],
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "in": "header",
-        "bearerFormat": "JWT"
       }
     }
   },

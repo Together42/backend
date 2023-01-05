@@ -4,6 +4,6 @@ import * as slackController from '../controller/slack.controller.js'
 
 const router = express.Router()
 
-router.post('/',slackController.publishMessages)
+router.post('',slackController.publishMessages)
 
 export default router

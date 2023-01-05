@@ -18,6 +18,7 @@ app.use(express.json());
 app.use(
   cors({
     origin: [
+      "http://localhost:9999",
       "http://localhost:3050",
       "http://10.18.245.57:3050",
       "http://10.19.230.111:3050",
@@ -40,7 +41,9 @@ app.use(
 );
 
 //Swagger 연결
-app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerFile, { explorer: true }));
+app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerFile, { explorer: true, swaggerOptions: {
+  persistAuthorization: true,
+} }));
 
 //route
 app.use("/api", router);
