@@ -67,6 +67,7 @@ jobs:
             echo "start docker"
             docker stop backend_test || true
             docker rm backend_test || true
+            docker rmi ${{ secrets.DOCKER_IMAGE }} || true
             cat <<EOF > ./test_server/docker-compose.yaml
             version: "3"
             services:
