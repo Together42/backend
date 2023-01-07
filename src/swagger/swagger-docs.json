@@ -12,7 +12,8 @@
   ],
   "securityDefinitions": {
     "bearerAuth": {
-      "type": "https",
+      "type": "apiKey",
+      "name": "Authorization",
       "scheme": "bearer",
       "in": "header",
       "bearerFormat": "JWT"
@@ -90,6 +91,7 @@
     "/api/auth/me": {
       "get": {
         "tags": ["auth"],
+        "security": [{"bearerAuth": []}],
         "description": "",
         "parameters": [],
         "responses": {
@@ -194,6 +196,7 @@
       },
       "post": {
         "tags": ["together"],
+        "security": [{"bearerAuth": []}],
         "description": "",
         "parameters": [
           {
@@ -225,6 +228,7 @@
     "/api/together/register": {
       "post": {
         "tags": ["together"],
+        "security": [{"bearerAuth": []}],
         "description": "",
         "parameters": [
           {
@@ -256,6 +260,7 @@
     "/api/together/unregister/{id}": {
       "delete": {
         "tags": ["together"],
+        "security": [{"bearerAuth": []}],
         "description": "",
         "parameters": [
           {
@@ -281,6 +286,7 @@
     "/api/together/matching": {
       "post": {
         "tags": ["together"],
+        "security": [{"bearerAuth": []}],
         "description": "",
         "parameters": [
           {
@@ -364,6 +370,7 @@
       },
       "delete": {
         "tags": ["together"],
+        "security": [{"bearerAuth": []}],
         "description": "",
         "parameters": [
           {
@@ -408,6 +415,7 @@
       },
       "post": {
         "tags": ["board"],
+        "security": [{"bearerAuth": []}],
         "description": "",
         "parameters": [
           {
@@ -448,6 +456,7 @@
     "/api/board/{id}": {
       "delete": {
         "tags": ["board"],
+        "security": [{"bearerAuth": []}],
         "description": "",
         "parameters": [
           {
@@ -471,6 +480,7 @@
       },
       "put": {
         "tags": ["board"],
+        "security": [{"bearerAuth": []}],
         "description": "",
         "parameters": [
           {
@@ -540,6 +550,7 @@
     "/api/board/comment": {
       "post": {
         "tags": ["board"],
+        "security": [{"bearerAuth": []}],
         "description": "",
         "parameters": [
           {
@@ -571,6 +582,7 @@
     "/api/board/comment/{id}": {
       "put": {
         "tags": ["board"],
+        "security": [{"bearerAuth": []}],
         "description": "",
         "parameters": [
           {
@@ -603,6 +615,7 @@
       },
       "delete": {
         "tags": ["board"],
+        "security": [{"bearerAuth": []}],
         "description": "",
         "parameters": [
           {
@@ -628,6 +641,7 @@
     "/api/board/upload": {
       "post": {
         "tags": ["board"],
+        "security": [{"bearerAuth": []}],
         "description": "",
         "parameters": [
           {
@@ -656,6 +670,7 @@
     "/api/board/image/remove/{id}": {
       "delete": {
         "tags": ["board"],
+        "security": [{"bearerAuth": []}],
         "description": "",
         "parameters": [
           {
@@ -678,6 +693,7 @@
     "/api/slack/": {
       "post": {
         "tags": ["slack"],
+        "security": [{"bearerAuth": []}],
         "description": "",
         "parameters": [
           {
@@ -731,16 +747,6 @@
             "description": "Bad Request"
           }
         }
-      }
-    }
-  },
-  "components": {
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "in": "header",
-        "bearerFormat": "JWT"
       }
     }
   },
