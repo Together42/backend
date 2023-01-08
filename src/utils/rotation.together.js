@@ -1,5 +1,5 @@
 import * as togetherRepository from '../data/together.js'
-import * as userRepository from '../data/user.js'
+import * as userRepository from '../data/auth.js'
 
 // 반환 값:
 // monthArray : 다음 달의 주차 별 평일을 담은 이차원 배열.
@@ -99,7 +99,7 @@ export async function getParticipantsInfo(week, weekday) {
   let user = undefined
   for (let i = 0; i < weekday.length; i++) {
     let userObject = {}
-    user = await userRepository.findUserById(weekday[i])
+    user = await userRepository.findById(weekday[i])
     userObject['intraId'] = user.intraId
     userObject['profile'] = user.profile
     userObject['teamId'] = week

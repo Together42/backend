@@ -1,5 +1,5 @@
 import * as boardRepository from "../data/board.js";
-import * as userRepository from "../data/user.js";
+import * as userRepository from "../data/auth.js";
 import { publishMessage } from "./slack.controller.js";
 import { s3 } from "../s3.js";
 //게시글 생성
@@ -132,7 +132,7 @@ export async function createComment(req, res) {
   );
   // 게시글에 댓글이 달리면 슬랙 메세지를 보낸다.
   const matchedPost = await boardRepository.findByPostId(boardId);
-  const writerInfo = await userRepository.findUserById(matchedPost.writerId);
+  const writerInfo = await userRepository.findById(matchedPost.writerId);
   if (writerInfo.slackId) {
     let str = `${matchedPost.title} 게시글에 댓글이 달렸습니다.\nhttps://together42.github.io/frontend/review`;
     await publishMessage(writerInfo.slackId, str);
