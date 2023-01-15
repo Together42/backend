@@ -70,7 +70,7 @@ jobs:
             echo "start docker"
             docker stop backend || true
             docker rm backend || true
-            docker image prune
+            docker rmi ${{ secrets.KYU_DOCKER_IMAGE }} || true
             cat <<EOF > ./backend/docker-compose.yaml
             version: "3"
             services:
@@ -84,3 +84,4 @@ jobs:
                 env_file: .env
             EOF
             cd backend && docker-compose up -d
+            docker image prune -f

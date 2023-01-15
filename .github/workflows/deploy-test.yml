@@ -81,4 +81,4 @@ jobs:
                 env_file: .env
             EOF
             cd test_server && docker-compose up -d
-            docker image prune
+            docker image prune -f
