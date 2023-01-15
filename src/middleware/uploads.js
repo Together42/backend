@@ -59,7 +59,6 @@ export const timelineUpload = multer(
       bucket: "together42",
       acl: "public-read",
       key: function (req, file, cb) {
-        console.log(file);
         cb(null, `timeline/${Date.now()}_${file.originalname}`);
       },
     }),
