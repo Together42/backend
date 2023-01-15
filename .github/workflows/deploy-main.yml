@@ -80,7 +80,7 @@ jobs:
                 volumes:
                   - ./logs:/logs
                 ports:
-                  - 3000:3000
+                  - 3000:9999
                 env_file: .env
             EOF
             cd backend && docker-compose up -d
