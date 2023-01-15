@@ -31,19 +31,26 @@ app.use(morgan("combined", { stream }));
 app.use(rateLimit);
 
 app.use(
-  ['/swagger'],
+  ["/swagger"],
   expressBasicAuth({
     challenge: true,
     users: {
       [process.env.SWAGGER_USER]: process.env.SWAGGER_PASSWORD,
     },
-  }),
+  })
 );
 
 //Swagger 연결
-app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerFile, { explorer: true, swaggerOptions: {
-  persistAuthorization: true,
-} }));
+app.use(
+  "/swagger",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerFile, {
+    explorer: true,
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  })
+);
 
 //route
 app.use("/api", router);
