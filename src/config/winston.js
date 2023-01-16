@@ -4,7 +4,7 @@ import winston, { format } from "winston";
 import winstonDaily from "winston-daily-rotate-file";
 const { combine, timestamp, printf } = format;
 
-const customFormat = printf(info => {
+const customFormat = printf((info) => {
   return `${info.timestamp} ${info.level}: ${info.message}`;
 });
 
