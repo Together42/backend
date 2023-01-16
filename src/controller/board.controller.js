@@ -19,7 +19,6 @@ export async function createPost(req, res) {
     contents,
     eventId,
   });
-  let str = `:fire: 친바 공지 !! :fire:\n\n${title} 게시글이 생성되었습니다.\nhttps://together42.github.io/frontend/`;
 
   //check.map(async (member)=>{//슬랙봇 메시지 보내기
   //  if(member.slackId)
@@ -174,7 +173,7 @@ export async function deleteComment(req, res) {
 
 //파일 업로드
 
-export async function upload(req, res, err) {
+export async function upload(req, res) {
   const boardId = req.body.boardId;
   const image = req.files;
   console.log(
