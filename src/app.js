@@ -25,7 +25,7 @@ app.use(
       "https://together42.github.io",
     ],
     credentials: true,
-  })
+  }),
 );
 app.use(morgan("combined", { stream }));
 app.use(rateLimit);
@@ -37,7 +37,7 @@ app.use(
     users: {
       [process.env.SWAGGER_USER]: process.env.SWAGGER_PASSWORD,
     },
-  })
+  }),
 );
 
 //Swagger 연결
@@ -49,7 +49,7 @@ app.use(
     swaggerOptions: {
       persistAuthorization: true,
     },
-  })
+  }),
 );
 
 //route

@@ -49,7 +49,7 @@ export const upload = multer(
       fileSize: 100 * 1024 * 1024, //50mb
     },
   },
-  "NONE"
+  "NONE",
 );
 
 export const timelineUpload = multer(
@@ -68,5 +68,5 @@ export const timelineUpload = multer(
       fileSize: 100 * 1024 * 1024, //50mb
     },
   },
-  "NONE"
+  "NONE",
 );
