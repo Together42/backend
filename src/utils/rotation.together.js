@@ -1,5 +1,5 @@
-import * as togetherRepository from '../data/together.js'
-import * as userRepository from '../data/user.js'
+import * as togetherRepository from "../data/together.js"
+import * as userRepository from "../data/user.js"
 
 // 반환 값:
 // monthArray : 다음 달의 주차 별 평일을 담은 이차원 배열.
@@ -63,7 +63,7 @@ async function setAttendance(attendance, monthArray) {
           }
         } else {
           if (participants[k].attend === participation && canDuplicate) {
-            console.log('duplication occurs!')
+            console.log("duplication occurs!")
             participant = participants[k]
             participant.attend += 1
             break
@@ -100,9 +100,9 @@ export async function getParticipantsInfo(week, weekday) {
   for (let i = 0; i < weekday.length; i++) {
     let userObject = {}
     user = await userRepository.findUserById(weekday[i])
-    userObject['intraId'] = user.intraId
-    userObject['profile'] = user.profile
-    userObject['teamId'] = week
+    userObject["intraId"] = user.intraId
+    userObject["profile"] = user.profile
+    userObject["teamId"] = week
     userArray.push(userObject)
   }
   return (userArray)

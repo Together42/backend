@@ -1,5 +1,5 @@
-import { config } from "../config.js";
-import mysql from "mysql2";
+import { config } from "../config.js"
+import mysql from "mysql2"
 
 const pool = mysql.createPool({
   host: config.db.host,
@@ -7,6 +7,6 @@ const pool = mysql.createPool({
   database: config.db.database,
   password: config.db.password,
   dateStrings: "date",
-});
+})
 
-export const db = pool.promise();
+export const db = pool.promise()

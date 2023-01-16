@@ -1,4 +1,4 @@
-import swaggerAutogen from "swagger-autogen";
+import swaggerAutogen from "swagger-autogen"
 
 const options = {
   info: {
@@ -22,9 +22,9 @@ const options = {
       bearerFormat: "JWT",
     },
   },
-};
+}
 
-const outputFile = "./src/swagger/swagger-docs.json";
-const endpointsFiles = ["../app.js"];
+const outputFile = "./src/swagger/swagger-docs.json"
+const endpointsFiles = ["../app.js"]
 
-swaggerAutogen(outputFile, endpointsFiles, options);
+swaggerAutogen(outputFile, endpointsFiles, options)

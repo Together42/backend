@@ -1,41 +1,41 @@
-import { db } from "../db/database.js";
-import { config } from "../config.js";
+import { db } from "../db/database.js"
+import { config } from "../config.js"
 
 export async function findByPostId(id) {
   return db
     .execute("SELECT * FROM board WHERE id=?", [id])
-    .then((result) => result[0][0]);
+    .then((result) => result[0][0])
 }
 
 export async function deletePost(id) {
-  return db.execute("DELETE FROM board WHERE id=?", [id]);
+  return db.execute("DELETE FROM board WHERE id=?", [id])
 }
 
 export async function deleteComment(id) {
-  return db.execute("DELETE FROM board_comment WHERE id=?", [id]);
+  return db.execute("DELETE FROM board_comment WHERE id=?", [id])
 }
 
 export async function createPost(post) {
-  const { writerId, title, contents, eventId } = post;
+  const { writerId, title, contents, eventId } = post
   return db
     .execute(
       "INSERT INTO board (writerId, title, contents, eventId) VALUES (?,?,?,?)",
-      [writerId, title, contents, eventId]
+      [writerId, title, contents, eventId],
     )
-    .then((result) => result[0].insertId);
+    .then((result) => result[0].insertId)
 }
 
 export async function createComment(boardId, comment, writerId) {
   return db
     .execute(
       "INSERT INTO board_comment (boardId, comments, writerId) VALUES (?,?,?)",
-      [boardId, comment, writerId]
+      [boardId, comment, writerId],
     )
-    .then((result) => result[0].insertId);
+    .then((result) => result[0].insertId)
 }
 
 export async function updatePost(post) {
-  const { id, title, contents, eventId } = post;
+  const { id, title, contents, eventId } = post
   return db
     .execute("UPDATE board SET title=? ,contents=? ,eventId=? WHERE id=?", [
       title,
@@ -43,17 +43,17 @@ export async function updatePost(post) {
       eventId,
       id,
     ])
-    .then(() => findByPostId(id));
+    .then(() => findByPostId(id))
 }
 
 export async function updateComment(comment, id) {
   return db
     .execute("UPDATE board_comment SET comments = ? WHERE id=?", [comment, id])
-    .then(() => findByCommentId(id));
+    .then(() => findByCommentId(id))
 }
 
 export async function getBoardList(eventId) {
-  let query;
+  let query
   if (eventId) {
     query = `
 		SELECT 
@@ -70,7 +70,7 @@ export async function getBoardList(eventId) {
 	LEFT JOIN users as us ON board.writerId = us.id
 	LEFT JOIN board_comment ON board.id=board_comment.boardId
 	WHERE board.eventId = ${eventId}
-	GROUP BY board.id;`;
+	GROUP BY board.id;`
   } else {
     query = `
 		SELECT 
@@ -87,9 +87,9 @@ export async function getBoardList(eventId) {
 		LEFT JOIN users as us ON board.writerId = us.id
 		LEFT JOIN board_comment ON board.id=board_comment.boardId
 		GROUP BY board.id;
-		`;
+		`
   }
-  return db.query(`${query}`).then((result) => result[0]);
+  return db.query(`${query}`).then((result) => result[0])
 }
 
 export async function getBoard(boardId) {
@@ -109,9 +109,9 @@ export async function getBoard(boardId) {
 		LEFT JOIN users as us ON board.writerId = us.id
 		WHERE board.id = ?
 			`,
-      [boardId]
+      [boardId],
     )
-    .then((result) => result[0][0]);
+    .then((result) => result[0][0])
 }
 
 export async function getAttendMembers(boardId) {
@@ -120,9 +120,9 @@ export async function getAttendMembers(boardId) {
       `	
 		SELECT users.intraId, users.profile FROM board_attend_members as bam JOIN users ON users.intraId=bam.intraId WHERE boardId = ?
 			`,
-      [boardId]
+      [boardId],
     )
-    .then((result) => result[0]);
+    .then((result) => result[0])
 }
 
 export async function getComments(boardId) {
@@ -139,34 +139,34 @@ export async function getComments(boardId) {
 		WHERE boardId = ?
 		;
 			`,
-      [boardId]
+      [boardId],
     )
-    .then((result) => result[0]);
+    .then((result) => result[0])
 }
 
 export async function createAttendMember(members, boardId) {
   const values = members.map((member) => {
-    return [member.intraId, boardId];
-  });
-  console.log(values);
+    return [member.intraId, boardId]
+  })
+  console.log(values)
   return db
     .query("INSERT INTO board_attend_members (intraId,boardId) VALUES ?", [
       values,
     ])
-    .then((result) => result[0]);
+    .then((result) => result[0])
 }
 export async function checkAttendMember(members) {
   const values = members.map((member) => {
-    return [`"${member.intraId}"`];
-  });
-  const sql = `SELECT intraId, slackId FROM users WHERE intraId IN (${values.toString()})`;
-  return db.query(sql).then((result) => result[0]);
+    return [`"${member.intraId}"`]
+  })
+  const sql = `SELECT intraId, slackId FROM users WHERE intraId IN (${values.toString()})`
+  return db.query(sql).then((result) => result[0])
 }
 
 export async function findByCommentId(id) {
   return db
     .execute("SELECT * FROM board_comment WHERE id=?", [id])
-    .then((result) => result[0][0]);
+    .then((result) => result[0][0])
 }
 
 //upload
@@ -180,16 +180,16 @@ export async function imageUpload(boardId, images) {
       image.mimetype,
       image.size,
       image.key,
-    ];
-  });
-  console.log(`value : ${values}`);
+    ]
+  })
+  console.log(`value : ${values}`)
   return db
     .query(
       "INSERT INTO image_info (boardNum, filePath, fileName, fileType, fileSize, fileKey) VALUES ?",
-      [values]
+      [values],
     )
     .then((result) => result[0].insertId)
-    .catch((error) => error);
+    .catch((error) => error)
 }
 
 export async function getImages(boardId) {
@@ -199,17 +199,17 @@ export async function getImages(boardId) {
       `	
 		SELECT id as imageId, boardNum as boardId, filePath, fileType, fileKey FROM image_info WHERE boardNum = ?
 			`,
-      [boardId]
+      [boardId],
     )
-    .then((result) => result[0]);
+    .then((result) => result[0])
 }
 
 export async function findByImageId(id) {
   return db
     .execute("SELECT * FROM image_info WHERE id=?", [id])
-    .then((result) => result[0][0]);
+    .then((result) => result[0][0])
 }
 
 export async function deleteImage(id) {
-  return db.execute("DELETE FROM image_info WHERE id=?", [id]);
+  return db.execute("DELETE FROM image_info WHERE id=?", [id])
 }

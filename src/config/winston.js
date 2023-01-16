@@ -1,7 +1,7 @@
-'use strict'
+"use strict"
 
-import winston, { createLogger, format, transports } from 'winston'
-import winstonDaily from 'winston-daily-rotate-file'
+import winston, { createLogger, format, transports } from "winston"
+import winstonDaily from "winston-daily-rotate-file"
 const { combine, timestamp, printf } = format
 
 const customFormat = printf(info => {
@@ -11,7 +11,7 @@ const customFormat = printf(info => {
 const logger = winston.createLogger({
   format: combine(
     timestamp({
-      format: 'YYYY-MM-DD HH:mm:ss',
+      format: "YYYY-MM-DD HH:mm:ss",
     }),
     customFormat,
   ),
@@ -19,10 +19,10 @@ const logger = winston.createLogger({
     new winston.transports.Console(),
 
     new winstonDaily({
-      level: 'info',
-      datePattern: 'YYYYMMDD',
-      dirname: './logs',
-      filename: 'together_%DATE%.log',
+      level: "info",
+      datePattern: "YYYYMMDD",
+      dirname: "./logs",
+      filename: "together_%DATE%.log",
       maxSize: null,
       maxFiles: 14,
     }),

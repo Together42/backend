@@ -1,14 +1,14 @@
-import dotenv from "dotenv";
-import nodemailer from "nodemailer";
+import dotenv from "dotenv"
+import nodemailer from "nodemailer"
 
-dotenv.config();
+dotenv.config()
 
 function required(key, defaultValue = undefined) {
-  const value = process.env[key] || defaultValue;
+  const value = process.env[key] || defaultValue
   if (value == null) {
-    throw new Error(`Key ${key} is undefined`);
+    throw new Error(`Key ${key} is undefined`)
   }
-  return value;
+  return value
 }
 
 export const config = {
@@ -53,7 +53,7 @@ export const config = {
     windowMs: 60 * 1000, //1분
     maxRequest: 100, //ip 1개당 100번
   },
-};
+}
 
 export const smtpTransport = nodemailer.createTransport({
   service: "Naver",
@@ -66,4 +66,4 @@ export const smtpTransport = nodemailer.createTransport({
   tls: {
     rejectUnauthorized: false,
   },
-});
+})
