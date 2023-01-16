@@ -1,10 +1,10 @@
 "use strict";
 
-import winston, { createLogger, format, transports } from "winston";
+import winston, { format } from "winston";
 import winstonDaily from "winston-daily-rotate-file";
 const { combine, timestamp, printf } = format;
 
-const customFormat = printf(info => {
+const customFormat = printf((info) => {
   return `${info.timestamp} ${info.level}: ${info.message}`;
 });
 
@@ -30,7 +30,7 @@ const logger = winston.createLogger({
 });
 
 const stream = {
-  write: message => {
+  write: (message) => {
     logger.info(message);
   },
 };
