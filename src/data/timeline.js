@@ -3,7 +3,7 @@ import { db } from "../db/database.js";
 export async function listAllImages() {
   return db
     .execute(
-      'SELECT filePath FROM image_info WHERE (filekey REGEXP "^timeline*")'
+      "SELECT filePath FROM image_info WHERE (filekey REGEXP \"^timeline*\")",
     )
     .then((result) => result[0]);
 }
@@ -23,7 +23,7 @@ export async function imageUpload(boardId, images) {
   return db
     .query(
       "INSERT INTO image_info (boardNum, filePath, fileName, fileType, fileSize, fileKey) VALUES ?",
-      [values]
+      [values],
     )
     .then((result) => result[0].insertId)
     .catch((error) => error);

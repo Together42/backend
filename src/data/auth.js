@@ -23,7 +23,7 @@ export async function createUser(user) {
   return db
     .execute(
       "INSERT INTO users (intraId, password, email, profile) VALUES (?,?,?,?)",
-      [intraId, password, email, profile]
+      [intraId, password, email, profile],
     )
     .then((result) => result[0].insertId);
 }

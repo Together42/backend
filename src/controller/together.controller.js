@@ -142,7 +142,7 @@ export async function matching(req, res) {
       str += `${week}주차 : `;
       userArray = await togetherUtils.getParticipantsInfo(
         week,
-        rotationInfo.rotation.monthArray[i]
+        rotationInfo.rotation.monthArray[i],
       );
       teamList[String(week)] = userArray;
       for (let j = 0; j < userArray.length; j++) {

@@ -20,7 +20,7 @@ export async function createPost(post) {
   return db
     .execute(
       "INSERT INTO board (writerId, title, contents, eventId) VALUES (?,?,?,?)",
-      [writerId, title, contents, eventId]
+      [writerId, title, contents, eventId],
     )
     .then((result) => result[0].insertId);
 }
@@ -29,7 +29,7 @@ export async function createComment(boardId, comment, writerId) {
   return db
     .execute(
       "INSERT INTO board_comment (boardId, comments, writerId) VALUES (?,?,?)",
-      [boardId, comment, writerId]
+      [boardId, comment, writerId],
     )
     .then((result) => result[0].insertId);
 }
@@ -109,7 +109,7 @@ export async function getBoard(boardId) {
 		LEFT JOIN users as us ON board.writerId = us.id
 		WHERE board.id = ?
 			`,
-      [boardId]
+      [boardId],
     )
     .then((result) => result[0][0]);
 }
@@ -120,7 +120,7 @@ export async function getAttendMembers(boardId) {
       `	
 		SELECT users.intraId, users.profile FROM board_attend_members as bam JOIN users ON users.intraId=bam.intraId WHERE boardId = ?
 			`,
-      [boardId]
+      [boardId],
     )
     .then((result) => result[0]);
 }
@@ -139,7 +139,7 @@ export async function getComments(boardId) {
 		WHERE boardId = ?
 		;
 			`,
-      [boardId]
+      [boardId],
     )
     .then((result) => result[0]);
 }
@@ -186,7 +186,7 @@ export async function imageUpload(boardId, images) {
   return db
     .query(
       "INSERT INTO image_info (boardNum, filePath, fileName, fileType, fileSize, fileKey) VALUES ?",
-      [values]
+      [values],
     )
     .then((result) => result[0].insertId)
     .catch((error) => error);
@@ -199,7 +199,7 @@ export async function getImages(boardId) {
       `	
 		SELECT id as imageId, boardNum as boardId, filePath, fileType, fileKey FROM image_info WHERE boardNum = ?
 			`,
-      [boardId]
+      [boardId],
     )
     .then((result) => result[0]);
 }

@@ -39,7 +39,7 @@ export async function upload(req, res) {
       util.success(200, "업로드를 완료했습니다", {
         imageId: imageId,
         path: path,
-      })
+      }),
     );
 }
 

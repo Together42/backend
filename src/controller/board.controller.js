@@ -90,7 +90,7 @@ export async function getBoardList(req, res) {
         const imageList = await boardRepository.getImages(board.boardId);
         board.images = imageList;
         return board;
-      })
+      }),
     );
   } catch (error) {
     return res.status(400).json({ message: "게시판 조회 실패" });
@@ -123,12 +123,12 @@ export async function createComment(req, res) {
   const { boardId, comment } = req.body;
   const writerId = req.userId;
   console.log(
-    `boardId = ${boardId}, comment = ${comment}, writerId = ${writerId}`
+    `boardId = ${boardId}, comment = ${comment}, writerId = ${writerId}`,
   );
   const result = await boardRepository.createComment(
     boardId,
     comment,
-    writerId
+    writerId,
   );
   // 게시글에 댓글이 달리면 슬랙 메세지를 보낸다.
   const matchedPost = await boardRepository.findByPostId(boardId);
@@ -178,7 +178,7 @@ export async function upload(req, res, err) {
   const boardId = req.body.boardId;
   const image = req.files;
   console.log(
-    `image length = ${image.length}, fileValidationError = ${req.fileValidationError}`
+    `image length = ${image.length}, fileValidationError = ${req.fileValidationError}`,
   );
   console.log(image[0]);
   const path = image.map((img) => img.location);
@@ -199,7 +199,7 @@ export async function upload(req, res, err) {
       util.success(200, "업로드를 완료했습니다", {
         imageId: imageId,
         path: path,
-      })
+      }),
     );
 }
 
@@ -230,7 +230,7 @@ function deleteObjectOfS3(fileKey) {
     function (err, data) {
       if (err) console.log(err);
       console.log(data);
-    }
+    },
   );
 }
 

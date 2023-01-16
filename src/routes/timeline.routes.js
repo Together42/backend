@@ -15,7 +15,7 @@ router.post(
   isAuth,
   timelineUpload.any(), 
   fileSizeLimitErrorHandler, 
-  timelineController.upload
+  timelineController.upload,
 );
 
 export default router;
