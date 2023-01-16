@@ -1,5 +1,4 @@
 import { db } from "../db/database.js";
-import { config } from "../config.js";
 
 export async function findByPostId(id) {
   return db

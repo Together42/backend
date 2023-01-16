@@ -119,7 +119,7 @@ export async function matching(req, res) {
     if (create.createdId !== 70)
       // 70 = gychoi
       return res.status(400).json({ message: "권한이 없습니다" });
-    const eventTitle = create.title; // 위 create에 모든 정보가 포함되어 있어서, 아래처럼 쿼리를 따로 추가하지 않아도 이벤트 제목을 알 수 있을 듯 합니다. 차후 리팩토링 고려...
+    // 위 create에 모든 정보가 포함되어 있어서, 아래처럼 쿼리를 따로 추가하지 않아도 이벤트 제목을 알 수 있을 듯 합니다. 차후 리팩토링 고려...
     const check = await togetherRepository.findAttendByEventId(eventId);
     if (
       check === undefined ||

@@ -94,7 +94,7 @@ export async function rotationEvent(eventId) {
     attendance,
     monthArrayInfo.monthArray,
   );
-  return ({rotation: rotationInfo, nextMonth: monthArrayInfo.nextMonth});
+  return { rotation: rotationInfo, nextMonth: monthArrayInfo.nextMonth };
 }
 
 export async function getParticipantsInfo(week, weekday) {
