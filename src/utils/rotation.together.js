@@ -11,20 +11,19 @@ function initMonthArray() {
   let year = new Date().getFullYear();
   const month = new Date().getMonth();
   const nextMonth = (month + 1) % 12 + 1;
-  if (nextMonth === 1)
-    year += 1;
+  if (nextMonth === 1) year += 1;
   const monthDays = new Date(year, nextMonth, 0).getDate();
   const tmpMonthArray = [];
   let tmp = [];
   for (let i = 1; i <= monthDays; i++) {
-    if (new Date(year, nextMonth - 1, i).getDay() > 0 &&
-      new Date(year, nextMonth - 1, i).getDay() < 6) {
+    if (
+      new Date(year, nextMonth - 1, i).getDay() > 0 &&
+      new Date(year, nextMonth - 1, i).getDay() < 6
+    ) {
       tmp.push(0);
       tmp.push(0);
-      if (i === monthDays)
-        tmpMonthArray.push(tmp);
-    }
-    else {
+      if (i === monthDays) tmpMonthArray.push(tmp);
+    } else {
       tmpMonthArray.push(tmp);
       tmp = [];
     }
