@@ -1,9 +1,9 @@
-import express from "express"
-import "express-async-errors"
-import * as slackController from "../controller/slack.controller.js"
+import express from "express";
+import "express-async-errors";
+import * as slackController from "../controller/slack.controller.js";
 
-const router = express.Router()
+const router = express.Router();
 
-router.post("/", slackController.publishMessages)
+router.post("/", slackController.publishMessages);
 
-export default router
+export default router;

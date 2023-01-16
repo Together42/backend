@@ -1,20 +1,20 @@
-import express from "express"
-import morgan from "morgan"
-import cors from "cors"
-import swaggerUi from "swagger-ui-express"
-import router from "./routes/index.js"
-import swaggerFile from "./swagger/swagger-docs.json" assert { type: "json" }
-import { config } from "./config.js"
-import { stream } from "./config/winston.js"
-import rateLimit from "./middleware/rate-limiter.js"
-import expressBasicAuth from "express-basic-auth"
+import express from "express";
+import morgan from "morgan";
+import cors from "cors";
+import swaggerUi from "swagger-ui-express";
+import router from "./routes/index.js";
+import swaggerFile from "./swagger/swagger-docs.json" assert { type: "json" };
+import { config } from "./config.js";
+import { stream } from "./config/winston.js";
+import rateLimit from "./middleware/rate-limiter.js";
+import expressBasicAuth from "express-basic-auth";
 
 // express configuration
-const app = express()
+const app = express();
 
 //parse JSON and url-encoded query
-app.use(express.urlencoded({ extended: false }))
-app.use(express.json())
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 app.use(
   cors({
     origin: [
@@ -26,9 +26,9 @@ app.use(
     ],
     credentials: true,
   }),
-)
-app.use(morgan("combined", { stream }))
-app.use(rateLimit)
+);
+app.use(morgan("combined", { stream }));
+app.use(rateLimit);
 
 app.use(
   ["/swagger"],
@@ -38,7 +38,7 @@ app.use(
       [process.env.SWAGGER_USER]: process.env.SWAGGER_PASSWORD,
     },
   }),
-)
+);
 
 //Swagger 연결
 app.use(
@@ -50,10 +50,10 @@ app.use(
       persistAuthorization: true,
     },
   }),
-)
+);
 
 //route
-app.use("/api", router)
+app.use("/api", router);
 
-app.listen(config.host.port)
-console.log("Listening on", config.host.port)
+app.listen(config.host.port);
+console.log("Listening on", config.host.port);

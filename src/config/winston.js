@@ -1,12 +1,12 @@
-"use strict"
+"use strict";
 
-import winston, { createLogger, format, transports } from "winston"
-import winstonDaily from "winston-daily-rotate-file"
-const { combine, timestamp, printf } = format
+import winston, { createLogger, format, transports } from "winston";
+import winstonDaily from "winston-daily-rotate-file";
+const { combine, timestamp, printf } = format;
 
 const customFormat = printf(info => {
-  return `${info.timestamp} ${info.level}: ${info.message}`
-})
+  return `${info.timestamp} ${info.level}: ${info.message}`;
+});
 
 const logger = winston.createLogger({
   format: combine(
@@ -27,12 +27,12 @@ const logger = winston.createLogger({
       maxFiles: 14,
     }),
   ],
-})
+});
 
 const stream = {
   write: message => {
-    logger.info(message)
+    logger.info(message);
   },
-}
+};
 
-export { logger, stream }
+export { logger, stream };
