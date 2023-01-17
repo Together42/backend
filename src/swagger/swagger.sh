@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 node src/swagger/swagger.js
 swagger_output='src/swagger/swagger-docs.json'
