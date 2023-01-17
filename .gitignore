@@ -1,3 +1,5 @@
+src/swagger/swagger-docs.json
+
 # Logs
 logs
 *.log
