@@ -1,4 +1,7 @@
 import swaggerAutogen from "swagger-autogen";
+import dotEnv from "dotenv";
+
+dotEnv.config();
 
 const options = {
   info: {
@@ -6,13 +9,13 @@ const options = {
     version: "1.0.0",
     description: "Together42 web service, Express and documented with Swagger",
   },
-  host: "dev.together.42jip.net",
+  host: process.env.BACKEND_LOCAL_HOST ?? process.env.BACKEND_TEST_HOST,
   contact: {
     name: "tkim",
     url: "https://github.com/kth2624",
     email: "dev.tkim42@gmail.com",
   },
-  schemes: ["https"],
+  schemes: [process.env.BACKEND_LOCAL_HOST ? "http" : "https"],
   securityDefinitions: {
     bearerAuth: {
       type: "apiKey",
