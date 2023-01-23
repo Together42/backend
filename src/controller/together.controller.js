@@ -1,6 +1,5 @@
 import * as togetherRepository from "../data/together.js";
 import * as userRepository from "../data/auth.js";
-import * as togetherUtils from "../utils/rotation.together.js";
 import { publishMessage } from "./slack.controller.js";
 import { config } from "../config.js";
 
