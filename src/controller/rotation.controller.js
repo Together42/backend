@@ -98,9 +98,7 @@ export async function setRotationAndGet(req, res) {
 
 export async function updateAttendInfo(req, res) {
   let year = new Date().getFullYear();
-  let month = (new Date().getMonth() + 1) % 12 + 1;
-  if (month === 1)
-    year += 1;
+  let month = (new Date().getMonth()) % 12 + 1;
   if (month < 10) {
     month = "0" + month;
   }
