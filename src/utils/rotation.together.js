@@ -202,6 +202,7 @@ export function checkAttend(attendInfo) {
     }
     if (flag === true)
       break;
+    loop++;
   }
   if (flag === false)
     return ({status: flag, loop: loop, message: "적합한 매칭을 만들지 못했습니다."});
