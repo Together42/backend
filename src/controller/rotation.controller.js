@@ -15,17 +15,22 @@ export async function addParticipant(req, res) {
       participant["year"] = year;
       console.log(participant);
       await rotationRepository.addParticipant(participant);
-      return res.status(200).json({ message: "OK" });
+      let rotationResult = setRotation();
+      if (rotationResult.status < 0) {
+        return res.status(500).json({ message: "사서 로테이션 실패" });
+      } else {
+        return res.status(200).json({ message: "로테이션 참석이 완료되었습니다." });
+      }
     }
     else
       return res.status(500).json({ message: "중복되는 참석자입니다." });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "참석자 입력 실패." });
-  }
+  } 
 }
 
-export async function setRotationAndGet(req, res) {
+async function setRotation() {
   const monthArrayInfo = rotationUtils.initMonthArray();
   let month = monthArrayInfo.nextMonth;
   if (month < 10) {
@@ -48,12 +53,12 @@ export async function setRotationAndGet(req, res) {
           await rotationRepository.initAttendInfo({ intraId: participants[i].intraId, month: month, year: year });
         } catch (error) {
           console.log(error);
-          return res.status(500).json({ message: "사서 로테이션 실패." });
+          return ({ status: -1, info: error });
         }
       }
       const rotationResult = rotationUtils.checkAttend(rotationUtils.setRotation(participants, monthArrayInfo));
       if (rotationResult.status === false) {
-        return res.status(500).json({ message: rotationResult.message });
+        return ({ status: -1, info: rotationResult.message });
       }
       for (let i = 0; i < rotationResult.monthArray.monthArray.length; i++) {
         for (let j = 0; j < rotationResult.monthArray.monthArray[i].length; j++) {
@@ -69,7 +74,7 @@ export async function setRotationAndGet(req, res) {
                 await rotationRepository.setAttendDate({ attendDate: attendDate, intraId: participantId, month: month, year: year });
               } catch (error) {
                 console.log(error);
-                return res.status(500).json({ message: "사서 로테이션 실패" });
+                return ({ status: -1, info: error });
               }
             }
           }
@@ -78,7 +83,15 @@ export async function setRotationAndGet(req, res) {
     }
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ message: "사서 로테이션 실패" });
+    return ({ status: -1, info: error });
+  }
+}
+
+export async function getRotationInfo(req, res) {
+  let year = new Date().getFullYear();
+  let month = (new Date().getMonth()) % 12 + 1;
+  if (month < 10) {
+    month = "0" + month;
   }
   try {
     let participants = await rotationRepository.getParticipants({ month: month, year: year });
@@ -92,7 +105,7 @@ export async function setRotationAndGet(req, res) {
     return res.status(200).json(participantInfo);
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ message: "사서 로테이션 실패 "});
+    return res.status(500).json({ message: "사서 로테이션 조회 실패" });
   }
 }
 

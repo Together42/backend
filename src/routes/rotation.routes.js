@@ -9,7 +9,7 @@ const router = express.Router();
 router.post("/attend", isAuth, rotationController.addParticipant);
 
 // 사서 로테이션 진행 및 결과 반환
-router.get("/", rotationController.setRotationAndGet);
+router.get("/", rotationController.getRotationInfo);
 
 // 사서 일정 변경
 router.patch("/update/:intraId", isAuth, rotationController.updateAttendInfo);

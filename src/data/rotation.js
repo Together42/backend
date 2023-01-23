@@ -3,8 +3,8 @@ import { db } from "../db/database.js";
 export async function addParticipant(participant) {
   const { intraId, attendLimit, month, year } = participant;
   return db
-    .execute("INSERT INTO rotation (intraId, attendLimit, month, year) VALUES (?,?,?,?)",
-      [intraId, attendLimit, month, year],
+    .execute("INSERT INTO rotation (intraId, attendLimit, month, year, isSet) VALUES (?,?,?,?,?)",
+      [intraId, attendLimit, month, year,0],
     )
     .then((result) => result[0].insertId);
 }
