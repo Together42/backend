@@ -9,10 +9,10 @@ export async function addParticipant(participant) {
     .then((result) => result[0].insertId);
 }
 
-export async function checkDuplicate(participant) {
+export async function deleteParticipant(participantInfo) {
   return db
-    .execute("SELECT intraId from rotation WHERE intraId=?",
-      [participant.intraId],
+    .execute("DELETE FROM rotation WHERE (intraId=? AND month=? AND year=?)",
+      [participantInfo.intraId, participantInfo.month, participantInfo.year],
     )
     .then((result) => result[0]);
 }
