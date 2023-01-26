@@ -3,31 +3,54 @@ import * as rotationUtils from "../utils/rotation.together.js";
 
 export async function addParticipant(req, res) {
   let participant = req.body;
+  let year = new Date().getFullYear();
+  let month = new Date().getMonth();
+  let nextMonth = (month + 1) % 12 + 1;
+  if (nextMonth === 1)
+    year += 1;
   try {
-    const exists = await rotationRepository.checkDuplicate(participant);
+    const exists = await rotationRepository.getParticipantInfo({ intraId: participant.intraId, month: nextMonth, year: year });
     if (!exists.length) {
-      let year = new Date().getFullYear();
-      const month = new Date().getMonth();
-      const nextMonth = (month + 1) % 12 + 1;
-      if (nextMonth === 1)
-        year += 1;
       participant["month"] = nextMonth;
       participant["year"] = year;
-      console.log(participant);
       await rotationRepository.addParticipant(participant);
       let rotationResult = setRotation();
       if (rotationResult.status < 0) {
-        return res.status(500).json({ message: "사서 로테이션 실패" });
-      } else {
-        return res.status(200).json({ message: "로테이션 참석이 완료되었습니다." });
+        return res.status(500).json({ message: "로테이션 참석은 완료되었지만, 사서 로테이션을 실패하였습니다." });
       }
+      return res.status(200).json({ intraId: participant.intraId, message: "로테이션 참석이 완료되었습니다." });
+    } else {
+      return res.status(400).json({ intraId: participant.intraId, message: "중복되는 참석자입니다." });
     }
-    else
-      return res.status(500).json({ message: "중복되는 참석자입니다." });
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ message: "참석자 입력 실패." });
+    return res.status(500).json({ message: "참석자 추가 실패." });
   } 
+}
+
+export async function deleteParticipant(req, res) {
+  let participant = req.body;
+  let year = new Date().getFullYear();
+  let month = new Date().getMonth();
+  let nextMonth = (month + 1) % 12 + 1;
+  if (nextMonth === 1)
+    year += 1;
+  try {
+    const exists = await rotationRepository.getParticipantInfo({ intraId: participant.intraId, month: nextMonth, year: year });
+    if (exists.length) {
+      await rotationRepository.deleteParticipant({ intraId: participant.intraId, month: nextMonth, year: year });
+      let rotationResult = setRotation();
+      if (rotationResult.status < 0) {
+        return res.status(500).json({ message: "로테이션 참석 삭제는 완료되었지만, 사서 로테이션을 실패하였습니다." });
+      }
+      return res.status(200).json({ intraId: participant.intraId, message: "로테이션 참석 정보를 삭제했습니다." });
+    } else {
+      return res.status(400).json({ intraId: participant.intraId, message: "다음 달 로테이션에 참석하지 않은 사서입니다." });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "참석자 삭제 실패." });
+  }
 }
 
 async function setRotation() {
@@ -68,7 +91,7 @@ async function setRotation() {
               if (day < 10) {
                 day = "0" + day;
               }
-              let attendDate = year + "-" + month + "-" + day + ", ";
+              let attendDate = year + "-" + month + "-" + day + ",";
               let participantId = rotationResult.monthArray.monthArray[i][j].arr[k];
               try {
                 await rotationRepository.setAttendDate({ attendDate: attendDate, intraId: participantId, month: month, year: year });
@@ -116,23 +139,60 @@ export async function updateAttendInfo(req, res) {
     month = "0" + month;
   }
   let intraId = req.body.intraId;
-  let before = req.body.before;
-  let after = req.body.after;
+  let before = req.body.before.trim();
+  let after = req.body.after.trim();
   try {
     const participantInfo = await rotationRepository.getParticipantInfo({ intraId: intraId, month: month, year: year });
+    if (participantInfo === undefined) {
+      return res.status(400).json({ intraId: intraId, message: "해당 달 사서 업무에 참여하지 않은 사서입니다" });
+    }
     let attendDates = participantInfo[0].attendDate.split(",").slice(0,-1);
     let newDates = [];
-    for (let i = 0; i < attendDates.length; i++) {
-      if (attendDates[i] === before) {
-        newDates.push(after);
-      } else {
-        newDates.push(attendDates[i]);
+    if (before === "") {
+      if (attendDates.indexOf(after) < 0){
+        await rotationRepository.setAttendDate({ attendDate: after + ",", intraId: intraId, month: month, year: year });
       }
+    } else {
+      for (let i = 0; i < attendDates.length; i++) {
+        if (attendDates[i].trim() === before) {
+          newDates.push(after);
+        } else {
+          newDates.push(attendDates[i].trim());
+        }
+      }
+      await rotationRepository.updateAttendDate({ attendDate: newDates.join(",") + ",", intraId: intraId, month: month, year: year});
     }
-    await rotationRepository.updateAttendDate({ attendDate: newDates.toString() + ", ", intraId: intraId, month: month, year: year});
-    return res.status(200).json({ message: "OK" });
+    return res.status(200).json({ intraId: intraId, message: "UPDATE ATTEND DATE OK" });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "일정 업데이트 실패" });
+  }
+}
+
+export async function deleteAttendInfo(req, res) {
+  let year = new Date().getFullYear();
+  let month = (new Date().getMonth()) % 12 + 1;
+  if (month < 10) {
+    month = "0" + month;
+  }
+  let intraId = req.body.intraId;
+  let dateDelete = req.body.date.trim();
+  try {
+    const participantInfo = await rotationRepository.getParticipantInfo({ intraId: intraId, month: month, year: year });
+    if (participantInfo === undefined) {
+      return res.status(400).json({ intraId: intraId, message: "해당 달 사서 업무에 참여하지 않은 사서입니다" });
+    }
+    let attendDates = participantInfo[0].attendDate.split(",").slice(0,-1);
+    let newDates = [];
+    for (let i = 0; i < attendDates.length; i++) {
+      if (attendDates[i].trim() != dateDelete) {
+        newDates.push(attendDates[i].trim());
+      }
+    }
+    await rotationRepository.updateAttendDate({ attendDate: newDates.join(",") + ",", intraId: intraId, month: month, year: year});
+    return res.status(200).json({ intraId: intraId, message: "DELETE ATTEND DATE OK" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "사서 일정 추가 실패" });
   }
 }
