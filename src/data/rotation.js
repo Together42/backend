@@ -4,7 +4,16 @@ export async function addParticipant(participant) {
   const { intraId, attendLimit, month, year } = participant;
   return db
     .execute("INSERT INTO rotation (intraId, attendLimit, month, year, isSet) VALUES (?,?,?,?,?)",
-      [intraId, attendLimit, month, year,0],
+      [intraId, attendLimit, month, year, 0],
+    )
+    .then((result) => result[0].insertId);
+}
+
+export async function putParticipant(participant) {
+  const { intraId, attendLimit, month, year, attendDate } = participant;
+  return db
+    .execute("INSERT INTO rotation (intraId, attendLimit, month, year, attendDate, isSet) VALUES (?,?,?,?,?,?)",
+      [intraId, attendLimit, month, year, attendDate, 1],
     )
     .then((result) => result[0].insertId);
 }

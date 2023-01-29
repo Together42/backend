@@ -143,8 +143,10 @@ export async function updateAttendInfo(req, res) {
   let after = req.body.after.trim();
   try {
     const participantInfo = await rotationRepository.getParticipantInfo({ intraId: intraId, month: month, year: year });
-    if (participantInfo === undefined) {
-      return res.status(400).json({ intraId: intraId, message: "해당 달 사서 업무에 참여하지 않은 사서입니다" });
+    console.log(participantInfo);
+    if (participantInfo.length === 0) {
+      await rotationRepository.putParticipant({ intraId: intraId, attendLimit: null, month: month, year: year, attendDate : after + "," });
+      return res.status(200).json({ intraId: intraId, message: "PUT PARTICIPATION OK" });
     }
     let attendDates = participantInfo[0].attendDate.split(",").slice(0,-1);
     let newDates = [];
