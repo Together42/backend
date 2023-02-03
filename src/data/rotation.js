@@ -28,9 +28,15 @@ export async function deleteParticipant(participantInfo) {
 
 export async function getParticipants(dateInfo) {
   return db
-    .execute("SELECT id, intraId, attendLimit, attendDate, isSet from rotation WHERE (month=? AND year=?)",
+    .execute("SELECT id, intraId, attendLimit, attendDate, isSet FROM rotation WHERE (month=? AND year=?)",
       [dateInfo.month, dateInfo.year],
     )
+    .then((result) => result[0]);
+}
+
+export async function getRotationInfo() {
+  return db
+    .execute("SELECT * FROM rotation")
     .then((result) => result[0]);
 }
 

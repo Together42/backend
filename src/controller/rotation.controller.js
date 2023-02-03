@@ -111,24 +111,34 @@ async function setRotation() {
 }
 
 export async function getRotationInfo(req, res) {
-  let year = new Date().getFullYear();
-  let month = (new Date().getMonth()) % 12 + 1;
-  if (month < 10) {
-    month = "0" + month;
-  }
-  try {
-    let participants = await rotationRepository.getParticipants({ month: month, year: year });
-    let participantInfo = [];
-    for (let i = 0; i < participants.length; i++) {
-      let date = participants[i].attendDate.split(",").slice(0,-1);
-      let participantId = participants[i].intraId;
-      participantInfo.push({ date: date, intraId: participantId });
+  if (Object.keys(req.body).length === 0 || 
+     (Object.keys(req.body).indexOf("month") < 0) || 
+     (Object.keys(req.body).indexOf("year") < 0)
+  ) {
+    try {
+      let rotationInfo = await rotationRepository.getRotationInfo();
+      return res.status(200).json(rotationInfo);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: "사서 로테이션 조회 실패" });
     }
-    console.log(participantInfo);
-    return res.status(200).json(participantInfo);
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ message: "사서 로테이션 조회 실패" });
+  } else {
+    try {
+      let month = req.body.month;
+      let year = req.body.year;
+      let participants = await rotationRepository.getParticipants({ month: month, year: year });
+      let participantInfo = [];
+      for (let i = 0; i < participants.length; i++) {
+        let date = participants[i].attendDate.split(",").slice(0,-1);
+        let participantId = participants[i].intraId;
+        participantInfo.push({ date: date, intraId: participantId });
+      }
+      console.log(participantInfo);
+      return res.status(200).json(participantInfo);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: "사서 로테이션 조회 실패" });
+    }
   }
 }
 

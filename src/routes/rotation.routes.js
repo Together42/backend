@@ -11,7 +11,7 @@ router.post("/attend", isAuth, rotationController.addParticipant);
 // 로테이션 참석 사서 삭제
 router.delete("/attend", isAuth, rotationController.deleteParticipant);
 
-// 이번 달 사서 로테이션 결과 반환
+// 전체 사서 로테이션 결과 반환
 router.get("/", rotationController.getRotationInfo);
 
 // 사서 일정 변경
