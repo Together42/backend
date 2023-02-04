@@ -131,6 +131,7 @@ export async function getRotationInfo(req, res) {
         month = req.query.month;
       if (Object.keys(req.query).indexOf("year") > -1 && !isNaN(parseInt(req.query.year, 10)))
         year = req.query.year;
+
       let participants = await rotationRepository.getParticipants({ month: month, year: year });
       let participantInfo = [];
       for (let i = 0; i < participants.length; i++) {
