@@ -111,10 +111,7 @@ async function setRotation() {
 }
 
 export async function getRotationInfo(req, res) {
-  if (Object.keys(req.body).length === 0 || 
-     (Object.keys(req.body).indexOf("month") < 0) || 
-     (Object.keys(req.body).indexOf("year") < 0)
-  ) {
+  if (!Object.keys(req.query).length) {
     try {
       let rotationInfo = await rotationRepository.getRotationInfo();
       return res.status(200).json(rotationInfo);
@@ -124,8 +121,17 @@ export async function getRotationInfo(req, res) {
     }
   } else {
     try {
-      let month = req.body.month;
-      let year = req.body.year;
+      let year = new Date().getFullYear();
+      let month = (new Date().getMonth()) % 12 + 1;
+      if (month < 10) {
+        month = "0" + month;
+      }
+      console.log(typeof(req.query.month));
+      if (Object.keys(req.query).indexOf("month") > -1 && !isNaN(parseInt(req.query.month, 10)))
+        month = req.query.month;
+      if (Object.keys(req.query).indexOf("year") > -1 && !isNaN(parseInt(req.query.year, 10)))
+        year = req.query.year;
+
       let participants = await rotationRepository.getParticipants({ month: month, year: year });
       let participantInfo = [];
       for (let i = 0; i < participants.length; i++) {
