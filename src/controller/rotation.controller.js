@@ -155,7 +155,7 @@ export async function updateAttendInfo(req, res) {
   let before = req.body.before.trim();
   let after = req.body.after.trim();
 
-  let year = new Date().getFullYear();
+  let year = after.split("-")[0];
   let month = after.split("-")[1];
   try {
     const participantInfo = await rotationRepository.getParticipantInfo({ intraId: intraId, month: month, year: year });
@@ -191,7 +191,7 @@ export async function deleteAttendInfo(req, res) {
   let intraId = req.body.intraId;
   let dateDelete = req.body.date.trim();
 
-  let year = new Date().getFullYear();
+  let year = dateDelete.split("-")[0];
   let month = dateDelete.split("-")[1];
   try {
     const participantInfo = await rotationRepository.getParticipantInfo({ intraId: intraId, month: month, year: year });
