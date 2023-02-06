@@ -49,11 +49,11 @@ export function initMonthArray() {
 export function setRotation(attendance, monthArrayInfo) {
   let canDuplicate = false;
   if (attendance.length < 10) canDuplicate = true;
-  let participation = 0;
+  let participation = 1;
   let participants = [];
   for (let i = 0; i < attendance.length; i++) {
     participants.push({id: attendance[i].id, intraId: attendance[i].intraId,
-      attendLimit: attendance[i].attendLimit, attend: 0});
+      attendLimit: JSON.parse(attendance[i].attendLimit), attend: 0});
   }
   shuffle(participants);
   sortByArray(participants);
@@ -63,31 +63,34 @@ export function setRotation(attendance, monthArrayInfo) {
   let isLoopedAgain = false;
   for (let i = 0; i < monthArrayInfo.monthArray.length; i++) {
     for (let j = 0; j < monthArrayInfo.monthArray[i].length; j++) {
+      // console.log("================================");
       let participant1 = undefined;
       let arrIndex = 0;
       for (let k = 0; k < participants.length; k++) {
         if (checkContinue === true) {
           k += continueIndex;
-          checkContinue = false;
         }
-        // console.log("first :", participants[k].userId, participants[k].attend, k)
+        // console.log("first :", participants[k].intraId, participants[k].attend);
         if (participants[k].attend < participation) {
           if (participants[k].attendLimit
-            .indexOf(monthArrayInfo.monthArray[i][j].day) == -1) {
+            .indexOf(monthArrayInfo.monthArray[i][j].day) === -1) {
             if (monthArrayInfo.monthArray[i][j].arr
-              .indexOf(participants[k].intraId) == -1) {
+              .indexOf(participants[k].intraId) === -1) {
               participant1 = participants[k];
               participant1.attend += 1;
               break;
             }
           }
-        } else {
-          if (canDuplicate && (participants[k].attend == participation)) {
-            //console.log("Duplication occours!")
+        }
+      }
+      if (canDuplicate && participant1 === undefined) {
+        for (let k = 0; k < participants.length; k++) {
+          if (participants[k].attend < participation + 1) {
+            // console.log("dup first :", participants[k].intraId, participants[k].attend);
             if (participants[k].attendLimit
-              .indexOf(monthArrayInfo.monthArray[i][j].day) == -1) {
+              .indexOf(monthArrayInfo.monthArray[i][j].day) === -1) {
               if (monthArrayInfo.monthArray[i][j].arr
-                .indexOf(participants[k].intraId) == -1) {
+                .indexOf(participants[k].intraId) === -1) {
                 participant1 = participants[k];
                 participant1.attend += 1;
                 break;
@@ -106,6 +109,7 @@ export function setRotation(attendance, monthArrayInfo) {
         if (isLooped === false) {
           isLooped = true;
         } else if (isLooped === true) {
+          participation -= 1;
           isLooped = false;
           j += 1;
         }
@@ -116,29 +120,36 @@ export function setRotation(attendance, monthArrayInfo) {
         isLooped = false;
         monthArrayInfo.monthArray[i][j].arr[arrIndex++] = participant1.intraId;
       }
-      // console.log("first: ", monthArrayInfo.monthArray[i][j], participation, i, j)
+      // console.log("first: ", monthArrayInfo.monthArray[i][j], participation);
+
+      shuffle(participants);
+      sortByArray(participants);
+      // console.log("------------------");
 
       // 한 번 더 반복
       let participant2 = undefined;
       for (let k = 0; k < participants.length; k++) {
-        // console.log("second :", participants[k].userId, participants[k].attend, k)
+        // console.log("second :", participants[k].intraId, participants[k].attend);
         if (participants[k].attend < participation) {
           if (participants[k].attendLimit
-            .indexOf(monthArrayInfo.monthArray[i][j].day) == -1) {
+            .indexOf(monthArrayInfo.monthArray[i][j].day) === -1) {
             if (monthArrayInfo.monthArray[i][j].arr
-              .indexOf(participants[k].intraId) == -1) {
+              .indexOf(participants[k].intraId) === -1) {
               participant2 = participants[k];
               participant2.attend += 1;
               break;
             }
           }
-        } else {
-          if (canDuplicate && (participants[k].attend <= participation + 1)) {
-            //console.log("Duplication occours!")
+        }
+      }
+      if (canDuplicate && participant2 === undefined) {
+        for (let k = 0; k < participants.length; k++) {
+          if (participants[k].attend < participation + 1) {
+            // console.log("dup second :", participants[k].intraId, participants[k].attend);
             if (participants[k].attendLimit
-              .indexOf(monthArrayInfo.monthArray[i][j].day) == -1) {
+              .indexOf(monthArrayInfo.monthArray[i][j].day) === -1) {
               if (monthArrayInfo.monthArray[i][j].arr
-                .indexOf(participants[k].intraId) == -1) {
+                .indexOf(participants[k].intraId) === -1) {
                 participant2 = participants[k];
                 participant2.attend += 1;
                 break;
@@ -156,6 +167,7 @@ export function setRotation(attendance, monthArrayInfo) {
         }
         if (participant1 && isLooped === false) {
           if (isLoopedAgain === true) {
+            participation -= 1;
             isLoopedAgain = false;
             continue;
           }
@@ -167,6 +179,7 @@ export function setRotation(attendance, monthArrayInfo) {
           participant1.attend -= 1;
           monthArrayInfo.monthArray[i][j + 1].arr[0] = 0;
         } else if (isLooped === true) {
+          participation -= 1;
           isLooped = false;
           isLoopedAgain = false;
           j += 1;
@@ -176,9 +189,11 @@ export function setRotation(attendance, monthArrayInfo) {
         continueIndex = 0;
         checkContinue = false;
         isLooped = false;
-        monthArrayInfo.monthArray[i][j].arr[arrIndex++] = participant2.intraId;
+        isLoopedAgain = false;
+        monthArrayInfo.monthArray[i][j].arr[arrIndex--] = participant2.intraId;
       }
-      // console.log("second: ", monthArrayInfo.monthArray[i][j], participation, i, j)
+      // console.log("second: ", monthArrayInfo.monthArray[i][j], participation);
+      // console.log("================================");
     }
   }
   // for (let i = 0; i < monthArrayInfo.monthArray.length; i++) {
@@ -209,3 +224,13 @@ export function checkAttend(attendInfo) {
   else
     return ({status: flag, loop: loop, ...attendInfo});
 }
+
+// import * as rotationRepository from "../data/rotation.js";
+
+// let monthArrayInfo = initMonthArray();
+// let participants = await rotationRepository.getParticipants({ month: 3, year: 2023 });
+// let attendResult = checkAttend(setRotation(participants, monthArrayInfo)).participants;
+
+// for (let i = 0; i < attendResult.length; i++) {
+//   console.log(attendResult[i].intraId, attendResult[i].attend);
+// }
