@@ -13,7 +13,7 @@ export async function putParticipant(participant) {
   const { intraId, attendLimit, month, year, attendDate } = participant;
   return db
     .execute("INSERT INTO rotation (intraId, attendLimit, month, year, attendDate, isSet) VALUES (?,?,?,?,?,?)",
-      [intraId, attendLimit, month, year, attendDate, 1],
+      [intraId, attendLimit, month, year, attendDate, 0],
     )
     .then((result) => result[0].insertId);
 }
@@ -51,7 +51,7 @@ export async function getParticipantInfo(participantInfo) {
 export async function setAttendDate(attendInfo) {
   return db
     .execute("UPDATE rotation SET attendDate=CONCAT(IFNULL(attendDate, ''),?),isSet=? WHERE (intraId=? AND month=? AND year=?)",
-      [attendInfo.attendDate, 1, attendInfo.intraId, attendInfo.month, attendInfo.year],
+      [attendInfo.attendDate, attendInfo.isSet, attendInfo.intraId, attendInfo.month, attendInfo.year],
     )
     .then((result) => result[0]);
 }

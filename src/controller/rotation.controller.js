@@ -13,10 +13,12 @@ export async function addParticipant(req, res) {
     if (!exists.length) {
       participant["month"] = nextMonth;
       participant["year"] = year;
+      if (participant.attendLimit === null)
+        participant["attendLimit"] = [];
       await rotationRepository.addParticipant(participant);
       let rotationResult = setRotation();
       if (rotationResult.status < 0) {
-        return res.status(500).json({ message: "로테이션 참석은 완료되었지만, 사서 로테이션을 실패하였습니다." });
+        return res.status(500).json({ message: "사서 로테이션을 실패하였습니다." });
       }
       return res.status(200).json({ intraId: participant.intraId, message: "로테이션 참석이 완료되었습니다." });
     } else {
@@ -41,7 +43,7 @@ export async function deleteParticipant(req, res) {
       await rotationRepository.deleteParticipant({ intraId: participant.intraId, month: nextMonth, year: year });
       let rotationResult = setRotation();
       if (rotationResult.status < 0) {
-        return res.status(500).json({ message: "로테이션 참석 삭제는 완료되었지만, 사서 로테이션을 실패하였습니다." });
+        return res.status(500).json({ message: "사서 로테이션을 실패하였습니다." });
       }
       return res.status(200).json({ intraId: participant.intraId, message: "로테이션 참석 정보를 삭제했습니다." });
     } else {
@@ -79,7 +81,7 @@ async function setRotation() {
           return ({ status: -1, info: error });
         }
       }
-      const rotationResult = rotationUtils.checkAttend(rotationUtils.setRotation(participants, monthArrayInfo));
+      const rotationResult = await rotationUtils.checkAttend(rotationUtils.setRotation(participants, monthArrayInfo));
       if (rotationResult.status === false) {
         return ({ status: -1, info: rotationResult.message });
       }
@@ -94,7 +96,7 @@ async function setRotation() {
               let attendDate = year + "-" + month + "-" + day + ",";
               let participantId = rotationResult.monthArray.monthArray[i][j].arr[k];
               try {
-                await rotationRepository.setAttendDate({ attendDate: attendDate, intraId: participantId, month: month, year: year });
+                await rotationRepository.setAttendDate({ attendDate: attendDate, isSet: 1, intraId: participantId, month: month, year: year });
               } catch (error) {
                 console.log(error);
                 return ({ status: -1, info: error });
@@ -149,26 +151,24 @@ export async function getRotationInfo(req, res) {
 }
 
 export async function updateAttendInfo(req, res) {
-  let year = new Date().getFullYear();
-  let month = (new Date().getMonth()) % 12 + 1;
-  if (month < 10) {
-    month = "0" + month;
-  }
   let intraId = req.body.intraId;
   let before = req.body.before.trim();
   let after = req.body.after.trim();
+
+  let year = after.split("-")[0];
+  let month = after.split("-")[1];
   try {
     const participantInfo = await rotationRepository.getParticipantInfo({ intraId: intraId, month: month, year: year });
-    console.log(participantInfo);
     if (participantInfo.length === 0) {
-      await rotationRepository.putParticipant({ intraId: intraId, attendLimit: null, month: month, year: year, attendDate : after + "," });
+      await rotationRepository.putParticipant({ intraId: intraId, attendLimit: [], month: month, year: year, attendDate : after + "," });
       return res.status(200).json({ intraId: intraId, message: "PUT PARTICIPATION OK" });
     }
     let attendDates = participantInfo[0].attendDate.split(",").slice(0,-1);
+    let isSet = participantInfo[0].isSet;
     let newDates = [];
     if (before === "") {
       if (attendDates.indexOf(after) < 0){
-        await rotationRepository.setAttendDate({ attendDate: after + ",", intraId: intraId, month: month, year: year });
+        await rotationRepository.setAttendDate({ attendDate: after + ",", intraId: intraId, month: month, year: year, isSet: isSet });
       }
     } else {
       for (let i = 0; i < attendDates.length; i++) {
@@ -178,7 +178,7 @@ export async function updateAttendInfo(req, res) {
           newDates.push(attendDates[i].trim());
         }
       }
-      await rotationRepository.updateAttendDate({ attendDate: newDates.join(",") + ",", intraId: intraId, month: month, year: year});
+      await rotationRepository.updateAttendDate({ attendDate: newDates.join(",") + ",", intraId: intraId, month: month, year: year });
     }
     return res.status(200).json({ intraId: intraId, message: "UPDATE ATTEND DATE OK" });
   } catch (error) {
@@ -188,17 +188,15 @@ export async function updateAttendInfo(req, res) {
 }
 
 export async function deleteAttendInfo(req, res) {
-  let year = new Date().getFullYear();
-  let month = (new Date().getMonth()) % 12 + 1;
-  if (month < 10) {
-    month = "0" + month;
-  }
   let intraId = req.body.intraId;
   let dateDelete = req.body.date.trim();
+
+  let year = dateDelete.split("-")[0];
+  let month = dateDelete.split("-")[1];
   try {
     const participantInfo = await rotationRepository.getParticipantInfo({ intraId: intraId, month: month, year: year });
-    if (participantInfo === undefined) {
-      return res.status(400).json({ intraId: intraId, message: "해당 달 사서 업무에 참여하지 않은 사서입니다" });
+    if (participantInfo.length === 0) {
+      return res.status(400).json({ intraId: intraId, month: month, message: "해당 달 사서 업무에 참여하지 않은 사서입니다" });
     }
     let attendDates = participantInfo[0].attendDate.split(",").slice(0,-1);
     let newDates = [];
@@ -208,9 +206,9 @@ export async function deleteAttendInfo(req, res) {
       }
     }
     await rotationRepository.updateAttendDate({ attendDate: newDates.join(",") + ",", intraId: intraId, month: month, year: year});
-    return res.status(200).json({ intraId: intraId, message: "DELETE ATTEND DATE OK" });
+    return res.status(200).json({ intraId: intraId, delete: dateDelete, message: "DELETE ATTEND DATE OK" });
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ message: "사서 일정 추가 실패" });
+    return res.status(500).json({ message: "사서 일정 삭제 실패" });
   }
 }
