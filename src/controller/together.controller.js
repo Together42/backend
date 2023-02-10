@@ -1,6 +1,5 @@
 import * as togetherRepository from "../data/together.js";
 import * as userRepository from "../data/auth.js";
-import * as togetherUtils from "../utils/rotation.together.js";
 import { publishMessage } from "./slack.controller.js";
 import { config } from "../config.js";
 
@@ -112,53 +111,7 @@ export async function getTeam(req, res) {
 export async function matching(req, res) {
   const { eventId, teamNum } = req.body;
   const create = await togetherRepository.findCreateUser(eventId);
-
-  // 약간 임시의 느낌이 들지만... 하나의 기능에서 모두 동작하기 위해
-  // 제가 아래의 제목으로 생성한 이벤트만 특수한 결과를 반환하도록 설정하였습니다.
-  if (create.title === "다음 달 사서 로테이션 신청") {
-    if (create.createdId !== 70)
-      // 70 = gychoi
-      return res.status(400).json({ message: "권한이 없습니다" });
-    const eventTitle = create.title; // 위 create에 모든 정보가 포함되어 있어서, 아래처럼 쿼리를 따로 추가하지 않아도 이벤트 제목을 알 수 있을 듯 합니다. 차후 리팩토링 고려...
-    const check = await togetherRepository.findAttendByEventId(eventId);
-    if (
-      check === undefined ||
-      check[0] === undefined ||
-      check[0].teamId !== null
-    )
-      return res
-        .status(400)
-        .json({ message: "참석자가 없거나 이미 매칭됐습니다" });
-
-    // 로테이션에서 팀 개수는 고려하지 않음. teamNum과 관련된 조건은 모두 패스.
-    // rotationInfo : 로테이션 정보를 담은 객체. 참가자들이 각 주에 배치된 배열과, 참가자 명단(rotation), 그리고 다음 달(nextMonth)을 반환함. {rotationInfo: rotation, nextMonth: nextMonth}
-    const rotationInfo = await togetherUtils.rotationEvent(eventId);
-    await togetherRepository.chagneEvent(eventId);
-    let str = `[[테스트입니다!!]]\n\n :fire: 친바 공지 !! :fire:\n\n[${rotationInfo.nextMonth}월 사서 로테이션] 매칭이 완료되었습니다! 총 ${rotationInfo.rotation.participants.length} 명이 참여해주셨어요. 감사합니다!\nhttps://together42.github.io/frontend/ \n :ultra_fast_parrot:\n\n`;
-    let teamList = {};
-    let userArray;
-    for (let i = 0; i < rotationInfo.rotation.monthArray.length; i++) {
-      let week = i + 1;
-      str += `${week}주차 : `;
-      userArray = await togetherUtils.getParticipantsInfo(
-        week,
-        rotationInfo.rotation.monthArray[i]
-      );
-      teamList[String(week)] = userArray;
-      for (let j = 0; j < userArray.length; j++) {
-        str += userArray[j].intraId;
-        if (j < userArray.length - 1) str += ", ";
-      }
-      str += "\n";
-    }
-    //console.log(teamList)
-    console.log(str);
-    await publishMessage(config.slack.jip, str);
-    return res.status(201).json({ eventId, teamList });
-  }
-
   if (create.createdId !== req.userId && !req.isAdmin)
-    // isadmin이 필요한 이유?!
     return res.status(400).json({ message: "권한이 없습니다" });
   const eventTitle = await togetherRepository.getByEventTitle(eventId);
   const check = await togetherRepository.findAttendByEventId(eventId);

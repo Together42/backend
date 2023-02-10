@@ -49,7 +49,7 @@ export const upload = multer(
       fileSize: 100 * 1024 * 1024, //50mb
     },
   },
-  "NONE"
+  "NONE",
 );
 
 export const timelineUpload = multer(
@@ -59,7 +59,6 @@ export const timelineUpload = multer(
       bucket: "together42",
       acl: "public-read",
       key: function (req, file, cb) {
-        console.log(file);
         cb(null, `timeline/${Date.now()}_${file.originalname}`);
       },
     }),
@@ -68,5 +67,5 @@ export const timelineUpload = multer(
       fileSize: 100 * 1024 * 1024, //50mb
     },
   },
-  "NONE"
+  "NONE",
 );

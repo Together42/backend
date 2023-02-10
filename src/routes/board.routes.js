@@ -35,7 +35,7 @@ router.post(
   "/upload",
   upload.array("image", 10),
   fileSizeLimitErrorHandler,
-  boardController.upload
+  boardController.upload,
 );
 
 //사진 삭제

@@ -3,7 +3,7 @@ import { db } from "../db/database.js";
 export async function getEventList() {
   return db
     .execute(
-      "SELECT ev.id, ev.title, ev.description, ev.createdId, us.intraId, ev.isMatching FROM event_info as ev JOIN users as us ON ev.createdId=us.id"
+      "SELECT ev.id, ev.title, ev.description, ev.createdId, us.intraId, ev.isMatching FROM event_info as ev JOIN users as us ON ev.createdId=us.id",
     )
     .then((result) => result[0]);
 }
@@ -14,7 +14,7 @@ export async function findByEventId(id) {
       //.execute('SELECT * FROM event_info WHERE id=?',[id])
       .execute(
         "SELECT ev.id, ev.title, ev.description, ev.createdId, us.intraId, ev.isMatching FROM event_info as ev JOIN users as us ON ev.createdId=us.id WHERE ev.id=?",
-        [id]
+        [id],
       )
       .then((result) => result[0][0])
   );
@@ -35,7 +35,7 @@ export async function createEvent(event) {
   return db
     .execute(
       "INSERT INTO event_info (title, description, createdId) VALUES (?,?,?)",
-      [title, description, createdId]
+      [title, description, createdId],
     )
     .then((result) => result[0].insertId);
 }
@@ -79,7 +79,7 @@ export async function getMatchingList(id) {
   return db
     .execute(
       "SELECT us.intraId, us.profile, at.teamId from attendance_info as at JOIN users as us ON at.userId=us.id WHERE at.eventId=? ORDER BY at.teamId",
-      [id]
+      [id],
     )
     .then((result) => result[0]);
 }

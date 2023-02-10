@@ -7,8 +7,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "sudo node src/app.js",
-    "swagger": "sh src/swagger/swagger.sh",
-    "dev": "nodemon src/app.js"
+    "swagger": "bash src/swagger/swagger.sh",
+    "prod": "nodemon src/app.js",
+    "dev": "yarn swagger && nodemon src/app.js"
   },
   "repository": {
     "type": "git",

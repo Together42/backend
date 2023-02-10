@@ -19,7 +19,6 @@ export async function createPost(req, res) {
     contents,
     eventId,
   });
-  let str = `:fire: 친바 공지 !! :fire:\n\n${title} 게시글이 생성되었습니다.\nhttps://together42.github.io/frontend/`;
 
   //check.map(async (member)=>{//슬랙봇 메시지 보내기
   //  if(member.slackId)
@@ -90,7 +89,7 @@ export async function getBoardList(req, res) {
         const imageList = await boardRepository.getImages(board.boardId);
         board.images = imageList;
         return board;
-      })
+      }),
     );
   } catch (error) {
     return res.status(400).json({ message: "게시판 조회 실패" });
@@ -123,12 +122,12 @@ export async function createComment(req, res) {
   const { boardId, comment } = req.body;
   const writerId = req.userId;
   console.log(
-    `boardId = ${boardId}, comment = ${comment}, writerId = ${writerId}`
+    `boardId = ${boardId}, comment = ${comment}, writerId = ${writerId}`,
   );
   const result = await boardRepository.createComment(
     boardId,
     comment,
-    writerId
+    writerId,
   );
   // 게시글에 댓글이 달리면 슬랙 메세지를 보낸다.
   const matchedPost = await boardRepository.findByPostId(boardId);
@@ -174,11 +173,11 @@ export async function deleteComment(req, res) {
 
 //파일 업로드
 
-export async function upload(req, res, err) {
+export async function upload(req, res) {
   const boardId = req.body.boardId;
   const image = req.files;
   console.log(
-    `image length = ${image.length}, fileValidationError = ${req.fileValidationError}`
+    `image length = ${image.length}, fileValidationError = ${req.fileValidationError}`,
   );
   console.log(image[0]);
   const path = image.map((img) => img.location);
@@ -193,14 +192,12 @@ export async function upload(req, res, err) {
   const imageId = await boardRepository.imageUpload(boardId, image);
   if (imageId.errno)
     return res.status(400).send({ message: "잘못된 boardId입니다" });
-  return res
-    .status(200)
-    .send(
-      util.success(200, "업로드를 완료했습니다", {
-        imageId: imageId,
-        path: path,
-      })
-    );
+  return res.status(200).send(
+    util.success(200, "업로드를 완료했습니다", {
+      imageId: imageId,
+      path: path,
+    }),
+  );
 }
 
 export async function deleteImage(req, res) {
@@ -230,7 +227,7 @@ function deleteObjectOfS3(fileKey) {
     function (err, data) {
       if (err) console.log(err);
       console.log(data);
-    }
+    },
   );
 }
 
