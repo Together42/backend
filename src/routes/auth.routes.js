@@ -24,4 +24,10 @@ router.post("/cert", authController.cert);
 //GET 유저리스트 조회
 router.get("/userList", authController.getByUserList);
 
+//유저 정보 조회(intraId, Email)
+router.get("/userInfo/:id", authController.getByUserInfo);
+
+// 유저 비밀번호 변경(intraId, password)
+router.put("/password/:id", authController.updatePassword);
+
 export default router;

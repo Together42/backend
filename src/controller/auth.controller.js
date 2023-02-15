@@ -141,3 +141,18 @@ export async function getByUserList(req, res) {
   }
   res.status(200).json({ userList: userList });
 }
+
+export async function getByUserInfo(req, res) {
+  const intraId = req.params.id;
+  const userInfo = await userRepository.findByintraId(intraId);
+  if (!userInfo) return res.status(400).json({ message: "사용자가 없습니다."});
+  res.status(200).json(userInfo);
+}
+
+export async function updatePassword(req, res) {
+  const id = req.params.id;
+  const { intraId, password } = req.body;
+  const hashed = await bcrypt.hash(password, config.bcrypt.saltRounds);
+  const updated = await userRepository.updatePassword({id: id, intraId: intraId, password: hashed});
+  res.status(200).json({ updated });
+}
