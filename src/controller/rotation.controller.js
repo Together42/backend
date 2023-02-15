@@ -229,12 +229,19 @@ export async function postRotationMessage() {
   let todayNum = new Date().getDate();
   const getLastDayOfMonth = new Date(year, month, -1);
 
-  if ((getWeekNumber == 4 && today == 1) || getWeekNumber == 4 && today == 5) {
-    let str = `마감 ${getLastDayOfMonth - todayNum}일 전! 사서 로테이션 신청 기간입니다. 친바 홈페이지에서 사서 로테이션 신청을 해주세요!`;
-    await publishMessage(config.slack.jip, str);
-  }
-  if (todayNum == getLastDayOfMonth) {
-    let str = "사서 로테이션이 완료되었습니다. 친바 홈페이지에서 확인해주세요!";
-    await publishMessage(config.slack.jip, str);
+  try {
+    if ((getWeekNumber == 4 && today == 1) || getWeekNumber == 4 && today == 5) {
+      let str = `마감 ${getLastDayOfMonth - todayNum}일 전! 사서 로테이션 신청 기간입니다. 친바 홈페이지에서 사서 로테이션 신청을 해주세요!`;
+      await publishMessage(config.slack.jip, str);
+      return ("CRON JOB SUCCESS");
+    }
+    if (todayNum == getLastDayOfMonth) {
+      let str = "사서 로테이션이 완료되었습니다. 친바 홈페이지에서 확인해주세요!";
+      await publishMessage(config.slack.jip, str);
+      return ("CRON JOB SUCCESS");
+    }
+  } catch (error) {
+    console.log(error);
+    return ("CRON JOB FAILED");
   }
 }

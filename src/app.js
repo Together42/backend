@@ -58,7 +58,10 @@ if (process.env.BACKEND_LOCAL_HOST || process.env.BACKEND_TEST_HOST) {
   );
 }
 
-cron.schedule("0 8 * * *", postRotationMessage());
+cron.schedule("0 8 * * *", function () {
+  const ret = postRotationMessage();
+  console.log(ret);
+});
 
 //route
 app.use("/api", router);
