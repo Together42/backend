@@ -14,7 +14,7 @@ export async function cert(req, res) {
   const CEA = req.body.CEA;
   const hashNum = urlencoded.decode(req.headers.cookie);
   const compare = await bcrypt.compare(CEA, hashNum);
-
+  
   try {
     if (compare) {
       res.status(200).send({ result: "success" });
@@ -36,13 +36,13 @@ export async function mailAuthentication(req, res) {
   const hashNum = await bcrypt.hash(number, config.bcrypt.saltRounds);
   console.log(hashNum);
   res.cookie("hashNum", hashNum.toString(), {
-    maxAge: 30000,
+    maxAge: 300000,
   });
 
   const mailOptions = {
-    from: "dev_tkim@naver.com",
+    from: process.env.SMTP_ID,
     to: sendEmail,
-    subject: "[친바]인증 관련 이메일 입니다",
+    subject: "[친바]인증 관련 이메일 입니다.",
     text: "인증번호는 " + number + " 입니다.",
     html:
       "<div style='font-family: 'Apple SD Gothic Neo', 'sans-serif' !important; width: 540px; height: 600px; border-top: 4px solid #348fe2; margin: 100px auto; padding: 30px 0; box-sizing: border-box;'>" +
