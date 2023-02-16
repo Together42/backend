@@ -1,5 +1,7 @@
 import * as rotationRepository from "../data/rotation.js";
 import * as rotationUtils from "../utils/rotation.together.js";
+import { publishMessage } from "./slack.controller.js";
+import { config } from "../config.js";
 
 export async function addParticipant(req, res) {
   let participant = req.body;
@@ -210,5 +212,36 @@ export async function deleteAttendInfo(req, res) {
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "사서 일정 삭제 실패" });
+  }
+}
+
+export async function postRotationMessage() {
+  const getWeekNumber = (dateFrom = new Date()) => {
+    let currentDate = dateFrom.getDate();
+    let startOfMonth = new Date(dateFrom.setDate(1));
+    let weekDay = startOfMonth.getDay();
+    return Math.floor((weekDay - 1 + currentDate) / 7) + 1;
+  };
+  const today = (new Date().getDay());
+
+  let year = new Date().getFullYear();
+  let month = (new Date().getMonth()) % 12 + 1;
+  let todayNum = new Date().getDate();
+  const getLastDayOfMonth = new Date(year, month, -1);
+
+  try {
+    if ((getWeekNumber == 4 && today == 1) || getWeekNumber == 4 && today == 5) {
+      let str = `마감 ${getLastDayOfMonth - todayNum}일 전! 사서 로테이션 신청 기간입니다. 친바 홈페이지에서 사서 로테이션 신청을 해주세요!`;
+      await publishMessage(config.slack.jip, str);
+      return ("CRON JOB SUCCESS");
+    }
+    if (todayNum == getLastDayOfMonth) {
+      let str = "사서 로테이션이 완료되었습니다. 친바 홈페이지에서 확인해주세요!";
+      await publishMessage(config.slack.jip, str);
+      return ("CRON JOB SUCCESS");
+    }
+  } catch (error) {
+    console.log(error);
+    return ("CRON JOB FAILED");
   }
 }
