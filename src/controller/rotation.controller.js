@@ -169,15 +169,18 @@ export async function updateAttendInfo(req, res) {
     let isSet = participantInfo[0].isSet;
     let newDates = [];
     if (before === "") {
-      if (attendDates.indexOf(after) < 0){
+      if (attendDates.indexOf(after) < 0) {
         await rotationRepository.setAttendDate({ attendDate: after + ",", intraId: intraId, month: month, year: year, isSet: isSet });
       }
     } else {
       for (let i = 0; i < attendDates.length; i++) {
+        console.log("loop: ", attendDates[i], before, after, newDates)
         if (attendDates[i].trim() === before) {
-          newDates.push(after);
+          if (newDates.indexOf(after) < 0)
+            newDates.push(after);
         } else {
-          newDates.push(attendDates[i].trim());
+          if (newDates.indexOf(attendDates[i].trim()))
+            newDates.push(attendDates[i].trim());
         }
       }
       await rotationRepository.updateAttendDate({ attendDate: newDates.join(",") + ",", intraId: intraId, month: month, year: year });
