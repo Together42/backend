@@ -8,6 +8,8 @@ import { config } from "./config.js";
 import { stream } from "./config/winston.js";
 import rateLimit from "./middleware/rate-limiter.js";
 import expressBasicAuth from "express-basic-auth";
+import cron from "node-cron";
+import { postRotationMessage } from "./controller/rotation.controller.js";
 
 // express configuration
 const app = express();
@@ -55,6 +57,11 @@ if (process.env.BACKEND_LOCAL_HOST || process.env.BACKEND_TEST_HOST) {
     }),
   );
 }
+
+cron.schedule("0 8 * * *", function () {
+  const ret = postRotationMessage();
+  console.log(ret);
+});
 
 //route
 app.use("/api", router);
