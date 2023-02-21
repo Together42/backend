@@ -33,3 +33,10 @@ export async function getByUserList() {
     .execute("SELECT id, intraId, profile FROM users")
     .then((result) => result[0]);
 }
+
+export async function updatePassword(userInfo) {
+  const { id, intraId, password } = userInfo;
+  return db
+    .execute("UPDATE users SET password=? WHERE id=?", [password, id])
+    .then(() => findById(id));
+}
