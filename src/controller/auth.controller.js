@@ -41,7 +41,7 @@ export async function mailAuthentication(req, res) {
   });
 
   const mailOptions = {
-    from: process.env.SMTP_ID,
+    from: config.naver.id,
     to: sendEmail,
     subject: "[친바]인증 관련 이메일 입니다.",
     text: "인증번호는 " + number + " 입니다.",
