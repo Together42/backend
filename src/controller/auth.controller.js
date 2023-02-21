@@ -12,9 +12,9 @@ const generateRandom = function (min, max) {
 
 export async function cert(req, res) {
   const CEA = req.body.CEA;
-  const hashNum = urlencoded.decode(req.headers.cookie);
+  const hashNum = urlencoded.decode(req.cookies.hashNum);
   const compare = await bcrypt.compare(CEA, hashNum);
-  
+
   try {
     if (compare) {
       res.status(200).send({ result: "success" });
@@ -37,6 +37,7 @@ export async function mailAuthentication(req, res) {
   console.log(hashNum);
   res.cookie("hashNum", hashNum.toString(), {
     maxAge: 300000,
+    httpOnly: true,
   });
 
   const mailOptions = {
@@ -145,7 +146,7 @@ export async function getByUserList(req, res) {
 export async function getByUserInfo(req, res) {
   const intraId = req.params.id;
   const userInfo = await userRepository.findByintraId(intraId);
-  if (!userInfo) return res.status(400).json({ message: "사용자가 없습니다."});
+  if (!userInfo) return res.status(400).json({ message: "사용자가 없습니다." });
   res.status(200).json(userInfo);
 }
 
@@ -153,6 +154,10 @@ export async function updatePassword(req, res) {
   const id = req.params.id;
   const { intraId, password } = req.body;
   const hashed = await bcrypt.hash(password, config.bcrypt.saltRounds);
-  const updated = await userRepository.updatePassword({id: id, intraId: intraId, password: hashed});
+  const updated = await userRepository.updatePassword({
+    id: id,
+    intraId: intraId,
+    password: hashed,
+  });
   res.status(200).json({ updated });
 }

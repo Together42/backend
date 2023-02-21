@@ -2,6 +2,7 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
+import cookieParser from "cookie-parser";
 import router from "./routes/index.js";
 import swaggerFile from "./swagger/swagger-docs.json" assert { type: "json" };
 import { config } from "./config.js";
@@ -29,6 +30,7 @@ app.use(
     credentials: true,
   }),
 );
+app.use(cookieParser());
 app.use(morgan("combined", { stream }));
 app.use(rateLimit);
 

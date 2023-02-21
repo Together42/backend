@@ -39,6 +39,10 @@ export const config = {
     secret_access_key: required("SECRET_ACCESS_KEY"),
     region: required("REGION"),
   },
+  naver: {
+    id: required("NAVER_ID"),
+    pw: required("NAVER_PW"),
+  },
   slack: {
     jip: required("SLACK_JIP"),
     tkim: required("SLACK_TKIM"),
@@ -49,25 +53,15 @@ export const config = {
     windowMs: 60 * 1000, //1분
     maxRequest: 100, //ip 1개당 100번
   },
-  smtp: {
-    service: required("SMTP_SERVICE"),
-    host: required("SMTP_HOST"),
-    port: required("SMTP_PORT"),
-    id: required("SMTP_ID"),
-    pw: required("SMTP_PW"),
-  }
 };
 
 export const smtpTransport = nodemailer.createTransport({
-  // service: "Naver",
-  // host: "smtp.naver.com",
-  // port: 587,
-  service: config.smtp.service,
-  host: config.smtp.host,
-  port: config.smtp.port,
+  service: "Naver",
+  host: "smtp.naver.com",
+  port: 587,
   auth: {
-    user: config.smtp.id,
-    pass: config.smtp.pw,
+    user: config.naver.id,
+    pass: config.naver.pw,
   },
   tls: {
     rejectUnauthorized: false,
