@@ -36,7 +36,7 @@ export async function mailAuthentication(req, res) {
   const hashNum = await bcrypt.hash(number, config.bcrypt.saltRounds);
   console.log(hashNum);
   res.cookie("hashNum", hashNum.toString(), {
-    maxAge: 300
+    maxAge: 300000,
   });
 
   const mailOptions = {
