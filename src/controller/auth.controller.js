@@ -36,8 +36,7 @@ export async function mailAuthentication(req, res) {
   const hashNum = await bcrypt.hash(number, config.bcrypt.saltRounds);
   console.log(hashNum);
   res.cookie("hashNum", hashNum.toString(), {
-    maxAge: 300000,
-    domain: ".together42.github.io",
+    maxAge: 300
   });
 
   const mailOptions = {
