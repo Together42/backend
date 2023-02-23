@@ -29,6 +29,7 @@ app.use(
       "http://10.19.230.111:3050",
       "https://together42.github.io",
       "https://together42.42jip.net",
+      "https://together.42jip.net",
     ],
     credentials: true,
   }),
