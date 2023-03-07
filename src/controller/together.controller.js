@@ -5,7 +5,7 @@ import { config } from "../config.js";
 
 //이벤트 생성
 export async function createEvent(req, res) {
-  const { title, description } = req.body;
+  const { title, description, categoryId } = req.body;
   const user = await userRepository.findById(req.userId);
   console.log(user);
   const createdId = user.id;
@@ -13,6 +13,7 @@ export async function createEvent(req, res) {
     title,
     description,
     createdId,
+    categoryId,
   });
   let str = `:fire: 친바 공지 !! :fire:\n\n${title} 이벤트가 생성되었습니다. \nhttps://together42.github.io/frontend/\n서둘러 참석해주세요`;
   await publishMessage(config.slack.jip, str);

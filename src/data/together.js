@@ -3,7 +3,7 @@ import { db } from "../db/database.js";
 export async function getEventList() {
   return db
     .execute(
-      "SELECT ev.id, ev.title, ev.description, ev.createdId, us.intraId, ev.isMatching FROM event_info as ev JOIN users as us ON ev.createdId=us.id",
+      "SELECT ev.id, ev.title, ev.description, ev.createdId, us.intraId, ev.isMatching, ev.categoryId FROM event_info as ev JOIN users as us ON ev.createdId=us.id",
     )
     .then((result) => result[0]);
 }
@@ -31,11 +31,11 @@ export async function deleteEvent(id) {
 }
 
 export async function createEvent(event) {
-  const { title, description, createdId } = event;
+  const { title, description, createdId, categoryId } = event;
   return db
     .execute(
-      "INSERT INTO event_info (title, description, createdId) VALUES (?,?,?)",
-      [title, description, createdId],
+      "INSERT INTO event_info (title, description, createdId, categoryId) VALUES (?,?,?,?)",
+      [title, description, createdId, categoryId],
     )
     .then((result) => result[0].insertId);
 }
