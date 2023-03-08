@@ -14,7 +14,7 @@ export async function createEvent(req, res) {
     description,
     createdId,
   });
-  let str = `:fire: 친바 공지 !! :fire:\n\n${title} 이벤트가 생성되었습니다. \nhttps://together42.github.io/frontend/\n서둘러 참석해주세요`;
+  let str = `:fire: 친바 공지 !! :fire:\n\n${title} 이벤트가 생성되었습니다. \nhttps://together.42jip.net\n서둘러 참석해주세요`;
   await publishMessage(config.slack.jip, str);
   res.status(201).json({ event });
 }
