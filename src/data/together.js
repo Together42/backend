@@ -71,7 +71,7 @@ export async function findAttendByEventId(eventId) {
     .then((result) => result[0]);
 }
 
-export async function chagneEvent(eventId) {
+export async function changeEvent(eventId) {
   return db.execute("UPDATE event_info SET isMatching=1 WHERE id=?", [eventId]);
 }
 
@@ -100,4 +100,11 @@ export async function createTeam(teamId, id) {
   return db
     .execute("UPDATE attendance_info SET teamId=? WHERE id=?", [teamId, id])
     .then(() => getByAttendId(id));
+}
+
+export async function getMeetingEvent() {
+  return db
+    .execute("SELECT * FROM event_info WHERE categoryId=1")
+    .then((result) => result[0][0])
+    .catch(() => undefined);
 }

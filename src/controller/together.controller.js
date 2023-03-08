@@ -15,9 +15,32 @@ export async function createEvent(req, res) {
     createdId,
     categoryId,
   });
-  let str = `:fire: 친바 공지 !! :fire:\n\n${title} 이벤트가 생성되었습니다. \nhttps://together42.github.io/frontend/\n서둘러 참석해주세요`;
+  let str = `:fire: 친바 공지 !! :fire:\n\n${title} 이벤트가 생성되었습니다. \nhttps://together.42jip.net/\n서둘러 참석해주세요`;
   await publishMessage(config.slack.jip, str);
   res.status(201).json({ event });
+}
+
+// 주간회의 이벤트 자동 생성
+export async function createWeeklyMeetingEvent() {
+  const meetingDate = new Date();
+  meetingDate.setDate(meetingDate.getDate() + 6);
+  const adminUserIntraId = "tkim";
+  const title = `[주간회의] ${
+    meetingDate.getMonth() + 1
+  }월 ${meetingDate.getDate()}일`;
+  const description = `매 주 생성되는 정기 회의입니다. 해당 날짜에 회의가 없다면 ${adminUserIntraId}님이 삭제해주세요!`;
+  const categoryId = 1;
+  const adminUser = await userRepository.findByintraId(adminUserIntraId);
+  console.log(adminUser);
+  const createdId = adminUser.id;
+  await togetherRepository.createEvent({
+    title,
+    description,
+    createdId,
+    categoryId,
+  });
+  let str = `:fire: 친바 공지 !! :fire:\n\n${title} 이벤트가 생성되었습니다. \nhttps://together.42jip.net/\n서둘러 참석해주세요`;
+  await publishMessage(config.slack.jip, str);
 }
 
 //이벤트 삭제
@@ -74,6 +97,7 @@ export async function register(req, res) {
   console.log(`${user.intraId}가 ${eventId}에 참석하다`);
   res.status(201).json({ attend });
 }
+
 //이벤트 참석해제
 export async function unregister(req, res) {
   const user = await userRepository.findById(req.userId); //토큰으로 받아온 아이디
@@ -128,14 +152,14 @@ export async function matching(req, res) {
     //유저보다 팀 개수가 많을때
     return res.status(400).json({ message: "팀 개수 0개 입니다" });
   shuffle(check); //팀 셔플완료  이제 팀개수대로 팀 나눠야함
-  await togetherRepository.chagneEvent(eventId);
+  await togetherRepository.changeEvent(eventId);
   for (let i = 0; i < check.length; i++) {
     let teamId = (i % teamNum) + 1;
     await togetherRepository.createTeam(teamId, check[i].id);
   }
   const teamList = await getTeamList(eventId);
   console.log(eventTitle);
-  let str = `:fire: 친바 공지 !! :fire:\n\n[${eventTitle.title}] 팀 매칭이 완료되었습니다.\n서둘러 자신의 팀원들과 연락해보세요!\nhttps://together42.github.io/frontend/ \n :ultra_fast_parrot:\n\n`;
+  let str = `:fire: 친바 공지 !! :fire:\n\n[${eventTitle.title}] 팀 매칭이 완료되었습니다.\n서둘러 자신의 팀원들과 연락해보세요!\nhttps://together.42jip.net/ \n :ultra_fast_parrot:\n\n`;
   for (let key in teamList) {
     const value = teamList[key];
     const test = value.map((team) => team.intraId);
@@ -147,6 +171,26 @@ export async function matching(req, res) {
   console.log(`문자열 출력 ${str}`);
   await publishMessage(config.slack.ywee, str);
   res.status(201).json({ eventId, teamList });
+}
+
+export async function matchWeeklyMeetingEvent() {
+  const event = await togetherRepository.getMeetingEvent();
+  if (event === undefined) return;
+  const check = await togetherRepository.findAttendByEventId(event.id);
+  // 참석자가 없는 경우
+  if (check === undefined || check[0] === undefined) {
+    await togetherRepository.deleteEvent(event.id);
+    return;
+  }
+  // 이미 매칭된 경우
+  if (check[0].teamId !== null) return;
+  shuffle(check); //팀 셔플완료  이제 팀개수대로 팀 나눠야함
+  await togetherRepository.changeEvent(event.id);
+  const teamNum = check.length >= 3 ? 3 : 1;
+  for (let i = 0; i < check.length; i++) {
+    let teamId = (i % teamNum) + 1;
+    await togetherRepository.createTeam(teamId, check[i].id);
+  }
 }
 
 //팀 셔플
