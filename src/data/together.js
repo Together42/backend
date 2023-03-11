@@ -108,3 +108,16 @@ export async function createTeam(teamId, id) {
     .execute("UPDATE attendance_info SET teamId=? WHERE id=?", [teamId, id])
     .then(() => getByAttendId(id));
 }
+
+export async function getAttendingPoint() {
+  return db
+    .execute(
+      `SELECT at.userId, us.intraId, us.profile, ev.categoryId, COUNT(at.userId) as point
+      FROM attendance_info as at 
+      JOIN users as us ON at.userId=us.id 
+      JOIN event_info as ev ON at.eventId=ev.id
+      WHERE ev.isMatching=1
+      GROUP BY at.userId, ev.categoryId;`,
+    )
+    .then((result) => result[0]);
+}

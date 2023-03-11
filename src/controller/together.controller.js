@@ -207,3 +207,8 @@ export async function getEventInfo(req, res) {
   }
   res.status(200).json(eventList);
 }
+
+export async function getAttendingPoint(req, res) {
+  const pointList = await togetherRepository.getAttendingPoint();
+  res.status(200).json({ pointList });
+}
