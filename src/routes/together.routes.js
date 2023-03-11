@@ -12,6 +12,7 @@ router.delete("/unregister/:id", isAuth, togetherController.unregister);
 router.post("/matching", isAuth, togetherController.matching);
 router.get("/matching", togetherController.getEventInfo);
 router.get("/matching/:id", togetherController.getTeam);
+router.get("/point", togetherController.getAttendingPoint);
 router.get("/:id", togetherController.getEvent);
 router.delete("/:id", isAuth, togetherController.deleteEvent);
 
