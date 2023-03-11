@@ -112,12 +112,16 @@ export async function createTeam(teamId, id) {
 export async function getAttendingPoint() {
   return db
     .execute(
-      `SELECT at.userId, us.intraId, us.profile, ev.categoryId, COUNT(at.userId) as point
-      FROM attendance_info as at 
+      `SELECT at.userId, us.intraId, us.profile, COUNT(at.userId) as totalPoint, 
+      COUNT(case when  ev.categoryId = 1 then 1 end) as meetingPoint,
+      COUNT(case when  ev.categoryId = 2 then 1 end) as eventPoint
+      FROM attendance_info  as at 
       JOIN users as us ON at.userId=us.id 
       JOIN event_info as ev ON at.eventId=ev.id
       WHERE ev.isMatching=1
-      GROUP BY at.userId, ev.categoryId;`,
+      GROUP BY at.userId
+      ORDER BY totalPoint DESC;
+      `,
     )
     .then((result) => result[0]);
 }
