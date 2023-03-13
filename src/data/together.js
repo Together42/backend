@@ -3,9 +3,16 @@ import { db } from "../db/database.js";
 export async function getEventList() {
   return db
     .execute(
-      "SELECT ev.id, ev.title, ev.description, ev.createdId, us.intraId, ev.isMatching FROM event_info as ev JOIN users as us ON ev.createdId=us.id",
+      "SELECT ev.id, ev.title, ev.description, ev.createdId, us.intraId, ev.isMatching, ev.categoryId FROM event_info as ev JOIN users as us ON ev.createdId=us.id",
     )
     .then((result) => result[0]);
+}
+
+export async function getEventByCategory(categoryId) {
+  return db
+    .execute("SELECT * FROM event_info WHERE categoryId=?", [categoryId])
+    .then((result) => result[0][0])
+    .catch(() => undefined);
 }
 
 export async function findByEventId(id) {
@@ -31,11 +38,11 @@ export async function deleteEvent(id) {
 }
 
 export async function createEvent(event) {
-  const { title, description, createdId } = event;
+  const { title, description, createdId, categoryId } = event;
   return db
     .execute(
-      "INSERT INTO event_info (title, description, createdId) VALUES (?,?,?)",
-      [title, description, createdId],
+      "INSERT INTO event_info (title, description, createdId, categoryId) VALUES (?,?,?,?)",
+      [title, description, createdId, categoryId],
     )
     .then((result) => result[0].insertId);
 }
@@ -71,7 +78,7 @@ export async function findAttendByEventId(eventId) {
     .then((result) => result[0]);
 }
 
-export async function chagneEvent(eventId) {
+export async function changeEvent(eventId) {
   return db.execute("UPDATE event_info SET isMatching=1 WHERE id=?", [eventId]);
 }
 
@@ -100,4 +107,21 @@ export async function createTeam(teamId, id) {
   return db
     .execute("UPDATE attendance_info SET teamId=? WHERE id=?", [teamId, id])
     .then(() => getByAttendId(id));
+}
+
+export async function getAttendingPoint() {
+  return db
+    .execute(
+      `SELECT at.userId, us.intraId, us.profile, COUNT(at.userId) as totalPoint, 
+      COUNT(case when  ev.categoryId = 1 then 1 end) as meetingPoint,
+      COUNT(case when  ev.categoryId = 2 then 1 end) as eventPoint
+      FROM attendance_info  as at 
+      JOIN users as us ON at.userId=us.id 
+      JOIN event_info as ev ON at.eventId=ev.id
+      WHERE ev.isMatching=1
+      GROUP BY at.userId
+      ORDER BY totalPoint DESC;
+      `,
+    )
+    .then((result) => result[0]);
 }

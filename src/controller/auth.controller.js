@@ -37,6 +37,7 @@ export async function mailAuthentication(req, res) {
   console.log(hashNum);
   res.cookie("hashNum", hashNum.toString(), {
     maxAge: 300000,
+    domain: ".together.42jip.net",
   });
 
   const mailOptions = {
