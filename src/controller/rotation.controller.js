@@ -91,7 +91,7 @@ export async function deleteParticipant(req, res) {
 }
 
 async function setRotation() {
-  const monthArrayInfo = rotationUtils.initMonthArray();
+  const monthArrayInfo = await rotationUtils.initMonthArray();
   let month = monthArrayInfo.nextMonth;
   if (month < 10) {
     month = "0" + month;
