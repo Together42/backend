@@ -44,6 +44,7 @@
     "node-cron": "^3.0.2",
     "nodemailer": "^6.7.5",
     "nodemon": "^2.0.15",
+    "request": "^2.88.2",
     "swagger-autogen": "^2.22.0",
     "urlencode": "^1.1.0",
     "winston": "^3.7.2",

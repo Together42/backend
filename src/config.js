@@ -53,6 +53,9 @@ export const config = {
     windowMs: 60 * 1000, //1분
     maxRequest: 100, //ip 1개당 100번
   },
+  openApi: {
+    holidayKey: required("OPENAPI_HOLIDAY_KEY"),
+  },
 };
 
 export const smtpTransport = nodemailer.createTransport({
