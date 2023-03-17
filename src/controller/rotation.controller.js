@@ -339,12 +339,12 @@ export async function postRotationMessage() {
   let year = new Date().getFullYear();
   let month = (new Date().getMonth() % 12) + 1;
   let todayNum = new Date().getDate();
-  const getLastDayOfMonth = new Date(year, month, -1);
+  const getLastDayOfMonth = new Date(year, month, 0).getDate();
 
   try {
     if (
-      (getWeekNumber == 4 && today == 1) ||
-      (getWeekNumber == 4 && today == 5)
+      (getWeekNumber() == 4 && today == 1) ||
+      (getWeekNumber() == 4 && today == 5)
     ) {
       let str = `마감 ${
         getLastDayOfMonth - todayNum
