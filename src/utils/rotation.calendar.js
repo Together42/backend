@@ -1,6 +1,12 @@
 import request from "request";
 import { config } from "../config.js";
 
+export function getTodayDate() {
+  const today = new Date();
+  const date = String(today.getDate()).padStart(2, '0');
+  return (date);
+}
+
 export function getFourthWeekdaysOfMonth() {
   const today = new Date();
   const year = today.getFullYear();
