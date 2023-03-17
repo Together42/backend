@@ -1,4 +1,4 @@
-import { getHolidayOfMonth } from "./rotation.calendar";
+import { getHolidayOfMonth } from "./rotation.calendar.js";
 
 function sortByArray(array) {
   array.sort((a, b) => b.attendLimit.length - a.attendLimit.length);
