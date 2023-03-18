@@ -11,7 +11,7 @@ export async function addParticipant(req, res) {
   let nextMonth = ((month + 1) % 12) + 1;
   if (nextMonth === 1) year += 1;
   try {
-    if (getFourthWeekdaysOfMonth().indexOf(getTodayDate) < 0) {
+    if (getFourthWeekdaysOfMonth().indexOf(getTodayDate()) < 0) {
       return res
         .status(500)
         .json({ message: "사서 로테이션 기간이 아닙니다." });
@@ -59,7 +59,7 @@ export async function deleteParticipant(req, res) {
   let nextMonth = ((month + 1) % 12) + 1;
   if (nextMonth === 1) year += 1;
   try {
-    if (getFourthWeekdaysOfMonth().indexOf(getTodayDate) < 0) {
+    if (getFourthWeekdaysOfMonth().indexOf(getTodayDate()) < 0) {
       return res
         .status(500)
         .json({ message: "사서 로테이션 기간이 아닙니다." });
