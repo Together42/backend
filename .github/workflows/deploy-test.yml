@@ -82,10 +82,10 @@ jobs:
                   - 9999:9999
                 env_file: .env
                 networks:
-                  test_backend
-              networks:
-                test_backend:
-                  external: true
+                  - test_backend
+            networks:
+              test_backend:
+                external: true
             EOF
             cd test_server && docker-compose up -d
             docker image prune -f
