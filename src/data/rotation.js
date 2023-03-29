@@ -48,6 +48,29 @@ export async function getParticipantInfo(participantInfo) {
     .then((result) => result[0]);
 }
 
+export async function getParticipantInfoAll(participantInfo) {
+  return db
+    .execute("SELECT id, intraId, attendLimit, attendDate, isSet from rotation WHERE (intraId=?)", [participantInfo.intraId],
+    )
+    .then((result) => result[0]);
+}
+
+export async function getParticipantInfoAllMonth(participantInfo) {
+  return db
+    .execute("SELECT id, intraId, attendLimit, attendDate, isSet from rotation WHERE (intraId=? AND month=?)",
+      [participantInfo.intraId, participantInfo.month],
+    )
+    .then((result) => result[0]);
+}
+
+export async function getParticipantInfoAllYear(participantInfo) {
+  return db
+    .execute("SELECT id, intraId, attendLimit, attendDate, isSet from rotation WHERE (intraId=? AND year=?)",
+      [participantInfo.intraId, participantInfo.year],
+    )
+    .then((result) => result[0]);
+}
+
 export async function setAttendDate(attendInfo) {
   return db
     .execute("UPDATE rotation SET attendDate=CONCAT(IFNULL(attendDate, ''),?),isSet=? WHERE (intraId=? AND month=? AND year=?)",
