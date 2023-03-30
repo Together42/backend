@@ -365,82 +365,40 @@ export async function postRotationMessage() {
 }
 
 export async function getUserParticipation(req, res) {
-  if (!Object.keys(req.query).length) {
-    try {
-      let rotationInfo = await rotationRepository.getRotationInfo();
-      return res.status(200).json(rotationInfo);
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json({ message: "사서 로테이션 DB 조회 실패" });
-    }
-  };
-  if (Object.keys(req.query).indexOf("intraId") < 0 || req.query.intraId.length < 1) {
-    return res.status(400).json({ message: "intraId를 포함하여 쿼리스트링을 전송해주세요."})
-  };
-  if (Object.keys(req.query).indexOf("month") < 0 
-  && Object.keys(req.query).indexOf("year") < 0 
-  && req.query.intraId.length > 0) {
-    try {
-      let rotationInfo = await rotationRepository.getParticipantInfoAll({
-        intraId: req.query.intraId,
-      });
-      if (rotationInfo.length < 1) {
-        return res.status(400).json({ message: "해당 사서는 로테이션에 참석하지 않았습니다." });
-      }
-      return res.status(200).json(rotationInfo);
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json({ message: "사서 로테이션 DB 조회 실패" });
-    }
+  let rotationInfo;
+  const { intraId, month, year } = req.query;
+  const obj = {}
+  const isValid = {
+    intraId: (intraId) => intraId != undefined && intraId.length > 0,
+    month: (month) => /^(1[0-2]|0?[1-9])$/.test(month),
+    year: (year) => /^[0-9]{4}$/.test(year) && 2023 <= year && year <= new Date().getFullYear() + 1
   }
-  else if (Object.keys(req.query).indexOf("month") > -1 
-  && Number.isInteger(Number(req.query.month))
-  && Object.keys(req.query).indexOf("year") < 0 
-  && req.query.intraId.length > 0) {
-    try {
-      let rotationInfo = await rotationRepository.getParticipantInfoAllMonth({
-        intraId: req.query.intraId,
-        month: req.query.month,
-      });
-      return res.status(200).json(rotationInfo);
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json({ message: "사서 로테이션 DB 조회 실패" });
-    }
+  if (isValid.intraId(intraId)) {
+    obj.intraId = intraId;
   }
-  else if (Object.keys(req.query).indexOf("month") < 0 
-  && Object.keys(req.query).indexOf("year") > -1 
-  && Number.isInteger(Number(req.query.year))
-  && req.query.intraId.length > 0) {
-    try {
-      let rotationInfo = await rotationRepository.getParticipantInfoAllYear({
-        intraId: req.query.intraId,
-        year: req.query.year,
-      });
-      return res.status(200).json(rotationInfo);
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json({ message: "사서 로테이션 DB 조회 실패" });
-    }
+  if (isValid.month(month)) {
+    obj.month = month;
   }
-  else if (Object.keys(req.query).indexOf("month") > -1 
-  && Number.isInteger(Number(req.query.month))
-  && Object.keys(req.query).indexOf("year") > -1 
-  && Number.isInteger(Number(req.query.year))
-  && req.query.intraId.length > 0) {
-    try {
-      let rotationInfo = await rotationRepository.getParticipantInfo({
-        intraId: req.query.intraId,
-        month: req.query.month,
-        year: req.query.year,
-      });
-      return res.status(200).json(rotationInfo);
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json({ message: "사서 로테이션 DB 조회 실패" });
-    }
+  if (isValid.year(year)) {
+    obj.year = year;
   }
-  else {
-    return res.status(400).json({ message: "적합한 쿼리 인자(month, year)를 받지 못했습니다." });
+  console.log(obj)
+
+  try {
+    if (!("intraId" in obj)) {
+      rotationInfo = await rotationRepository.getRotationInfo();
+    } else if ("year" in obj && "month" in obj) {
+      rotationInfo = await rotationRepository.getParticipantInfo(obj);
+    } else if ("year" in obj) {
+      rotationInfo = await rotationRepository.getParticipantInfoAllYear(obj);
+    } else if ("month" in obj) {
+      rotationInfo = await rotationRepository.getParticipantInfoAllMonth(obj);
+    } else {
+      rotationInfo = await rotationRepository.getParticipantInfoAll(obj);
+    }
+    return res.status(200).json(rotationInfo);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "사서 로테이션 DB 조회 실패" });
   }
 }
