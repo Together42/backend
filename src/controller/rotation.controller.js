@@ -363,3 +363,42 @@ export async function postRotationMessage() {
     return "CRON JOB FAILED";
   }
 }
+
+export async function getUserParticipation(req, res) {
+  let rotationInfo;
+  const { intraId, month, year } = req.query;
+  const obj = {}
+  const isValid = {
+    intraId: (intraId) => intraId != undefined && intraId.length > 0,
+    month: (month) => /^(1[0-2]|0?[1-9])$/.test(month),
+    year: (year) => /^[0-9]{4}$/.test(year) && 2023 <= year && year <= new Date().getFullYear() + 1
+  }
+  if (isValid.intraId(intraId)) {
+    obj.intraId = intraId;
+  }
+  if (isValid.month(month)) {
+    obj.month = month;
+  }
+  if (isValid.year(year)) {
+    obj.year = year;
+  }
+  console.log(obj)
+
+  try {
+    if (!("intraId" in obj)) {
+      rotationInfo = await rotationRepository.getRotationInfo();
+    } else if ("year" in obj && "month" in obj) {
+      rotationInfo = await rotationRepository.getParticipantInfo(obj);
+    } else if ("year" in obj) {
+      rotationInfo = await rotationRepository.getParticipantInfoAllYear(obj);
+    } else if ("month" in obj) {
+      rotationInfo = await rotationRepository.getParticipantInfoAllMonth(obj);
+    } else {
+      rotationInfo = await rotationRepository.getParticipantInfoAll(obj);
+    }
+    return res.status(200).json(rotationInfo);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "사서 로테이션 DB 조회 실패" });
+  }
+}
