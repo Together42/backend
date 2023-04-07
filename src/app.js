@@ -67,16 +67,17 @@ if (process.env.BACKEND_LOCAL_HOST || process.env.BACKEND_TEST_HOST) {
 
 // 사서 로테이션 돌림
 cron.schedule("0 8 * * *", function () {
-  postRotationMessage();
+  const ret = postRotationMessage();
+  console.log("ret", ret);
 });
 
 // 주간 회의 자동 생성
-cron.schedule("0 12 * * 4", function () {
+cron.schedule("0 03 * * 4", function () {
   createWeeklyMeetingEvent();
 });
 
 // 주간 회의 자동 매칭
-cron.schedule("0 10 * * 3", function () {
+cron.schedule("0 01 * * 3", function () {
   matchWeeklyMeetingEvent();
 });
 

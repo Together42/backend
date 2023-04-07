@@ -174,7 +174,7 @@ export async function matching(req, res) {
 }
 
 export async function matchWeeklyMeetingEvent() {
-  const event = await togetherRepository.getEventByCategory(1);
+  const event = await togetherRepository.getNotMatchedEventByCategory(1);
   if (event === undefined) return;
   const check = await togetherRepository.findAttendByEventId(event.id);
   // 참석자가 없는 경우

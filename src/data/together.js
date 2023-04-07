@@ -8,9 +8,11 @@ export async function getEventList() {
     .then((result) => result[0]);
 }
 
-export async function getEventByCategory(categoryId) {
+export async function getNotMatchedEventByCategory(categoryId) {
   return db
-    .execute("SELECT * FROM event_info WHERE categoryId=?", [categoryId])
+    .execute("SELECT * FROM event_info WHERE categoryId=? AND isMatching=0", [
+      categoryId,
+    ])
     .then((result) => result[0][0])
     .catch(() => undefined);
 }
