@@ -27,6 +27,7 @@ export const config = {
     user: required("DB_USER"),
     database: required("DB_DATABASE"),
     password: required("DB_PASSWORD"),
+    port: required("DB_PORT"),
   },
   hostname: {
     hostname: required("HOSTNAME", "local"),
@@ -52,6 +53,9 @@ export const config = {
   rateLimit: {
     windowMs: 60 * 1000, //1분
     maxRequest: 100, //ip 1개당 100번
+  },
+  openApi: {
+    holidayKey: required("OPENAPI_HOLIDAY_KEY"),
   },
 };
 

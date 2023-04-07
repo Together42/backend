@@ -1,5 +1,6 @@
 import * as rotationRepository from "../data/rotation.js";
 import * as rotationUtils from "../utils/rotation.together.js";
+import { getTodayDate, getFourthWeekdaysOfMonth } from "../utils/rotation.calendar.js";
 import { publishMessage } from "./slack.controller.js";
 import { config } from "../config.js";
 
@@ -10,6 +11,11 @@ export async function addParticipant(req, res) {
   let nextMonth = ((month + 1) % 12) + 1;
   if (nextMonth === 1) year += 1;
   try {
+    if (getFourthWeekdaysOfMonth().indexOf(getTodayDate()) < 0) {
+      return res
+        .status(500)
+        .json({ message: "사서 로테이션 기간이 아닙니다." });
+    }
     const exists = await rotationRepository.getParticipantInfo({
       intraId: participant.intraId,
       month: nextMonth,
@@ -53,6 +59,11 @@ export async function deleteParticipant(req, res) {
   let nextMonth = ((month + 1) % 12) + 1;
   if (nextMonth === 1) year += 1;
   try {
+    if (getFourthWeekdaysOfMonth().indexOf(getTodayDate()) < 0) {
+      return res
+        .status(500)
+        .json({ message: "사서 로테이션 기간이 아닙니다." });
+    }
     const exists = await rotationRepository.getParticipantInfo({
       intraId: participant.intraId,
       month: nextMonth,
@@ -91,7 +102,7 @@ export async function deleteParticipant(req, res) {
 }
 
 async function setRotation() {
-  const monthArrayInfo = rotationUtils.initMonthArray();
+  const monthArrayInfo = await rotationUtils.initMonthArray();
   let month = monthArrayInfo.nextMonth;
   if (month < 10) {
     month = "0" + month;
@@ -102,64 +113,54 @@ async function setRotation() {
       month: month,
       year: year,
     });
-    let allAttend = true;
     for (let i = 0; i < participants.length; i++) {
-      if (participants[i].isSet === 0) {
-        allAttend = false;
+      try {
+        await rotationRepository.initAttendInfo({
+          intraId: participants[i].intraId,
+          month: month,
+          year: year,
+        });
+      } catch (error) {
+        console.log(error);
+        return { status: -1, info: error };
       }
     }
-    if (allAttend === true) {
-      console.log("Up to date");
-    } else {
-      for (let i = 0; i < participants.length; i++) {
-        try {
-          await rotationRepository.initAttendInfo({
-            intraId: participants[i].intraId,
-            month: month,
-            year: year,
-          });
-        } catch (error) {
-          console.log(error);
-          return { status: -1, info: error };
-        }
-      }
-      const rotationResult = await rotationUtils.checkAttend(
-        rotationUtils.setRotation(participants, monthArrayInfo),
-      );
-      if (rotationResult.status === false) {
-        return { status: -1, info: rotationResult.message };
-      }
-      for (let i = 0; i < rotationResult.monthArray.monthArray.length; i++) {
+    const rotationResult = await rotationUtils.checkAttend(
+      rotationUtils.setRotation(participants, monthArrayInfo),
+    );
+    if (rotationResult.status === false) {
+      return { status: -1, info: rotationResult.message };
+    }
+    for (let i = 0; i < rotationResult.monthArray.monthArray.length; i++) {
+      for (
+        let j = 0;
+        j < rotationResult.monthArray.monthArray[i].length;
+        j++
+      ) {
         for (
-          let j = 0;
-          j < rotationResult.monthArray.monthArray[i].length;
-          j++
+          let k = 0;
+          k < rotationResult.monthArray.monthArray[i][j].arr.length;
+          k++
         ) {
-          for (
-            let k = 0;
-            k < rotationResult.monthArray.monthArray[i][j].arr.length;
-            k++
-          ) {
-            if (rotationResult.monthArray.monthArray[i][j].arr[k] != "0") {
-              let day = rotationResult.monthArray.monthArray[i][j].day;
-              if (day < 10) {
-                day = "0" + day;
-              }
-              let attendDate = year + "-" + month + "-" + day + ",";
-              let participantId =
-                rotationResult.monthArray.monthArray[i][j].arr[k];
-              try {
-                await rotationRepository.setAttendDate({
-                  attendDate: attendDate,
-                  isSet: 1,
-                  intraId: participantId,
-                  month: month,
-                  year: year,
-                });
-              } catch (error) {
-                console.log(error);
-                return { status: -1, info: error };
-              }
+          if (rotationResult.monthArray.monthArray[i][j].arr[k] != "0") {
+            let day = rotationResult.monthArray.monthArray[i][j].day;
+            if (day < 10) {
+              day = "0" + day;
+            }
+            let attendDate = year + "-" + month + "-" + day + ",";
+            let participantId =
+              rotationResult.monthArray.monthArray[i][j].arr[k];
+            try {
+              await rotationRepository.setAttendDate({
+                attendDate: attendDate,
+                isSet: 1,
+                intraId: participantId,
+                month: month,
+                year: year,
+              });
+            } catch (error) {
+              console.log(error);
+              return { status: -1, info: error };
             }
           }
         }
@@ -187,7 +188,6 @@ export async function getRotationInfo(req, res) {
       if (month < 10) {
         month = "0" + month;
       }
-      console.log(typeof req.query.month);
       if (
         Object.keys(req.query).indexOf("month") > -1 &&
         !isNaN(parseInt(req.query.month, 10))
@@ -209,7 +209,6 @@ export async function getRotationInfo(req, res) {
         let participantId = participants[i].intraId;
         participantInfo.push({ date: date, intraId: participantId });
       }
-      console.log(participantInfo);
       return res.status(200).json(participantInfo);
     } catch (error) {
       console.log(error);
@@ -258,7 +257,6 @@ export async function updateAttendInfo(req, res) {
       }
     } else {
       for (let i = 0; i < attendDates.length; i++) {
-        console.log("loop: ", attendDates[i], before, after, newDates);
         if (attendDates[i].trim() === before) {
           if (newDates.indexOf(after) < 0) newDates.push(after);
         } else {
@@ -341,12 +339,12 @@ export async function postRotationMessage() {
   let year = new Date().getFullYear();
   let month = (new Date().getMonth() % 12) + 1;
   let todayNum = new Date().getDate();
-  const getLastDayOfMonth = new Date(year, month, -1);
+  const getLastDayOfMonth = new Date(year, month, 0).getDate();
 
   try {
     if (
-      (getWeekNumber == 4 && today == 1) ||
-      (getWeekNumber == 4 && today == 5)
+      (getWeekNumber() == 4 && today == 1) ||
+      (getWeekNumber() == 4 && today == 5)
     ) {
       let str = `마감 ${
         getLastDayOfMonth - todayNum
@@ -363,5 +361,44 @@ export async function postRotationMessage() {
   } catch (error) {
     console.log(error);
     return "CRON JOB FAILED";
+  }
+}
+
+export async function getUserParticipation(req, res) {
+  let rotationInfo;
+  const { intraId, month, year } = req.query;
+  const obj = {}
+  const isValid = {
+    intraId: (intraId) => intraId != undefined && intraId.length > 0,
+    month: (month) => /^(1[0-2]|0?[1-9])$/.test(month),
+    year: (year) => /^[0-9]{4}$/.test(year) && 2023 <= year && year <= new Date().getFullYear() + 1
+  }
+  if (isValid.intraId(intraId)) {
+    obj.intraId = intraId;
+  }
+  if (isValid.month(month)) {
+    obj.month = month;
+  }
+  if (isValid.year(year)) {
+    obj.year = year;
+  }
+  console.log(obj)
+
+  try {
+    if (!("intraId" in obj)) {
+      rotationInfo = await rotationRepository.getRotationInfo();
+    } else if ("year" in obj && "month" in obj) {
+      rotationInfo = await rotationRepository.getParticipantInfo(obj);
+    } else if ("year" in obj) {
+      rotationInfo = await rotationRepository.getParticipantInfoAllYear(obj);
+    } else if ("month" in obj) {
+      rotationInfo = await rotationRepository.getParticipantInfoAllMonth(obj);
+    } else {
+      rotationInfo = await rotationRepository.getParticipantInfoAll(obj);
+    }
+    return res.status(200).json(rotationInfo);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "사서 로테이션 DB 조회 실패" });
   }
 }
