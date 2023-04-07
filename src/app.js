@@ -67,8 +67,7 @@ if (process.env.BACKEND_LOCAL_HOST || process.env.BACKEND_TEST_HOST) {
 
 // 사서 로테이션 돌림
 cron.schedule("0 8 * * *", function () {
-  const ret = postRotationMessage();
-  console.log("ret", ret);
+  postRotationMessage();
 });
 
 // 주간 회의 자동 생성

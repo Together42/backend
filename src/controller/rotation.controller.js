@@ -328,39 +328,29 @@ export async function deleteAttendInfo(req, res) {
 }
 
 export async function postRotationMessage() {
-  const getWeekNumber = (dateFrom = new Date()) => {
-    let currentDate = dateFrom.getDate();
-    let startOfMonth = new Date(dateFrom.setDate(1));
-    let weekDay = startOfMonth.getDay();
-    return Math.floor((weekDay - 1 + currentDate) / 7) + 1;
-  };
-  const today = new Date().getDay();
-
-  let year = new Date().getFullYear();
-  let month = (new Date().getMonth() % 12) + 1;
-  let todayNum = new Date().getDate();
-  const getLastDayOfMonth = new Date(year, month, 0).getDate();
-
+  const fourthWeekDays = getFourthWeekdaysOfMonth();
+  let fourthWeekStartDay = fourthWeekDays[0];
+  let fourthWeekFifthDay = fourthWeekDays[4];
+  let fourthWeekEndDay = fourthWeekDays[fourthWeekDays.length - 1];
+  let today = new Date().getDate();
   try {
-    if (
-      (getWeekNumber() == 4 && today == 1) ||
-      (getWeekNumber() == 4 && today == 5)
-    ) {
-      let str = `마감 ${
-        getLastDayOfMonth - todayNum
-      }일 전! 사서 로테이션 신청 기간입니다. 친바 홈페이지에서 사서 로테이션 신청을 해주세요!`;
+    if (today === fourthWeekStartDay || today == fourthWeekFifthDay) {
+      let str = `<!channel> 마감 ${
+        fourthWeekEndDay - today
+      }일 전! 사서 로테이션 신청 기간입니다. 친바 홈페이지에서 사서 로테이션 신청을 해주세요! <a href="https://together.42jip.net/">https://together.42jip.net/</a>`;
       await publishMessage(config.slack.jip, str);
-      return "CRON JOB SUCCESS";
-    }
-    if (todayNum == getLastDayOfMonth) {
-      let str =
-        "사서 로테이션이 완료되었습니다. 친바 홈페이지에서 확인해주세요!";
-      await publishMessage(config.slack.jip, str);
-      return "CRON JOB SUCCESS";
+    } else {
+      let year = new Date().getFullYear();
+      let month = (new Date().getMonth() % 12) + 1;
+      let lastDay = new Date(year, month, 0).getDate();
+      if (today === lastDay) {
+        let str =
+          `<!channel> 다음 달 사서 로테이션이 완료되었습니다. 친바 홈페이지에서 확인해주세요! <a href="https://together.42jip.net/">https://together.42jip.net/</a>`;
+        await publishMessage(config.slack.jip, str);
+      }
     }
   } catch (error) {
     console.log(error);
-    return "CRON JOB FAILED";
   }
 }
 
