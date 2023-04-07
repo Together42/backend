@@ -1,3 +1,6 @@
+
+import { getHolidayOfMonth } from "./rotation.calendar.js";
+
 function sortByArray(array) {
   array.sort((a, b) => b.attendLimit.length - a.attendLimit.length);
 }
@@ -10,7 +13,17 @@ function isEmptyObj(object) {
   return JSON.stringify(object) === "{}";
 }
 
-export function initMonthArray() {
+async function isNotHoliday(day) {
+  let response = await getHolidayOfMonth();
+  let holiday = response.data.map(dateString => dateString.slice(-2));
+  let checkDay = day < 10 ? '0' + day : day;
+  if (holiday.indexOf(checkDay.toString()) > 0) {
+    return false;
+  }
+  return true;
+}
+
+export async function initMonthArray() {
   let year = new Date().getFullYear();
   const month = new Date().getMonth();
   const nextMonth = (month + 1) % 12 + 1;
@@ -27,11 +40,13 @@ export function initMonthArray() {
     if (new Date(year, nextMonth - 1, i).getDay() > 0 &&
       new Date(year, nextMonth - 1, i).getDay() < 6) {
       let day = new Date(year, nextMonth - 1, i).getDate();
-      tmp.push(0);
-      tmp.push(0);
-      tmpDayObject = {day: day, arr: tmp};
-      if (i === daysOfMonth)
-        tmpMonthArray.push(tmpWeek);
+      if (await isNotHoliday(day)) {
+        tmp.push(0);
+        tmp.push(0);
+        tmpDayObject = {day: day, arr: tmp};
+        if (i === daysOfMonth)
+          tmpMonthArray.push(tmpWeek);
+      }
     }
     else {
       tmpMonthArray.push(tmpWeek);

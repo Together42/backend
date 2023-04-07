@@ -64,6 +64,7 @@ jobs:
             SLACK_JIP=${{ secrets.SLACK_JIP }}
             SLACK_TKIM=${{ secrets.SLACK_TKIM }}
             SLACK_YWEE=${{ secrets.SLACK_YWEE }}
+            OPENAPI_HOLIDAY_KEY=${{ secrets.OPENAPI_HOLIDAY_KEY }}
             BACKEND_TEST_HOST=dev.together.42jip.net" > ./test_server/.env
             echo "start docker"
             docker stop backend_test || true
@@ -80,6 +81,11 @@ jobs:
                 ports:
                   - 9999:9999
                 env_file: .env
+                networks:
+                  - test_backend
+            networks:
+              test_backend:
+                external: true
             EOF
             cd test_server && docker-compose up -d
             docker image prune -f

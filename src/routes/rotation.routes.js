@@ -5,6 +5,9 @@ import { isAuth } from "../middleware/auth.js";
 
 const router = express.Router();
 
+// 사서 로테이션 참석 기록 반환
+router.get("/attend", isAuth, rotationController.getUserParticipation);
+
 // 로테이션 참석 사서 추가
 router.post("/attend", isAuth, rotationController.addParticipant);
 
