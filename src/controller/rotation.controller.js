@@ -1,6 +1,9 @@
 import * as rotationRepository from "../data/rotation.js";
 import * as rotationUtils from "../utils/rotation.together.js";
-import { getTodayDate, getFourthWeekdaysOfMonth } from "../utils/rotation.calendar.js";
+import {
+  getTodayDate,
+  getFourthWeekdaysOfMonth,
+} from "../utils/rotation.calendar.js";
 import { publishMessage } from "./slack.controller.js";
 import { config } from "../config.js";
 
@@ -32,19 +35,15 @@ export async function addParticipant(req, res) {
           .status(500)
           .json({ message: "사서 로테이션을 실패하였습니다." });
       }
-      return res
-        .status(200)
-        .json({
-          intraId: participant.intraId,
-          message: "로테이션 참석이 완료되었습니다.",
-        });
+      return res.status(200).json({
+        intraId: participant.intraId,
+        message: "로테이션 참석이 완료되었습니다.",
+      });
     } else {
-      return res
-        .status(400)
-        .json({
-          intraId: participant.intraId,
-          message: "중복되는 참석자입니다.",
-        });
+      return res.status(400).json({
+        intraId: participant.intraId,
+        message: "중복되는 참석자입니다.",
+      });
     }
   } catch (error) {
     console.log(error);
@@ -81,19 +80,15 @@ export async function deleteParticipant(req, res) {
           .status(500)
           .json({ message: "사서 로테이션을 실패하였습니다." });
       }
-      return res
-        .status(200)
-        .json({
-          intraId: participant.intraId,
-          message: "로테이션 참석 정보를 삭제했습니다.",
-        });
+      return res.status(200).json({
+        intraId: participant.intraId,
+        message: "로테이션 참석 정보를 삭제했습니다.",
+      });
     } else {
-      return res
-        .status(400)
-        .json({
-          intraId: participant.intraId,
-          message: "다음 달 로테이션에 참석하지 않은 사서입니다.",
-        });
+      return res.status(400).json({
+        intraId: participant.intraId,
+        message: "다음 달 로테이션에 참석하지 않은 사서입니다.",
+      });
     }
   } catch (error) {
     console.log(error);
@@ -132,11 +127,7 @@ async function setRotation() {
       return { status: -1, info: rotationResult.message };
     }
     for (let i = 0; i < rotationResult.monthArray.monthArray.length; i++) {
-      for (
-        let j = 0;
-        j < rotationResult.monthArray.monthArray[i].length;
-        j++
-      ) {
+      for (let j = 0; j < rotationResult.monthArray.monthArray[i].length; j++) {
         for (
           let k = 0;
           k < rotationResult.monthArray.monthArray[i][j].arr.length;
@@ -293,13 +284,11 @@ export async function deleteAttendInfo(req, res) {
       year: year,
     });
     if (participantInfo.length === 0) {
-      return res
-        .status(400)
-        .json({
-          intraId: intraId,
-          month: month,
-          message: "해당 달 사서 업무에 참여하지 않은 사서입니다",
-        });
+      return res.status(400).json({
+        intraId: intraId,
+        month: month,
+        message: "해당 달 사서 업무에 참여하지 않은 사서입니다",
+      });
     }
     let attendDates = participantInfo[0].attendDate.split(",").slice(0, -1);
     let newDates = [];
@@ -314,13 +303,11 @@ export async function deleteAttendInfo(req, res) {
       month: month,
       year: year,
     });
-    return res
-      .status(200)
-      .json({
-        intraId: intraId,
-        delete: dateDelete,
-        message: "DELETE ATTEND DATE OK",
-      });
+    return res.status(200).json({
+      intraId: intraId,
+      delete: dateDelete,
+      message: "DELETE ATTEND DATE OK",
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "사서 일정 삭제 실패" });
@@ -328,51 +315,43 @@ export async function deleteAttendInfo(req, res) {
 }
 
 export async function postRotationMessage() {
-  const getWeekNumber = (dateFrom = new Date()) => {
-    let currentDate = dateFrom.getDate();
-    let startOfMonth = new Date(dateFrom.setDate(1));
-    let weekDay = startOfMonth.getDay();
-    return Math.floor((weekDay - 1 + currentDate) / 7) + 1;
-  };
-  const today = new Date().getDay();
-
-  let year = new Date().getFullYear();
-  let month = (new Date().getMonth() % 12) + 1;
-  let todayNum = new Date().getDate();
-  const getLastDayOfMonth = new Date(year, month, 0).getDate();
-
+  const fourthWeekDays = getFourthWeekdaysOfMonth();
+  let fourthWeekStartDay = fourthWeekDays[0];
+  let fourthWeekFifthDay = fourthWeekDays[4];
+  let fourthWeekEndDay = fourthWeekDays[fourthWeekDays.length - 1];
+  let today = new Date().getDate();
   try {
-    if (
-      (getWeekNumber() == 4 && today == 1) ||
-      (getWeekNumber() == 4 && today == 5)
-    ) {
-      let str = `마감 ${
-        getLastDayOfMonth - todayNum
-      }일 전! 사서 로테이션 신청 기간입니다. 친바 홈페이지에서 사서 로테이션 신청을 해주세요!`;
+    if (today === fourthWeekStartDay || today == fourthWeekFifthDay) {
+      let str = `<!channel> 마감 ${
+        fourthWeekEndDay - today
+      }일 전! 사서 로테이션 신청 기간입니다. 친바 홈페이지에서 사서 로테이션 신청을 해주세요! <a href="https://together.42jip.net/">https://together.42jip.net/</a>`;
       await publishMessage(config.slack.jip, str);
-      return "CRON JOB SUCCESS";
-    }
-    if (todayNum == getLastDayOfMonth) {
-      let str =
-        "사서 로테이션이 완료되었습니다. 친바 홈페이지에서 확인해주세요!";
-      await publishMessage(config.slack.jip, str);
-      return "CRON JOB SUCCESS";
+    } else {
+      let year = new Date().getFullYear();
+      let month = (new Date().getMonth() % 12) + 1;
+      let lastDay = new Date(year, month, 0).getDate();
+      if (today === lastDay) {
+        let str = `<!channel> 다음 달 사서 로테이션이 완료되었습니다. 친바 홈페이지에서 확인해주세요! <a href="https://together.42jip.net/">https://together.42jip.net/</a>`;
+        await publishMessage(config.slack.jip, str);
+      }
     }
   } catch (error) {
     console.log(error);
-    return "CRON JOB FAILED";
   }
 }
 
 export async function getUserParticipation(req, res) {
   let rotationInfo;
   const { intraId, month, year } = req.query;
-  const obj = {}
+  const obj = {};
   const isValid = {
     intraId: (intraId) => intraId != undefined && intraId.length > 0,
     month: (month) => /^(1[0-2]|0?[1-9])$/.test(month),
-    year: (year) => /^[0-9]{4}$/.test(year) && 2023 <= year && year <= new Date().getFullYear() + 1
-  }
+    year: (year) =>
+      /^[0-9]{4}$/.test(year) &&
+      2023 <= year &&
+      year <= new Date().getFullYear() + 1,
+  };
   if (isValid.intraId(intraId)) {
     obj.intraId = intraId;
   }
@@ -382,7 +361,7 @@ export async function getUserParticipation(req, res) {
   if (isValid.year(year)) {
     obj.year = year;
   }
-  console.log(obj)
+  console.log(obj);
 
   try {
     if (!("intraId" in obj)) {
