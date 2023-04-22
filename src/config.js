@@ -38,6 +38,7 @@ export const config = {
   s3: {
     access_key_id: required("ACCESS_KEY_ID"),
     secret_access_key: required("SECRET_ACCESS_KEY"),
+    bucket: required("BUCKET"),
     region: required("REGION"),
   },
   naver: {

@@ -2,6 +2,8 @@ import * as boardRepository from "../data/board.js";
 import * as userRepository from "../data/user.js";
 import { publishMessage } from "./slack.controller.js";
 import { s3 } from "../s3.js";
+import { config } from "../config.js";
+
 //게시글 생성
 export async function createPost(req, res) {
   const { title, contents, eventId, attendMembers } = req.body;
@@ -221,7 +223,7 @@ function deleteObjectOfS3(fileKey) {
   s3.deleteObject(
     {
       //s3에서 삭제
-      Bucket: "together42",
+      Bucket: config.s3.bucket,
       Key: fileKey,
     },
     function (err, data) {

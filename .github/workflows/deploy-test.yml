@@ -56,6 +56,7 @@ jobs:
             NAVER_PW=${{ secrets.NAVER_PW }}
             ACCESS_KEY_ID=${{ secrets.ACCESS_KEY_ID }}
             SECRET_ACCESS_KEY=${{ secrets.SECRET_ACCESS_KEY }}
+            BUCKET=${{ secrets.BUCKET }}
             REGION=${{ secrets.AWS_REGION }}
             DOCKER_IMAGE=${{ secrets.DOCKER_IMAGE }}
             BOT_USER_OAUTH_ACCESS_TOKEN=${{ secrets.BOT_USER_OAUTH_ACCESS_TOKEN }}

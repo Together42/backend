@@ -1,6 +1,7 @@
 import multer from "multer";
 import multerS3 from "multer-s3";
 import { s3 } from "../s3.js";
+import { config } from "../config.js";
 
 export const fileSizeLimitErrorHandler = (err, req, res, next) => {
   if (err) {
@@ -38,7 +39,7 @@ export const upload = multer(
   {
     storage: multerS3({
       s3: s3,
-      bucket: "together42",
+      bucket: config.s3.bucket,
       acl: "public-read",
       key: function (req, file, cb) {
         cb(null, `uploads/${Date.now()}_${file.originalname}`);
@@ -56,7 +57,7 @@ export const timelineUpload = multer(
   {
     storage: multerS3({
       s3: s3,
-      bucket: "together42",
+      bucket: config.s3.bucket,
       acl: "public-read",
       key: function (req, file, cb) {
         cb(null, `timeline/${Date.now()}_${file.originalname}`);
