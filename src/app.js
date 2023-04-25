@@ -65,7 +65,7 @@ if (process.env.BACKEND_LOCAL_HOST || process.env.BACKEND_TEST_HOST) {
   );
 }
 
-// 사서 로테이션 돌림
+// 매일 사서 로테이션 요일 확인 후 해당 요일에 메세지 전송
 cron.schedule("0 8 * * *", function () {
   postRotationMessage();
 });
