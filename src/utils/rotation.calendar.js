@@ -4,7 +4,7 @@ import { config } from "../config.js";
 
 export function getTodayDate() {
   const today = new Date();
-  const date = String(today.getDate()).padStart(2, '0');
+  const date = today.getDate();
   return (date);
 }
 
