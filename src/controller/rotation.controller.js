@@ -1,6 +1,9 @@
 import * as rotationRepository from "../data/rotation.js";
 import * as rotationUtils from "../utils/rotation.together.js";
-import { getTodayDate, getFourthWeekdaysOfMonth } from "../utils/rotation.calendar.js";
+import {
+  getTodayDate,
+  getFourthWeekdaysOfMonth,
+} from "../utils/rotation.calendar.js";
 import { publishMessage } from "./slack.controller.js";
 import { config } from "../config.js";
 
@@ -32,19 +35,15 @@ export async function addParticipant(req, res) {
           .status(500)
           .json({ message: "사서 로테이션을 실패하였습니다." });
       }
-      return res
-        .status(200)
-        .json({
-          intraId: participant.intraId,
-          message: "로테이션 참석이 완료되었습니다.",
-        });
+      return res.status(200).json({
+        intraId: participant.intraId,
+        message: "로테이션 참석이 완료되었습니다.",
+      });
     } else {
-      return res
-        .status(400)
-        .json({
-          intraId: participant.intraId,
-          message: "중복되는 참석자입니다.",
-        });
+      return res.status(400).json({
+        intraId: participant.intraId,
+        message: "중복되는 참석자입니다.",
+      });
     }
   } catch (error) {
     console.log(error);
@@ -81,19 +80,15 @@ export async function deleteParticipant(req, res) {
           .status(500)
           .json({ message: "사서 로테이션을 실패하였습니다." });
       }
-      return res
-        .status(200)
-        .json({
-          intraId: participant.intraId,
-          message: "로테이션 참석 정보를 삭제했습니다.",
-        });
+      return res.status(200).json({
+        intraId: participant.intraId,
+        message: "로테이션 참석 정보를 삭제했습니다.",
+      });
     } else {
-      return res
-        .status(400)
-        .json({
-          intraId: participant.intraId,
-          message: "다음 달 로테이션에 참석하지 않은 사서입니다.",
-        });
+      return res.status(400).json({
+        intraId: participant.intraId,
+        message: "다음 달 로테이션에 참석하지 않은 사서입니다.",
+      });
     }
   } catch (error) {
     console.log(error);
@@ -132,11 +127,7 @@ async function setRotation() {
       return { status: -1, info: rotationResult.message };
     }
     for (let i = 0; i < rotationResult.monthArray.monthArray.length; i++) {
-      for (
-        let j = 0;
-        j < rotationResult.monthArray.monthArray[i].length;
-        j++
-      ) {
+      for (let j = 0; j < rotationResult.monthArray.monthArray[i].length; j++) {
         for (
           let k = 0;
           k < rotationResult.monthArray.monthArray[i][j].arr.length;
@@ -293,13 +284,11 @@ export async function deleteAttendInfo(req, res) {
       year: year,
     });
     if (participantInfo.length === 0) {
-      return res
-        .status(400)
-        .json({
-          intraId: intraId,
-          month: month,
-          message: "해당 달 사서 업무에 참여하지 않은 사서입니다",
-        });
+      return res.status(400).json({
+        intraId: intraId,
+        month: month,
+        message: "해당 달 사서 업무에 참여하지 않은 사서입니다",
+      });
     }
     let attendDates = participantInfo[0].attendDate.split(",").slice(0, -1);
     let newDates = [];
@@ -314,13 +303,11 @@ export async function deleteAttendInfo(req, res) {
       month: month,
       year: year,
     });
-    return res
-      .status(200)
-      .json({
-        intraId: intraId,
-        delete: dateDelete,
-        message: "DELETE ATTEND DATE OK",
-      });
+    return res.status(200).json({
+      intraId: intraId,
+      delete: dateDelete,
+      message: "DELETE ATTEND DATE OK",
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "사서 일정 삭제 실패" });
@@ -344,8 +331,7 @@ export async function postRotationMessage() {
       let month = (new Date().getMonth() % 12) + 1;
       let lastDay = new Date(year, month, 0).getDate();
       if (today === lastDay) {
-        let str =
-          `#42seoul_club_42jiphyeonjeon_ 다음 달 사서 로테이션이 완료되었습니다. 친바 홈페이지에서 확인해주세요! https://together.42jip.net/`;
+        let str = `#42seoul_club_42jiphyeonjeon_ 다음 달 사서 로테이션이 완료되었습니다. 친바 홈페이지에서 확인해주세요! https://together.42jip.net/`;
         await publishMessage(config.slack.jip, str);
       }
     }
@@ -357,12 +343,15 @@ export async function postRotationMessage() {
 export async function getUserParticipation(req, res) {
   let rotationInfo;
   const { intraId, month, year } = req.query;
-  const obj = {}
+  const obj = {};
   const isValid = {
     intraId: (intraId) => intraId != undefined && intraId.length > 0,
     month: (month) => /^(1[0-2]|0?[1-9])$/.test(month),
-    year: (year) => /^[0-9]{4}$/.test(year) && 2023 <= year && year <= new Date().getFullYear() + 1
-  }
+    year: (year) =>
+      /^[0-9]{4}$/.test(year) &&
+      2023 <= year &&
+      year <= new Date().getFullYear() + 1,
+  };
   if (isValid.intraId(intraId)) {
     obj.intraId = intraId;
   }
@@ -372,7 +361,7 @@ export async function getUserParticipation(req, res) {
   if (isValid.year(year)) {
     obj.year = year;
   }
-  console.log(obj)
+  console.log(obj);
 
   try {
     if (!("intraId" in obj)) {
