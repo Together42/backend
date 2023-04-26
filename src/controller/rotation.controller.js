@@ -322,16 +322,16 @@ export async function postRotationMessage() {
   let today = new Date().getDate();
   try {
     if (today === fourthWeekStartDay || today == fourthWeekFifthDay) {
-      let str = `<!channel> 마감 ${
+      let str = `#42seoul_club_42jiphyeonjeon_ 마감 ${
         fourthWeekEndDay - today
-      }일 전! 사서 로테이션 신청 기간입니다. 친바 홈페이지에서 사서 로테이션 신청을 해주세요! <a href="https://together.42jip.net/">https://together.42jip.net/</a>`;
+      }일 전! 사서 로테이션 신청 기간입니다. 친바 홈페이지에서 사서 로테이션 신청을 해주세요! https://together.42jip.net/`;
       await publishMessage(config.slack.jip, str);
     } else {
       let year = new Date().getFullYear();
       let month = (new Date().getMonth() % 12) + 1;
       let lastDay = new Date(year, month, 0).getDate();
       if (today === lastDay) {
-        let str = `<!channel> 다음 달 사서 로테이션이 완료되었습니다. 친바 홈페이지에서 확인해주세요! <a href="https://together.42jip.net/">https://together.42jip.net/</a>`;
+        let str = `#42seoul_club_42jiphyeonjeon_ 다음 달 사서 로테이션이 완료되었습니다. 친바 홈페이지에서 확인해주세요! https://together.42jip.net/`;
         await publishMessage(config.slack.jip, str);
       }
     }
