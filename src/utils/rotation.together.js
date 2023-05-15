@@ -14,10 +14,9 @@ function isEmptyObj(object) {
 }
 
 async function isNotHoliday(day) {
-  let response = await getHolidayOfMonth();
-  let holiday = response.data.map(dateString => dateString.slice(-2));
-  let checkDay = day < 10 ? '0' + day : day;
-  if (holiday.indexOf(checkDay.toString()) > 0) {
+  const response = await getHolidayOfMonth();
+  const holidayArray = response.map(item => parseInt(item.day));
+  if (holidayArray.indexOf(Number(day)) >= 0) {
     return false;
   }
   return true;
@@ -40,7 +39,7 @@ export async function initMonthArray() {
     if (new Date(year, nextMonth - 1, i).getDay() > 0 &&
       new Date(year, nextMonth - 1, i).getDay() < 6) {
       let day = new Date(year, nextMonth - 1, i).getDate();
-      if (await isNotHoliday(day)) {
+      if (isNotHoliday(day)) {
         tmp.push(0);
         tmp.push(0);
         tmpDayObject = {day: day, arr: tmp};

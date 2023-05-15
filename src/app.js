@@ -15,6 +15,7 @@ import {
   matchWeeklyMeetingEvent,
 } from "./controller/together.controller.js";
 import { postRotationMessage } from "./controller/rotation.controller.js";
+import { storeHolidayInfo } from "./utils/rotation.calendar.js";
 
 // express configuration
 const app = express();
@@ -65,8 +66,20 @@ if (process.env.BACKEND_LOCAL_HOST || process.env.BACKEND_TEST_HOST) {
   );
 }
 
+// 매 달 첫 날, 다음 달에 휴일이 있는지 확인하여, DB에 저장.
+cron.schedule("0 0 1 * *", function() {
+  storeHolidayInfo()
+    .then(response => {
+      console.log(`Store holiday data status: ${response.status}`);
+    })
+    .catch(error => {
+      console.log('Error occurred while stroing holiday data:');
+      console.log(error);
+    });
+});
+
 // 매일 사서 로테이션 요일 확인 후 해당 요일에 메세지 전송
-cron.schedule("0 8 * * *", function () {
+cron.schedule("0 08 * * *", function () {
   postRotationMessage();
 });
 
