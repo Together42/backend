@@ -7,6 +7,40 @@ import {
 import { publishMessage } from "./slack.controller.js";
 import { config } from "../config.js";
 
+export async function initParticipants() {
+  const results = await rotationRepository.getAttendableUsers();
+  const users = results.map(item => item.intraId);
+  const month = new Date().getMonth() + 2;
+  const year = month === 1 ? new Date().getFullYear() += 1 : new Date().getFullYear();
+  const today = getTodayDate();
+  // if (getFourthWeekdaysOfMonth()[0] != today) {
+  //   return { status: 200 }
+  // }
+  return new Promise((resolve, reject) => {
+    try {
+      const promises = users.map(async (user) => {
+        let participant = [];
+        participant['intraId'] = user;
+        participant['attendLimit'] = [];
+        participant['month'] = month;
+        participant['year'] = year;
+        await rotationRepository.addParticipant(participant);
+      });
+
+      Promise.all(promises)
+      .then(async () => {
+        const rotationResult = await setRotation();
+        if (rotationResult.status < 0)
+          reject ({ status: 500, message: 'setRotation failed in initParticipants'});
+        else
+          resolve ({ status: 200, message: 'initParticipants success '});
+      })
+    } catch (error) {
+      reject ({ status: 500, message: 'initParticipants failed', error: error });
+    }
+  })
+}
+
 export async function addParticipant(req, res) {
   let participant = req.body;
   let year = new Date().getFullYear();
@@ -157,6 +191,7 @@ async function setRotation() {
         }
       }
     }
+    return { status: 200, info: 'setRotation success' };
   } catch (error) {
     console.log(error);
     return { status: -1, info: error };
@@ -335,8 +370,10 @@ export async function postRotationMessage() {
         await publishMessage(config.slack.jip, str);
       }
     }
+    return { status: 200 };
   } catch (error) {
     console.log(error);
+    return { status: -1 };
   }
 }
 
@@ -361,7 +398,6 @@ export async function getUserParticipation(req, res) {
   if (isValid.year(year)) {
     obj.year = year;
   }
-  console.log(obj);
 
   try {
     if (!("intraId" in obj)) {

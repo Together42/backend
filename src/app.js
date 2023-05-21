@@ -14,7 +14,7 @@ import {
   createWeeklyMeetingEvent,
   matchWeeklyMeetingEvent,
 } from "./controller/together.controller.js";
-import { postRotationMessage } from "./controller/rotation.controller.js";
+import { initParticipants, postRotationMessage } from "./controller/rotation.controller.js";
 import { storeHolidayInfo } from "./utils/rotation.calendar.js";
 
 // express configuration
@@ -70,17 +70,34 @@ if (process.env.BACKEND_LOCAL_HOST || process.env.BACKEND_TEST_HOST) {
 cron.schedule("0 0 1 * *", function() {
   storeHolidayInfo()
     .then(response => {
-      console.log(`Store holiday data status: ${response.status}`);
+      console.log(`storeHolidayInfo status: ${response.status}`);
     })
     .catch(error => {
-      console.log('Error occurred while stroing holiday data:');
+      console.log('Error occurred in storeHolidayInfo:');
       console.log(error);
     });
 });
 
-// 매일 사서 로테이션 요일 확인 후 해당 요일에 메세지 전송
-cron.schedule("0 08 * * *", function () {
-  postRotationMessage();
+// 매 요일 날짜 확인 후, 로테이션에 해당하는 날짜에 행동을 수행
+// 1. 로테이션 시작 당일 : initParticipants
+// 2. 로테이션 주간 중 수요일, 금요일 : postRotationMessage
+cron.schedule("0 12 * * *", function () {
+  initParticipants()
+    .then(response => {
+      console.log(`initParticipants status: ${response.status}`);
+    })
+    .catch(error => {
+      console.log('Error occurred in initParticipants:');
+      console.log(error);
+    });
+  postRotationMessage()
+    .then(response => {
+      console.log(`postRotationMessgae status: ${response.status}`);
+    })
+    .catch(error => {
+      console.log('Error occuured in PostRotationMessage: ');
+      console.log(error);
+    });
 });
 
 // 주간 회의 자동 생성

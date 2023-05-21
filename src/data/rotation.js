@@ -1,5 +1,16 @@
 import { db } from "../db/database.js";
 
+export async function getAttendableUsers() {
+  try {
+    return db
+      .execute("SELECT * FROM users WHERE canAttend='1'", 
+      )
+      .then((result) => result[0]);
+  } catch (error) {
+    throw error;
+  }
+}
+
 export async function addParticipant(participant) {
   const { intraId, attendLimit, month, year } = participant;
   return db
