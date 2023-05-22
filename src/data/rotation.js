@@ -1,5 +1,16 @@
 import { db } from "../db/database.js";
 
+export async function getAttendableUsers() {
+  try {
+    return db
+      .execute("SELECT * FROM users WHERE canAttend='1'", 
+      )
+      .then((result) => result[0]);
+  } catch (error) {
+    throw error;
+  }
+}
+
 export async function addParticipant(participant) {
   const { intraId, attendLimit, month, year } = participant;
   return db
@@ -93,4 +104,38 @@ export async function updateAttendDate(attendInfo) {
       [attendInfo.attendDate, attendInfo.intraId, attendInfo.month, attendInfo.year],
     )
     .then((result) => result[0]);
+}
+
+export async function addHolidayInfo(holidayInfo) {
+  const { year, month, day, info } = holidayInfo;
+  try {
+    const [rows] = await db.execute(
+      "SELECT * FROM holiday_info WHERE year = ? AND month = ? AND day = ?", 
+      [year, month, day],
+    );
+    if (rows.length === 0) {
+      return db
+        .execute("INSERT INTO holiday_info (month, year, day, info) VALUES (?,?,?,?)",
+        [month, year, day, info],
+        )
+        .then((result) => result[0]);
+    } else {
+      console.log('Record already exists');
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getHolidayByMonth(holidayInfo) {
+  const { year, month } = holidayInfo;
+  try {
+    return db
+      .execute("SELECT * FROM holiday_info WHERE year = ? AND month = ?", 
+      [year, month],
+      )
+      .then((result) => result[0]);
+  } catch (error) {
+    throw error;
+  }
 }
