@@ -44,7 +44,7 @@ export async function initMonthArray() {
     if (new Date(year, nextMonth - 1, i).getDay() > 0 &&
       new Date(year, nextMonth - 1, i).getDay() < 6) {
       let day = new Date(year, nextMonth - 1, i).getDate();
-      if (isNotHoliday(day)) {
+      if (await isNotHoliday(day)) {
         tmp.push(0);
         tmp.push(0);
         tmpDayObject = {day: day, arr: tmp};
