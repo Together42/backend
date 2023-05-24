@@ -13,9 +13,9 @@ export async function initParticipants() {
   const month = new Date().getMonth() + 2;
   const year = month === 1 ? new Date().getFullYear() += 1 : new Date().getFullYear();
   const today = getTodayDate();
-  // if (getFourthWeekdaysOfMonth()[0] != today) {
-  //   return { status: 200 }
-  // }
+  if (getFourthWeekdaysOfMonth()[0] != today) {
+    return { status: 200 }
+  }
   return new Promise((resolve, reject) => {
     try {
       const promises = users.map(async (user) => {
