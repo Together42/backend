@@ -19,7 +19,7 @@ export function getFourthWeekdaysOfMonth() {
   const fourthWeekStartDay = lastDateOfMonth - lastDayOfMonth - 6;
   const fourthWeekDays = [];
 
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < 5; i++) {
     const day = fourthWeekStartDay + i;
     if (day > 0 && day <= lastDateOfMonth) {
       fourthWeekDays.push(day);
