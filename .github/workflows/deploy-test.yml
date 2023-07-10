@@ -42,8 +42,6 @@ jobs:
           key: ${{ secrets.AWS_KYU_KEY }}
           port: 22
           script: |
-            pwd
-            ls -al
             mkdir -p test_server
             echo "DB_DATABASE=${{ secrets.TEST_DATABASE }}
             DB_USER=${{ secrets.TEST_DATABASE_USER }}
