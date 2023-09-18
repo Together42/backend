@@ -32,9 +32,14 @@ const getFourthWeekPeriod = (date = new Date()) => {
 };
 
 export const getFourthWeekdaysOfMonth = (date = new Date()) => {
-    const [dateOfMondayOnFourthWeek, dateOfSundayOnFourthWeek] = getFourthWeekPeriod(date);
-    const dateOfFridayOnFourthWeek = dateOfSundayOnFourthWeek - 2;
-    return [dateOfMondayOnFourthWeek, dateOfFridayOnFourthWeek]
+  const [dateOfMondayOnFourthWeek, dateOfSundayOnFourthWeek] = getFourthWeekPeriod(date);
+  const dateOfFridayOnFourthWeek = dateOfSundayOnFourthWeek - 2;
+  const fourthWeekDays = [];
+  for (let i = 0; i < 5; i++) {
+    const day = dateOfMondayOnFourthWeek + i;
+    fourthWeekDays.push(day);
+  }
+  return (fourthWeekDays);
 };
 
 export async function storeHolidayInfo() {
