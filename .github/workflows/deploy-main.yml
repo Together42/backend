@@ -50,7 +50,7 @@ jobs:
             DB_USER=${{ secrets.KYU_DB_USER }}
             DB_PASSWORD=${{ secrets.KYU_DB_PASSWORD }}
             DB_HOST=${{ secrets.KYU_DB_HOST }}
-            DB_PORT=${{ secrets.TEST_DB_PORT }}
+            DB_PORT=${{ secrets.KYU_DB_PORT }}
             JWT_SECRET=${{ secrets.JWT_SECRET }}
             JWT_EXPIRES_SEC=${{ secrets.JWT_EXPIRES_SEC }}
             BCRYPT_SALT_ROUNDS=${{ secrets.BCRYPT_SALT_ROUNDS }}
