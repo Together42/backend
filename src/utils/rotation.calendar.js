@@ -8,25 +8,34 @@ export function getTodayDate() {
   return (date);
 }
 
-export function getFourthWeekdaysOfMonth() {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth() + 1;
+const MONTH_IN_YEAR = 12;
+const DAY_IN_WEEK = 7;
 
-  const lastDate = new Date(year, month, 0);
-  const lastDayOfMonth = lastDate.getDay();
-  const lastDateOfMonth = lastDate.getDate();
-  const fourthWeekStartDay = lastDateOfMonth - lastDayOfMonth - 6;
-  const fourthWeekDays = [];
+const DAY_OF_THURSDAY = 4;
 
-  for (let i = 0; i < 7; i++) {
-    const day = fourthWeekStartDay + i;
-    if (day > 0 && day <= lastDateOfMonth) {
-      fourthWeekDays.push(day);
+const getFirstDateOfMonth = (date, offsetMonth = 0) =>
+    new Date(date.getFullYear(), date.getMonth() + offsetMonth, 1);
+const getFirstDayOfMonth = (date, offsetMonth = 0) => getFirstDateOfMonth(date, offsetMonth).getDay();
+
+const getFourthWeekPeriod = (date = new Date()) => {
+    const firstDay = getFirstDayOfMonth(date); // 첫째날 day
+    let dateOfThursdayOnFirstWeek; // 첫쨰주에 무조건 존재하는 목요일을 기준으로 탐색.
+    if (firstDay <= DAY_OF_THURSDAY) {
+        dateOfThursdayOnFirstWeek = 1 + DAY_OF_THURSDAY - firstDay;
+    } else {
+        dateOfThursdayOnFirstWeek = 1 + DAY_IN_WEEK + DAY_OF_THURSDAY - firstDay;
     }
-  }
-  return (fourthWeekDays);
-}
+    const dateOfThursdayOnFourthWeek = dateOfThursdayOnFirstWeek + 3 * DAY_IN_WEEK;
+    const dateOfMondayOnFourthWeek = dateOfThursdayOnFourthWeek - 3;
+    const dateOfSundayOnFourthWeek = dateOfThursdayOnFourthWeek + 3;
+    return [dateOfMondayOnFourthWeek, dateOfSundayOnFourthWeek];
+};
+
+export const getFourthWeekdaysOfMonth = (date = new Date()) => {
+    const [dateOfMondayOnFourthWeek, dateOfSundayOnFourthWeek] = getFourthWeekPeriod(date);
+    const dateOfFridayOnFourthWeek = dateOfSundayOnFourthWeek - 2;
+    return [dateOfMondayOnFourthWeek, dateOfFridayOnFourthWeek]
+};
 
 export async function storeHolidayInfo() {
   const URL = 'http://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getHoliDeInfo';
