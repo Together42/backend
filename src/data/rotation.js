@@ -139,3 +139,14 @@ export async function getHolidayByMonth(holidayInfo) {
     throw error;
   }
 }
+
+export async function getParticipantsByDate(date) {
+  try {
+    return db.execute("SELECT intraId, attendDate FROM rotation WHERE attendDate LIKE ?", [
+      `%${date}%`,
+    ]).then((result) => result[0]);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
