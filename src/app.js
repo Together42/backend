@@ -115,9 +115,15 @@ cron.schedule("0 01 * * 3", function () {
 });
 
 // 매일 9시 사서에게 알림
-cron.schedule("0 9 * * *", function () {
-  postSlackTomorrowLibrarian();
-});
+cron.schedule(
+  "0 10 * * *",
+  function () {
+    postSlackTomorrowLibrarian();
+  },
+  {
+    timezone: "Asia/Seoul",
+  },
+);
 
 //route
 app.use("/api", router);
