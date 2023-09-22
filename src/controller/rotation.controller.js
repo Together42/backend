@@ -362,12 +362,17 @@ export async function postRotationMessage() {
       }일 전! 사서 로테이션 신청 기간입니다. 친바 홈페이지에서 사서 로테이션 신청을 해주세요! https://together.42jip.net/`;
       await publishMessage(config.slack.jip, str);
     } else {
-      let year = new Date().getFullYear();
-      let month = (new Date().getMonth() % 12) + 1;
-      let lastDay = new Date(year, month, 0).getDate();
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = (today.getMonth() % 12) + 1;
+      const lastDay = new Date(year, month, 0).getDate();
       if (today === lastDay) {
-        let str = `#42seoul_club_42jiphyeonjeon_ 다음 달 사서 로테이션이 완료되었습니다. 친바 홈페이지에서 확인해주세요! https://together.42jip.net/`;
+        const str = `#42seoul_club_42jiphyeonjeon_ 다음 달 사서 로테이션이 완료되었습니다. 친바 홈페이지에서 확인해주세요! https://together.42jip.net/`;
         await publishMessage(config.slack.jip, str);
+
+        // 다음달 로테이션 결과 사서 DM으로 전송
+        const nextMonth = month + 1 === 13 ? 1 : month + 1;
+        await postSlackMonthlyLibrarian(year, nextMonth);
       }
     }
     return { status: 200 };

@@ -25,3 +25,24 @@ export async function postSlackTomorrowLibrarians() {
   });
   await Promise.all(messages);
 }
+
+export async function postSlackMonthlyLibrarian(year, month) {
+  console.log(year, month);
+  const libarians = await getMonthlyLibarians(year, month);
+  console.log(libarians);
+
+  const messages = libarians.map((libarian) => {
+    const { intraId, slackId } = libarian;
+    let channel = slackId;
+    const attendDates = libarian.attendDate
+      .split(",")
+      .filter((date) => date.length > 0)
+      .map((date) => "`" + date + "`")
+      .join(", ");
+    if (process.env.BACKEND_LOCAL_HOST || process.env.BACKEND_TEST_HOST) {
+      channel = config.slack.jip;
+    }
+    return publishMessage(channel, `${intraId}님은 ${attendDates} 사서입니다.`);
+  });
+  await Promise.all(messages);
+}
