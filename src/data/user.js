@@ -12,15 +12,3 @@ export async function findUserById(id) {
     .execute("SELECT * FROM users WHERE id=?", [id])
     .then((result) => result[0][0]);
 }
-
-export async function findUsersByIntraId(intraId) {
-  if (intraId.length == 0) {
-    return [];
-  }
-  const placeholder = intraId.map(() => "?");
-  return db
-    .execute(`SELECT intraId, slackId FROM users WHERE intraId IN (${placeholder.join()})`, [
-      ...intraId,
-    ])
-    .then((result) => result[0]);
-}
