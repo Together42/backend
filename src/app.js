@@ -19,7 +19,10 @@ import {
   postRotationMessage,
 } from "./controller/rotation.controller.js";
 import { storeHolidayInfo } from "./utils/rotation.calendar.js";
-import { postSlackTomorrowLibrarian } from "./utils/slack.service.js";
+import {
+  postSlackMonthlyLibrarian,
+  postSlackTomorrowLibrarians,
+} from "./utils/slack.service.js";
 
 // express configuration
 const app = express();
@@ -114,11 +117,20 @@ cron.schedule("0 01 * * 3", function () {
   matchWeeklyMeetingEvent();
 });
 
-// 매일 9시 사서에게 알림
+// 매일 오전 10시 사서에게 알림
+cron.schedule("0 10 * * *", postSlackTomorrowLibrarians, {
+  timezone: "Asia/Seoul",
+});
+
+// 테스트용, 삭제 예정
 cron.schedule(
-  "0 10 * * *",
-  function () {
-    postSlackTomorrowLibrarian();
+  "42 10 * * *",
+  async function () {
+    const today = new Date();
+    const month = (today.getMonth() % 12) + 1;
+    const nextMonth = month + 1 === 13 ? 1 : month + 1;
+
+    await postSlackMonthlyLibrarian(today.getFullYear(), nextMonth);
   },
   {
     timezone: "Asia/Seoul",
