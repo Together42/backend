@@ -7,11 +7,6 @@ export async function postSlackTomorrowLibrarians() {
   const tomorrow = getTomorrow(new Date());
   const libarians = await getLibariansByDate(tomorrow);
 
-  // 테스트 서버용, 테스트 완료 후 삭제 예정
-  if (libarians.length === 0) {
-    return publishMessage(config.slack.jip, `내일은 사서가 없는 날입니다!`);
-  }
-
   const messages = libarians.map((libarian) => {
     const { intraId, slackId } = libarian;
     let channel = slackId;
