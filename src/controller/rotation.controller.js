@@ -372,7 +372,8 @@ export async function postRotationMessage() {
 
         // 다음달 로테이션 결과 사서 DM으로 전송
         const nextMonth = month + 1 === 13 ? 1 : month + 1;
-        await postSlackMonthlyLibrarian(year, nextMonth);
+        const nextMonthYear = month + 1 === 13 ? year + 1 : year;
+        await postSlackMonthlyLibrarian(nextMonthYear, nextMonth);
       }
     }
     return { status: 200 };
