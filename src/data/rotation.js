@@ -139,3 +139,37 @@ export async function getHolidayByMonth(holidayInfo) {
     throw error;
   }
 }
+
+export async function getLibariansByDate(date) {
+  console.log(date);
+  try {
+    return db
+      .execute(
+        "SELECT users.intraId, users.slackId, rotation.attendDate \
+        FROM users, rotation \
+        WHERE users.intraId = rotation.intraId and rotation.attendDate LIKE ?",
+        [`%${date}%`],
+      )
+      .then((result) => result[0]);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+
+export async function getMonthlyLibarians(year, month) {
+  try {
+    return db
+      .execute(
+        "SELECT users.intraId, users.slackId, rotation.attendDate \
+        FROM users, rotation \
+        WHERE users.intraId = rotation.intraId and year = ? and month = ?",
+        [year, month],
+      )
+      .then((result) => result[0]);
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+}

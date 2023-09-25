@@ -14,8 +14,12 @@ import {
   createWeeklyMeetingEvent,
   matchWeeklyMeetingEvent,
 } from "./controller/together.controller.js";
-import { initParticipants, postRotationMessage } from "./controller/rotation.controller.js";
+import {
+  initParticipants,
+  postRotationMessage,
+} from "./controller/rotation.controller.js";
 import { storeHolidayInfo } from "./utils/rotation.calendar.js";
+import { postSlackTomorrowLibrarians } from "./utils/slack.service.js";
 
 // express configuration
 const app = express();
@@ -108,6 +112,11 @@ cron.schedule("0 03 * * 4", function () {
 // 주간 회의 자동 매칭
 cron.schedule("0 01 * * 3", function () {
   matchWeeklyMeetingEvent();
+});
+
+// 매일 오전 10시 사서에게 알림
+cron.schedule("0 10 * * *", postSlackTomorrowLibrarians, {
+  timezone: "Asia/Seoul",
 });
 
 //route
