@@ -4,6 +4,7 @@ import {} from "express-async-errors";
 import * as userRepository from "../data/auth.js";
 import { config, smtpTransport } from "../config.js";
 import urlencoded from "urlencode";
+import { err_log, info_log } from "../config/log_handling.js";
 
 const generateRandom = function (min, max) {
   const ranNum = Math.floor(Math.random() * (max - min + 1)) + min;
@@ -30,11 +31,10 @@ export async function cert(req, res) {
 export async function mailAuthentication(req, res) {
   //이메일 보내기
   const { sendEmail } = req.body;
-  console.log(sendEmail);
 
   let number = generateRandom(111111, 999999);
   const hashNum = await bcrypt.hash(number, config.bcrypt.saltRounds);
-  console.log(hashNum);
+
   res.cookie("hashNum", hashNum.toString(), {
     maxAge: 300000,
     domain: ".together.42jip.net",
@@ -104,21 +104,33 @@ export async function signUp(req, res) {
 }
 
 export async function login(req, res) {
-  const { intraId, password } = req.body;
-  const user = await userRepository.findByintraId(intraId);
-  if (!user) {
-    //사용자가 존재하는지 검사
-    return res.status(401).json({ message: "아이디와 비밀번호가 틀렸습니다" });
+  try {
+    const { intraId, password } = req.body;
+    if (!(intraId && password))
+      throw new Error("아이디와 비밀번호를 입력해주세요");
+    const user = await userRepository.findByintraId(intraId);
+    if (!user) {
+      //사용자가 존재하는지 검사
+      return res
+        .status(401)
+        .json({ message: "아이디와 비밀번호가 틀렸습니다" });
+    }
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
+      //비밀먼호 검증
+      return res
+        .status(401)
+        .json({ message: "아이디와 비밀번호가 틀렸습니다" });
+    }
+    const profile = user.profile;
+    const token = createJwtToken(user.intraId, user.isAdmin);
+    console.log(`login id : ${intraId},  time : ${new Date()}`);
+    res.status(200).json({ token, intraId, profile });
+  } catch (error) {
+    const err_msg = err_log("A005", "", error); // server Error
+    //res.body = { success: false, error: err_msg };
+    res.status(400).json({ success: false, error: err_msg });
   }
-  const isValidPassword = await bcrypt.compare(password, user.password);
-  if (!isValidPassword) {
-    //비밀먼호 검증
-    return res.status(401).json({ message: "아이디와 비밀번호가 틀렸습니다" });
-  }
-  const profile = user.profile;
-  const token = createJwtToken(user.intraId, user.isAdmin);
-  console.log(`login id : ${intraId},  time : ${new Date()}`);
-  res.status(200).json({ token, intraId, profile });
 }
 
 function createJwtToken(id, isAdmin) {
