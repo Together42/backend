@@ -40,3 +40,12 @@ export async function updatePassword(userInfo) {
     .execute("UPDATE users SET password=? WHERE id=?", [password, id])
     .then(() => findById(id));
 }
+
+export async function findUsersByIdList(idList) {
+  const placeholder = idList.map(() => "?");
+  return db
+    .execute(`select intraId from users where id in (${placeholder})`, [
+      ...idList,
+    ])
+    .then((result) => result[0]);
+}
