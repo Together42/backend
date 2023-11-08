@@ -21,14 +21,10 @@ export async function createEvent(req, res) {
 }
 
 // 주간회의 이벤트 자동 생성
-export async function createWeeklyMeetingEvent() {
-  const meetingDate = new Date();
-  meetingDate.setDate(meetingDate.getDate() + 6);
+export async function createWeeklyDinnerEvent() {
   const adminUserIntraId = "tkim";
-  const title = `[주간회의] ${
-    meetingDate.getMonth() + 1
-  }월 ${meetingDate.getDate()}일`;
-  const description = `매 주 생성되는 정기 회의입니다. 해당 날짜에 회의가 없다면 ${adminUserIntraId}님이 삭제해주세요!`;
+  const title = "[주간 식사] 오늘 주간 회의 끝나고 같이 저녁 드실 분~";
+  const description = "같이 회의도 하고 식사도 하면서 친해집시다!";
   const categoryId = 1;
   const adminUser = await userRepository.findByintraId(adminUserIntraId);
   console.log(adminUser);
@@ -39,8 +35,8 @@ export async function createWeeklyMeetingEvent() {
     createdId,
     categoryId,
   });
-  let str = `:fire: 친바 공지 !! :fire:\n\n${title} 이벤트가 생성되었습니다. \nhttps://together.42jip.net/\n서둘러 참석해주세요`;
-  await publishMessage(config.slack.jip, str);
+  const message = `:fire: 친바 공지 !! :fire:\n\n${title}\n이벤트가 생성되었습니다.\n금일 오후 6시에 자동 마감되오니 서둘러 참석해 주세요!\nhttps://together.42jip.net`;
+  await publishMessage(config.slack.jip, message);
 }
 
 //이벤트 삭제
@@ -173,7 +169,7 @@ export async function matching(req, res) {
   res.status(201).json({ eventId, teamList });
 }
 
-export async function matchWeeklyMeetingEvent() {
+export async function matchWeeklyDinnerEvent() {
   const event = await togetherRepository.getNotMatchedEventByCategory(1);
   if (event === undefined) return;
   const check = await togetherRepository.findAttendByEventId(event.id);
@@ -184,13 +180,19 @@ export async function matchWeeklyMeetingEvent() {
   }
   // 이미 매칭된 경우
   if (check[0].teamId !== null) return;
-  shuffle(check); //팀 셔플완료  이제 팀개수대로 팀 나눠야함
+  // 매칭 되지 않은 경우, 매칭 상태로 변경 isMatching=1
   await togetherRepository.changeEvent(event.id);
-  const teamNum = check.length >= 3 ? 3 : 1;
   for (let i = 0; i < check.length; i++) {
-    let teamId = (i % teamNum) + 1;
-    await togetherRepository.createTeam(teamId, check[i].id);
+    // 팀은 무조건 하나로만 자동 매칭
+    await togetherRepository.createTeam(1, check[i].id);
   }
+  let message = `:fire: 친바 공지 !! :fire:\n\n오늘 저녁 식사 모집 마감되었습니다.\n`;
+  const attendees = await userRepository.findUsersByIdList(
+    check.map((e) => e.userId),
+  );
+  message += attendees.map((e) => "`" + e.intraId + "`").join(", ");
+  message += " 님 맛있게 드세요!";
+  await publishMessage(config.slack.jip, message);
 }
 
 //팀 셔플
