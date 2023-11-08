@@ -11,8 +11,8 @@ import rateLimit from "./middleware/rate-limiter.js";
 import expressBasicAuth from "express-basic-auth";
 import cron from "node-cron";
 import {
-  createWeeklyMeetingEvent,
-  matchWeeklyMeetingEvent,
+  createWeeklyDinnerEvent,
+  matchWeeklyDinnerEvent,
 } from "./controller/together.controller.js";
 import {
   initParticipants,
@@ -104,14 +104,14 @@ cron.schedule("0 12 * * *", function () {
     });
 });
 
-// 주간 회의 자동 생성
-cron.schedule("0 03 * * 4", function () {
-  createWeeklyMeetingEvent();
+// 주간 회의 후 저녁 식사 친바 자동 생성
+cron.schedule("42 16 * * 3", createWeeklyDinnerEvent, {
+  timezone: "Asia/Seoul",
 });
 
-// 주간 회의 자동 매칭
-cron.schedule("0 01 * * 3", function () {
-  matchWeeklyMeetingEvent();
+// 주간 회의 후 저녁 식사 친바 자동 매칭
+cron.schedule("0 18 * * 3", matchWeeklyDinnerEvent, {
+  timezone: "Asia/Seoul",
 });
 
 // 매일 오전 10시 사서에게 알림
